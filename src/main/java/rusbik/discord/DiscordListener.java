@@ -54,7 +54,7 @@ public class DiscordListener extends ListenerAdapter {
         if (chatBridge){
 
             if (event.getMessage().getContentRaw().equals("!online")){
-                if (event.getChannel().getId().equals("730011700773912589") || event.getChannel().getId().equals("608960549845467155")){
+                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
                     StringBuilder msg = new StringBuilder();
                     int n = server.getPlayerManager().getPlayerList().size();
                     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()){

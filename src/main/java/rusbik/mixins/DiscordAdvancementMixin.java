@@ -21,7 +21,7 @@ public class DiscordAdvancementMixin {
     public void onAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir){
         if (DiscordListener.chatBridge){
             Text text = new TranslatableText("chat.type.advancement." + advancement.getDisplay().getFrame().getId(), new Object[]{this.owner.getDisplayName(), advancement.toHoverableText()});
-            DiscordListener.sendMessage(":confetti_ball: **" + text.getString() + "**");
+            DiscordListener.sendMessage(":confetti_ball: **" + text.getString().replace("_", "\\_") + "**");
         }
     }
 }

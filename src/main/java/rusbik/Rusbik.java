@@ -26,7 +26,7 @@ import java.util.Set;
 public class Rusbik {
 
     public static HashMap<String, String> permsArray = new HashMap<>();
-    
+
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher){
         RandomTpCommand.register(dispatcher);
         SetHomeCommand.register(dispatcher);

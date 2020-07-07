@@ -8,6 +8,7 @@
     "PlayerManagerJoinsMixin",
     "RusbikServerRunMixin",
     "ServerPlayNetworkHandlerPlayerLeftMixin",
+    "TeleportCommandMixin",
     "WorldBorderCommandMixin"
   ],
   "client": [],

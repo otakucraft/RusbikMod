@@ -11,6 +11,8 @@ import rusbik.home.HomeCommand;
 import rusbik.home.SetHomeCommand;
 import rusbik.perms.PermsCommand;
 import rusbik.randomTp.RandomTpCommand;
+import rusbik.teleport.AdminTeleportCommand;
+import rusbik.teleport.CustomTeleportCommand;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +28,8 @@ public class Rusbik {
         SetHomeCommand.register(dispatcher);
         HomeCommand.register(dispatcher);
         PermsCommand.register(dispatcher);
+        CustomTeleportCommand.register(dispatcher);
+        AdminTeleportCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

@@ -11,6 +11,7 @@ import rusbik.back.BackCommand;
 import rusbik.cameraAndSurvival.RusbisCameraCommand;
 import rusbik.cameraAndSurvival.RusbisSurvivalCommand;
 import rusbik.discord.DiscordCommand;
+import rusbik.here.HereCommand;
 import rusbik.home.HomeCommand;
 import rusbik.home.SetHomeCommand;
 import rusbik.perms.PermsCommand;
@@ -25,8 +26,7 @@ import java.util.Set;
 public class Rusbik {
 
     public static HashMap<String, String> permsArray = new HashMap<>();
-
-
+    
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher){
         RandomTpCommand.register(dispatcher);
         SetHomeCommand.register(dispatcher);
@@ -38,6 +38,7 @@ public class Rusbik {
         DiscordCommand.register(dispatcher);
         RusbisCameraCommand.register(dispatcher);
         RusbisSurvivalCommand.register(dispatcher);
+        HereCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

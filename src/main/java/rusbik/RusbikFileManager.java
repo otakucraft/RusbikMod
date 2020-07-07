@@ -1,5 +1,8 @@
 package rusbik;
 
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -134,7 +137,7 @@ public class RusbikFileManager {
         catch (IOException ignored) { }
     }
 
-    public static void onPlayerJoins(ServerPlayerEntity player){
+    public static void onPlayerJoins(MinecraftServer server, ServerPlayerEntity player){
         JSONArray playerList = getFileContent();
         if (playerList == null){
             registerPlayer(player);
@@ -142,6 +145,9 @@ public class RusbikFileManager {
         else {
             boolean exists = checkIfPlayerExists(player.getDisplayName().getString(), playerList);
             if (!exists){
+                Scoreboard scoreboard = server.getScoreboard();
+                Team team = server.getScoreboard().getTeam("MIEMBRO");
+                scoreboard.addPlayerToTeam(player.getName().getString(), team);
                 registerPlayer(player, playerList);
             }
         }

@@ -1,6 +1,7 @@
 package rusbik.randomTp;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.arguments.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
@@ -29,9 +30,15 @@ public class RandomTpCommand {
             double Z = -10000 + (10000 + 10000) * rand.nextDouble();
             double Y = 255;
             player.teleport(X, Y, Z);
-            BlockPos pos1 = source.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, player.getBlockPos());
-            player.teleport(X, pos1.getY(), Z);
-            ((ServerPlayerEntity) player).setSpawnPoint(World.OVERWORLD, player.getBlockPos(), true, false);
+            BlockPos pos1 = source.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, new BlockPos(X, Y, Z));
+            BlockPos posBelow = new BlockPos(pos1.getX(), pos1.getY() - 1, pos1.getZ());
+            if (source.getWorld().getBlockState(posBelow).getBlock().equals(Blocks.WATER) || source.getWorld().getBlockState(posBelow).getBlock().equals(Blocks.LAVA)){
+                tpAndSpawnPoint(source, player);
+            }
+            else{
+                player.teleport(X, pos1.getY(), Z);
+                ((ServerPlayerEntity) player).setSpawnPoint(World.OVERWORLD, player.getBlockPos(), true, false);
+            }
         }
         return 1;
     }

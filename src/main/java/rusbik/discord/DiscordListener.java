@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.network.MessageType;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
@@ -64,6 +66,19 @@ public class DiscordListener extends ListenerAdapter {
                         msg.append(player.getName().getString().replace("_", "\\_")).append("\n");
                     }
                     event.getChannel().sendMessage(Objects.requireNonNull(generateEmbed(msg, n)).build()).queue();
+                }
+            }
+
+            else if (event.getMessage().getContentRaw().startsWith("!miembro ")){
+                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
+                    String[] req = event.getMessage().getContentRaw().split(" ");
+                    if (req.length == 2){
+                        Scoreboard scoreboard = server.getScoreboard();
+                        Team team = server.getScoreboard().getTeam("MIEMBRO");
+                        scoreboard.addPlayerToTeam(req[1], team);
+                        event.getChannel().sendMessage("añadido :D").queue();
+                    }
+                    else event.getChannel().sendMessage("!miembro <playerName>").queue();
                 }
             }
 

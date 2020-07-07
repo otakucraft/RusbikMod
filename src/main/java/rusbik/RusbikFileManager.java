@@ -145,9 +145,13 @@ public class RusbikFileManager {
         else {
             boolean exists = checkIfPlayerExists(player.getDisplayName().getString(), playerList);
             if (!exists){
-                Scoreboard scoreboard = server.getScoreboard();
-                Team team = server.getScoreboard().getTeam("MIEMBRO");
-                scoreboard.addPlayerToTeam(player.getName().getString(), team);
+                for (Team teams : server.getScoreboard().getTeams()){
+                    if (teams.getName().equals("MIEMBRO")){
+                        Scoreboard scoreboard = server.getScoreboard();
+                        Team team = server.getScoreboard().getTeam("MIEMBRO");
+                        scoreboard.addPlayerToTeam(player.getName().getString(), team);
+                    }
+                }
                 registerPlayer(player, playerList);
             }
         }

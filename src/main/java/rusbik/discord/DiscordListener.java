@@ -73,10 +73,14 @@ public class DiscordListener extends ListenerAdapter {
                 if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
-                        Scoreboard scoreboard = server.getScoreboard();
-                        Team team = server.getScoreboard().getTeam("MIEMBRO");
-                        scoreboard.addPlayerToTeam(req[1], team);
-                        event.getChannel().sendMessage("añadido :D").queue();
+                        for (Team teams : server.getScoreboard().getTeams()){
+                            if (teams.getName().equals("MIEMBRO")){
+                                Scoreboard scoreboard = server.getScoreboard();
+                                Team team = server.getScoreboard().getTeam("MIEMBRO");
+                                scoreboard.addPlayerToTeam(req[1], team);
+                                event.getChannel().sendMessage("añadido :D").queue();
+                            }
+                        }
                     }
                     else event.getChannel().sendMessage("!miembro <playerName>").queue();
                 }

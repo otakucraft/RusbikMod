@@ -21,7 +21,7 @@
     "main": []
   },
   "mixins": [
-    "modid.mixins.json"
+    "rusbik.mixins.json"
   ],
 
   "depends": {

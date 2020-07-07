@@ -4,6 +4,7 @@
   "package": "rusbik.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "WorldBorderCommandMixin"
   ],
   "client": [],
   "injectors": {

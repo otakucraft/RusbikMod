@@ -18,7 +18,7 @@ public class HomeCommand {
     private static int tpHome(ServerCommandSource source) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getPlayer();
         if (playerEntity instanceof ServerPlayerEntity){
-            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 1){
+            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 0){
                 HomeFileManager.tpHome(source.getPlayer());
             }
             else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);

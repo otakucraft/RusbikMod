@@ -18,7 +18,7 @@ public class SetHomeCommand {
     public static int setHome(ServerCommandSource source) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getPlayer();
         if (playerEntity instanceof ServerPlayerEntity){
-            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 1){
+            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 0){
                 HomeFileManager.setHome(source.getPlayer(),source.getWorld(), source.getPlayer().getPos().x, source.getPlayer().getPos().y, source.getPlayer().getPos().z);
             }
             else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);

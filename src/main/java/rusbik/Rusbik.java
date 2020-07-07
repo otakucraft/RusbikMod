@@ -8,6 +8,9 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import rusbik.back.BackCommand;
+import rusbik.cameraAndSurvival.RusbisCameraCommand;
+import rusbik.cameraAndSurvival.RusbisSurvivalCommand;
+import rusbik.discord.DiscordCommand;
 import rusbik.home.HomeCommand;
 import rusbik.home.SetHomeCommand;
 import rusbik.perms.PermsCommand;
@@ -32,6 +35,9 @@ public class Rusbik {
         CustomTeleportCommand.register(dispatcher);
         AdminTeleportCommand.register(dispatcher);
         BackCommand.register(dispatcher);
+        DiscordCommand.register(dispatcher);
+        RusbisCameraCommand.register(dispatcher);
+        RusbisSurvivalCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

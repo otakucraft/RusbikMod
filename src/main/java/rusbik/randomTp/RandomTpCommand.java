@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
@@ -33,7 +32,6 @@ public class RandomTpCommand {
             BlockPos pos1 = source.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, player.getBlockPos());
             player.teleport(X, pos1.getY(), Z);
             ((ServerPlayerEntity) player).setSpawnPoint(World.OVERWORLD, player.getBlockPos(), true, false);
-            ((ServerPlayerEntity) player).sendMessage(new LiteralText("Recuerda usar el /setHome"), false);
         }
         return 1;
     }

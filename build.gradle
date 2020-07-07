@@ -23,8 +23,24 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 
 	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile 'org.slf4j:slf4j-nop:1.7.25'
+	compile 'net.dv8tion:JDA:4.1.1_126'
 
 	include 'com.googlecode.json-simple:json-simple:1.1.1'
+	include 'org.slf4j:slf4j-nop:1.7.25'
+	include 'net.dv8tion:JDA:4.1.1_126'
+	include 'org.slf4j:slf4j-api:1.7.25'
+	include 'com.neovisionaries:nv-websocket-client:2.9'
+	include 'com.squareup.okhttp3:okhttp:3.13.0'
+	include 'com.squareup.okio:okio:1.17.2'
+	include 'club.minnced:opus-java:1.0.4'
+	include 'club.minnced:opus-java-api:1.0.4'
+	include 'club.minnced:opus-java-natives:1.0.4'
+	include 'org.apache.commons:commons-collections4:4.1'
+	include 'net.sf.trove4j:trove4j:3.0.3'
+	include 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+	include 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
+	include 'com.fasterxml.jackson.core:jackson-core:2.10.1'
 }
 
 processResources {

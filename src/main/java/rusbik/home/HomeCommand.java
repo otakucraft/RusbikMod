@@ -3,6 +3,9 @@ package rusbik.home;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import rusbik.Rusbik;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -13,7 +16,13 @@ public class HomeCommand {
     }
 
     private static int tpHome(ServerCommandSource source) throws CommandSyntaxException {
-        HomeFileManager.tpHome(source.getPlayer());
+        ServerPlayerEntity playerEntity = source.getPlayer();
+        if (playerEntity instanceof ServerPlayerEntity){
+            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 1){
+                HomeFileManager.tpHome(source.getPlayer());
+            }
+            else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+        }
         return 1;
     }
 }

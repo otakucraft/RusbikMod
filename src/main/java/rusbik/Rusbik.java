@@ -9,16 +9,23 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import rusbik.home.HomeCommand;
 import rusbik.home.SetHomeCommand;
+import rusbik.perms.PermsCommand;
 import rusbik.randomTp.RandomTpCommand;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 
 public class Rusbik {
+
+    public static HashMap<String, String> permsArray = new HashMap<>();
+
+
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher){
         RandomTpCommand.register(dispatcher);
         SetHomeCommand.register(dispatcher);
         HomeCommand.register(dispatcher);
+        PermsCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

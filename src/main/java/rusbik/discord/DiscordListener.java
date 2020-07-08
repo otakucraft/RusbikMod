@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.network.MessageType;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
@@ -57,7 +56,9 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         if (chatBridge){
-
+            if (event.getAuthor().isBot()) return;
+            if (event.getMessage().getContentDisplay().equals("")) return;
+            if (event.getMessage().getContentRaw().equals("")) return;
             if (event.getMessage().getContentRaw().equals("!online")){
                 if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
                     StringBuilder msg = new StringBuilder();
@@ -138,8 +139,17 @@ public class DiscordListener extends ListenerAdapter {
                     if (names.length == 0) {
                         event.getChannel().sendMessage("whitelist is empty").queue();
                     } else {
-                        String msg = String.join(", ", names);
-                        event.getChannel().sendMessage("whitelist: `" + msg + "`").queue();
+                        StringBuilder msg = new StringBuilder("`");
+                        for (int i = 0; i < names.length - 1; i++){
+                            msg.append(names[i]);
+                            if (msg.length() < 1500) msg.append(", ");
+                            else {
+                                event.getChannel().sendMessage(msg.append("`")).queue();
+                                msg.setLength(0);
+                                msg.append("`");
+                            }
+                        }
+                        event.getChannel().sendMessage(msg.append(names[names.length - 1]).append("`")).queue();
                     }
                 }
             }
@@ -164,8 +174,6 @@ public class DiscordListener extends ListenerAdapter {
             }
 
             else if (event.getChannel().getId().equals(channelId)){
-                if (event.getMessage().getContentDisplay().equals("")) return;
-                if (event.getAuthor().isBot()) return;
                 String msg = "[Discord] <" + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay();
                 if (msg.length() >= 256) msg = msg.substring(0, 253) + "...";
 

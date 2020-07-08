@@ -1,6 +1,5 @@
 package rusbik;
 
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -143,7 +142,7 @@ public class RusbikFileManager {
             registerPlayer(player);
         }
         else {
-            boolean exists = checkIfPlayerExists(player.getDisplayName().getString(), playerList);
+            boolean exists = checkIfPlayerExists(player.getName().getString(), playerList);
             if (!exists){
                 for (Team team : server.getScoreboard().getTeams()){
                     if (team.getName().equals("MIEMBRO")){

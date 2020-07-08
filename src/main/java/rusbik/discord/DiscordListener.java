@@ -60,7 +60,7 @@ public class DiscordListener extends ListenerAdapter {
             if (event.getMessage().getContentDisplay().equals("")) return;
             if (event.getMessage().getContentRaw().equals("")) return;
             if (event.getMessage().getContentRaw().equals("!online")){
-                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
+                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
                     StringBuilder msg = new StringBuilder();
                     int n = server.getPlayerManager().getPlayerList().size();
                     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()){
@@ -71,7 +71,7 @@ public class DiscordListener extends ListenerAdapter {
             }
 
             else if (event.getMessage().getContentRaw().startsWith("!miembro ")){
-                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155")){
+                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         for (Team team : server.getScoreboard().getTeams()){

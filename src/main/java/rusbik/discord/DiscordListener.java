@@ -56,7 +56,6 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         if (chatBridge){
-            System.out.println(event);
             if (event.getAuthor().isBot()) return;
             if (event.getMessage().getContentDisplay().equals("")) return;
             if (event.getMessage().getContentRaw().equals("")) return;
@@ -78,7 +77,7 @@ public class DiscordListener extends ListenerAdapter {
                         for (Team team : server.getScoreboard().getTeams()){
                             if (team.getName().equals("MIEMBRO")){
                                 server.getScoreboard().addPlayerToTeam(req[1], team);
-                                event.getChannel().sendMessage("añadido :D").queue();
+                                event.getChannel().sendMessage("Añadido :D").queue();
                             }
                         }
                     }
@@ -96,9 +95,9 @@ public class DiscordListener extends ListenerAdapter {
                             if (!whitelist.isAllowed(gameProfile)){
                                 WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
                                 whitelist.add(whitelistEntry);
-                                event.getChannel().sendMessage("añadido :)").queue();
+                                event.getChannel().sendMessage("Añadido :)").queue();
                             }
-                            else event.getChannel().sendMessage("ya estaba en whitelist").queue();
+                            else event.getChannel().sendMessage("Ya estaba en whitelist").queue();
                         }
                         else event.getChannel().sendMessage("No es premium :P").queue();
                     }
@@ -116,7 +115,7 @@ public class DiscordListener extends ListenerAdapter {
                             if (whitelist.isAllowed(gameProfile)){
                                 WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
                                 whitelist.remove(whitelistEntry);
-                                event.getChannel().sendMessage("eliminado ;(").queue();
+                                event.getChannel().sendMessage("Eliminado ;(").queue();
                             }
                             else event.getChannel().sendMessage("No está en la whitelist").queue();
                         }
@@ -129,7 +128,7 @@ public class DiscordListener extends ListenerAdapter {
             else if (event.getMessage().getContentRaw().equals("!reload")){
                 if (event.getChannel().getId().equals("730011967980306452")) {
                     server.getPlayerManager().reloadWhitelist();
-                    event.getChannel().sendMessage("whitelist reloaded").queue();
+                    event.getChannel().sendMessage("Whitelist reloaded").queue();
                     server.kickNonWhitelistedPlayers(server.getCommandSource());
                 }
             }
@@ -138,7 +137,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (event.getChannel().getId().equals("730011967980306452")) {
                     String[] names = server.getPlayerManager().getWhitelistedNames();
                     if (names.length == 0) {
-                        event.getChannel().sendMessage("whitelist is empty").queue();
+                        event.getChannel().sendMessage("Whitelist is empty").queue();
                     } else {
                         StringBuilder msg = new StringBuilder("`");
                         for (int i = 0; i < names.length - 1; i++){

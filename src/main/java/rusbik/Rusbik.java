@@ -15,6 +15,7 @@ import rusbik.here.HereCommand;
 import rusbik.home.HomeCommand;
 import rusbik.home.SetHomeCommand;
 import rusbik.perms.PermsCommand;
+import rusbik.pito.PitoCommand;
 import rusbik.randomTp.RandomTpCommand;
 import rusbik.spoof.SpoofCommand;
 import rusbik.teleport.AdminTeleportCommand;
@@ -41,6 +42,7 @@ public class Rusbik {
         RusbisSurvivalCommand.register(dispatcher);
         HereCommand.register(dispatcher);
         SpoofCommand.register(dispatcher);
+        PitoCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

@@ -56,6 +56,7 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         if (chatBridge){
+            System.out.println(event);
             if (event.getAuthor().isBot()) return;
             if (event.getMessage().getContentDisplay().equals("")) return;
             if (event.getMessage().getContentRaw().equals("")) return;

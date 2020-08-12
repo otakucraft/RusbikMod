@@ -11,7 +11,7 @@ import rusbik.discord.DiscordListener;
 
 @Mixin(MinecraftServer.class)
 public class RusbikServerRunMixin {
-    @Inject(method = "method_29741", at = @At("HEAD"))
+    @Inject(method = "runServer", at = @At("HEAD"))
     public void run (CallbackInfo ci){
         try {
             String[] result = DiscordFileManager.readFile();
@@ -30,7 +30,7 @@ public class RusbikServerRunMixin {
         }
         RusbikFileManager.tryCreatePlayerFile();
     }
-    @Inject(method = "method_29741", at = @At("RETURN"))
+    @Inject(method = "runServer", at = @At("RETURN"))
     public void stop (CallbackInfo ci){
         if (DiscordListener.chatBridge) DiscordListener.stop();
     }

@@ -186,7 +186,7 @@ public class DiscordListener extends ListenerAdapter {
                     hasUrl = true;
                     Text text = new LiteralText(m.group(0)).styled((style -> style.withColor(Formatting.GRAY)
                             .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, m.group(0)))
-                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Open URL")))));
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Open URL")))));
                     finalMsg = finalMsg.append(new LiteralText(msg.substring(prev, m.start()))).append(text);
                     prev = m.end();
                 }

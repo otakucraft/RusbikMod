@@ -2,7 +2,7 @@ package rusbik.randomTp;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Blocks;
-import net.minecraft.command.arguments.EntityArgumentType;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -37,7 +37,7 @@ public class RandomTpCommand {
             }
             else{
                 player.teleport(X, pos1.getY(), Z);
-                ((ServerPlayerEntity) player).setSpawnPoint(World.OVERWORLD, player.getBlockPos(), true, false);
+                ((ServerPlayerEntity) player).setSpawnPoint(World.OVERWORLD, player.getBlockPos(), 0.0F, true, false);
             }
         }
         return 1;

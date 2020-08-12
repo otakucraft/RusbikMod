@@ -3,7 +3,7 @@ package rusbik.teleport;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.arguments.BlockPosArgumentType;
+import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.command.CommandManager;

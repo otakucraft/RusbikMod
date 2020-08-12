@@ -18,8 +18,9 @@ import rusbik.discord.DiscordListener;
 @Mixin(ServerPlayerEntity.class)
 public abstract class PlayerOnDeathBackMixin extends PlayerEntity {
 
-    public PlayerOnDeathBackMixin(World world, BlockPos blockPos, GameProfile gameProfile) {
-        super(world, blockPos, gameProfile);
+
+    public PlayerOnDeathBackMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
+        super(world, pos, yaw, profile);
     }
 
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/CombatEventS2CPacket;<init>(Lnet/minecraft/entity/damage/DamageTracker;Lnet/minecraft/network/packet/s2c/play/CombatEventS2CPacket$Type;Lnet/minecraft/text/Text;)V", ordinal = 0))

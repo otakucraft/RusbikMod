@@ -46,7 +46,7 @@ public class Rusbik {
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {
-        Identifier dimensionType = player.world.getDimensionRegistryKey().getValue();
+        Identifier dimensionType = player.world.getRegistryKey().getValue();
         String msg = player.world.getDimension().toString();
         if (dimensionType.equals(World.OVERWORLD.getValue())) msg = Formatting.GREEN + "[Overworld]";
         else if (dimensionType.equals(World.NETHER.getValue())) msg = Formatting.RED + "[Nether]";
@@ -55,7 +55,7 @@ public class Rusbik {
     }
 
     public static String getDimensionWithColor(World world) {
-        Identifier dimensionType = world.getDimensionRegistryKey().getValue();
+        Identifier dimensionType = world.getRegistryKey().getValue();
         String msg = world.getDimension().toString();
         if (dimensionType.equals(World.OVERWORLD.getValue())) msg = Formatting.GREEN + "[Overworld]";
         else if (dimensionType.equals(World.NETHER.getValue())) msg = Formatting.RED + "[Nether]";
@@ -64,7 +64,7 @@ public class Rusbik {
     }
 
     public static String getDim(World world){
-        Identifier dimensionType = world.getDimensionRegistryKey().getValue();
+        Identifier dimensionType = world.getRegistryKey().getValue();
         String msg = world.getDimension().toString();
         if (dimensionType.equals(World.OVERWORLD.getValue())) msg = "Overworld";
         else if (dimensionType.equals(World.NETHER.getValue())) msg = "Nether";

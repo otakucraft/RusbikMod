@@ -6,13 +6,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rusbik.RusbikFileManager;
+import rusbik.database.RusbikDatabase;
 import rusbik.discord.DiscordFileManager;
 import rusbik.discord.DiscordListener;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @Mixin(MinecraftServer.class)
 public class RusbikServerRunMixin {
     @Inject(method = "runServer", at = @At("HEAD"))
     public void run (CallbackInfo ci){
+
+        RusbikDatabase.initializeDB();
+
         try {
             String[] result = DiscordFileManager.readFile();
             if (!result[0].equals("") && !result[1].equals("") && !result[2].equals("")) {
@@ -31,7 +38,8 @@ public class RusbikServerRunMixin {
         RusbikFileManager.tryCreatePlayerFile();
     }
     @Inject(method = "runServer", at = @At("RETURN"))
-    public void stop (CallbackInfo ci){
+    public void stop (CallbackInfo ci) throws SQLException {
+        if (RusbikDatabase.c != null) RusbikDatabase.c.close();
         if (DiscordListener.chatBridge) DiscordListener.stop();
     }
 }

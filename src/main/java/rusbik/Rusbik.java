@@ -2,10 +2,13 @@ package rusbik;
 
 import com.google.common.collect.Sets;
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import rusbik.back.BackCommand;
 import rusbik.cameraAndSurvival.RusbisCameraCommand;
@@ -23,6 +26,7 @@ import rusbik.teleport.CustomTeleportCommand;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 
 public class Rusbik {
@@ -80,5 +84,22 @@ public class Rusbik {
         Set<String> players = Sets.newLinkedHashSet();
         players.addAll(source.getPlayerNames());
         return players;
+    }
+
+    public static ServerWorld getWorld(String dim, ServerPlayerEntity player){
+        ServerWorld dimension = Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD);
+        switch (dim){
+            case "Overworld":
+                dimension = Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD);
+                break;
+            case "Nether":
+                dimension = Objects.requireNonNull(player.getServer()).getWorld(World.NETHER);
+                break;
+            case "End":
+                dimension = Objects.requireNonNull(player.getServer()).getWorld(World.END);
+                break;
+        }
+
+        return dimension;
     }
 }

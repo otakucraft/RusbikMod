@@ -11,19 +11,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rusbik.RusbikFileManager;
+import rusbik.database.RusbikDatabase;
 import rusbik.discord.DiscordListener;
 import rusbik.perms.Perms;
+
+import java.sql.SQLException;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerJoinsMixin {
     @Shadow @Final private MinecraftServer server;
 
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
-    private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci){
+    private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) throws SQLException {
         if (DiscordListener.chatBridge){
             DiscordListener.sendMessage(":arrow_right: **" + player.getName().getString().replace("_", "\\_") + " joined the game!**");
         }
         RusbikFileManager.onPlayerJoins(server, player);
         Perms.addToArray(player.getName().getString());
+
+        RusbikDatabase.addPlayerInformation(player.getName().getString());
     }
 }

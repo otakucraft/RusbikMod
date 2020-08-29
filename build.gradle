@@ -25,10 +25,12 @@ dependencies {
 	compile 'com.googlecode.json-simple:json-simple:1.1.1'
 	compile 'org.slf4j:slf4j-nop:1.7.25'
 	compile 'net.dv8tion:JDA:4.1.1_126'
+	compile 'org.xerial:sqlite-jdbc:3.21.0.1'
 
 	include 'com.googlecode.json-simple:json-simple:1.1.1'
 	include 'org.slf4j:slf4j-nop:1.7.25'
 	include 'net.dv8tion:JDA:4.1.1_126'
+	include 'org.xerial:sqlite-jdbc:3.21.0.1'
 	include 'org.slf4j:slf4j-api:1.7.25'
 	include 'com.neovisionaries:nv-websocket-client:2.9'
 	include 'com.squareup.okhttp3:okhttp:3.13.0'

@@ -5,12 +5,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import rusbik.RusbikFileManager;
 import rusbik.database.RusbikDatabase;
 import rusbik.discord.DiscordFileManager;
 import rusbik.discord.DiscordListener;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 @Mixin(MinecraftServer.class)
@@ -35,7 +33,6 @@ public class RusbikServerRunMixin {
         catch (Exception e){
             System.out.println("config file not created");
         }
-        RusbikFileManager.tryCreatePlayerFile();
     }
     @Inject(method = "runServer", at = @At("RETURN"))
     public void stop (CallbackInfo ci) throws SQLException {

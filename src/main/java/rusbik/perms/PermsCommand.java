@@ -3,9 +3,10 @@ package rusbik.perms;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
+import rusbik.database.RusbikDatabase;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -23,8 +24,12 @@ public class PermsCommand {
                                         .executes(context -> givePerms(context.getSource(), StringArgumentType.getString(context, "player"), IntegerArgumentType.getInteger(context, "int")))))));
     }
 
-    public static int givePerms(ServerCommandSource source, String player, int value) throws CommandSyntaxException {
-        PermsFileManager.setPerm(source.getPlayer(), player, value);
+    public static int givePerms(ServerCommandSource source, String player, int value) {
+        try {
+            RusbikDatabase.updatePerms(player, value);
+            source.sendFeedback(new LiteralText(String.format("Player %s => %d", player, value)), false);
+        }
+        catch (Exception ignored){}
         return 1;
     }
 }

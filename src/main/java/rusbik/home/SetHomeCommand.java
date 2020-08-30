@@ -18,17 +18,19 @@ public class SetHomeCommand {
 
     public static int setHome(ServerCommandSource source) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getPlayer();
-        if (playerEntity instanceof ServerPlayerEntity){
-            if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 0){
-                try {
-                    RusbikDatabase.addPlayerInformation(source.getPlayer(), source.getPlayer().getX(), source.getPlayer().getY(), source.getPlayer().getZ(), Rusbik.getDim(source.getWorld()));
+        if (playerEntity != null){
+            try {
+                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0){
+                    RusbikDatabase.addPlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), Rusbik.getDim(playerEntity.world));
+                    source.sendFeedback(new LiteralText("Casa en: " + Rusbik.getDimensionWithColor(playerEntity.world) + Rusbik.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ())), false);
                 }
-                catch (Exception e){
-                    source.sendFeedback(new LiteralText("No se pudo añadir :("), false);
+                else {
+                    source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
                 }
-                HomeFileManager.setHome(source.getPlayer(),source.getWorld(), source.getPlayer().getPos().x, source.getPlayer().getPos().y, source.getPlayer().getPos().z);
             }
-            else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+            catch (Exception e){
+                System.out.println(e);
+            }
         }
         return 1;
     }

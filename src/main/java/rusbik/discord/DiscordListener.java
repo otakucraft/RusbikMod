@@ -16,7 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
-import rusbik.perms.PermsFileManager;
+import rusbik.database.RusbikDatabase;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -161,7 +161,15 @@ public class DiscordListener extends ListenerAdapter {
                         String player = req[1];
                         try {
                             int permsInt = Integer.parseInt(req[2]);
-                            if (permsInt > 0 && permsInt < 4) event.getChannel().sendMessage(PermsFileManager.setPerm(player, permsInt)).queue();
+                            if (permsInt > 0 && permsInt < 4) {
+                                try {
+                                    RusbikDatabase.updatePerms(player, permsInt);
+                                    event.getChannel().sendMessage(String.format("Player %s => %d", player, permsInt)).queue();
+                                }
+                                catch (Exception e){
+                                    event.getChannel().sendMessage("unable to set perms").queue();
+                                }
+                            }
                             else event.getChannel().sendMessage("Pls input an integer between 1 and 3").queue();
                         }
                         catch (Exception e){

@@ -2,15 +2,14 @@ package rusbik;
 
 import com.google.common.collect.Sets;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import rusbik.back.BackCommand;
+import rusbik.blockInfo.BlockInfoCommand;
 import rusbik.cameraAndSurvival.RusbisCameraCommand;
 import rusbik.cameraAndSurvival.RusbisSurvivalCommand;
 import rusbik.discord.DiscordCommand;
@@ -47,6 +46,7 @@ public class Rusbik {
         HereCommand.register(dispatcher);
         SpoofCommand.register(dispatcher);
         PitoCommand.register(dispatcher);
+        BlockInfoCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {
@@ -99,7 +99,6 @@ public class Rusbik {
                 dimension = Objects.requireNonNull(player.getServer()).getWorld(World.END);
                 break;
         }
-
         return dimension;
     }
 }

@@ -1,11 +1,14 @@
 package rusbik.database;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import rusbik.Rusbik;
 import rusbik.back.BackPos;
 import rusbik.home.HomePos;
 
 import java.io.File;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RusbikDatabase {
 
@@ -44,10 +47,8 @@ public class RusbikDatabase {
                     "`action` INT(1) NOT NULL," +
                     "`date` TEXT NOT NULL);";
             stmt.executeUpdate(createLoggerDB);
-
-            c.commit();
-            c.setAutoCommit(true);
             stmt.close();
+            c.commit();
         }
         catch (Exception e){
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -61,6 +62,7 @@ public class RusbikDatabase {
                     "VALUES ('%s',1);", name); // only on new player
             stmt.executeUpdate(addPlayer);
             stmt.close();
+            c.commit();
         }
     }
 
@@ -71,6 +73,7 @@ public class RusbikDatabase {
                     "WHERE name LIKE '%s';", X, Y, Z, Dim, name); // on player death
             stmt.executeUpdate(addPlayer);
             stmt.close();
+            c.commit();
         }
     }
 
@@ -81,6 +84,7 @@ public class RusbikDatabase {
                     "WHERE name LIKE '%s';", X, Y, Z, Dim, player.getName().getString()); // on player /setHome
             stmt.executeUpdate(addPlayer);
             stmt.close();
+            c.commit();
         }
     }
 
@@ -121,10 +125,13 @@ public class RusbikDatabase {
     }
 
     public static void updatePerms(String playerName, int value) throws SQLException {
-        Statement stmt = c.createStatement();
-        String addPlayer = String.format("UPDATE player SET perms = %d WHERE name LIKE '%s';", value, playerName); // on perms update
-        stmt.executeUpdate(addPlayer);
-        stmt.close();
+        if (c != null) {
+            Statement stmt = c.createStatement();
+            String addPlayer = String.format("UPDATE player SET perms = %d WHERE name LIKE '%s';", value, playerName); // on perms update
+            stmt.executeUpdate(addPlayer);
+            stmt.close();
+            c.commit();
+        }
     }
 
     public static boolean playerExists(String playerName) throws SQLException {
@@ -136,13 +143,31 @@ public class RusbikDatabase {
         return exists;
     }
 
-    public static void blockLogging(String playerName, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {
+    public static void blockLogging(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {
         if (c != null){
             Statement stmt = c.createStatement();
             String addBrokenBlock = String.format("INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
-                    "VALUES ('%s','%s',%d,%d,%d,'%s',%d,'%s');", playerName, block, X, Y, Z, dim, actionType, date);
+                    "VALUES ('%s','%s',%d,%d,%d,'%s',%d,'%s');", init, block, X, Y, Z, dim, actionType, date);
             stmt.executeUpdate(addBrokenBlock);
             stmt.close();
+            c.commit();
         }
+    }
+
+    public static List<String> getInfo(int X, int Y, int Z, String dim) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC;", X, Y, Z, dim));
+        List<String> msg = new ArrayList<>();
+        int i = 0;
+        while (rs.next() && i <= 10){
+            String line = Rusbik.buildLine(rs);
+            msg.add(line);
+            i++;
+        }
+        if (msg.isEmpty()){
+            msg.add("Este bloque nunca ha sido modificado");
+        }
+
+        return msg;
     }
 }

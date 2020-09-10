@@ -20,6 +20,7 @@ import rusbik.home.SetHomeCommand;
 import rusbik.perms.PermsCommand;
 import rusbik.pito.PitoCommand;
 import rusbik.randomTp.RandomTpCommand;
+import rusbik.scoreboard.SBCommand;
 import rusbik.spoof.SpoofCommand;
 import rusbik.teleport.AdminTeleportCommand;
 import rusbik.teleport.CustomTeleportCommand;
@@ -52,6 +53,7 @@ public class Rusbik {
         SpoofCommand.register(dispatcher);
         PitoCommand.register(dispatcher);
         BlockInfoCommand.register(dispatcher);
+        SBCommand.register(dispatcher);
     }
 
     public static String getDimensionWithColor(ServerPlayerEntity player) {

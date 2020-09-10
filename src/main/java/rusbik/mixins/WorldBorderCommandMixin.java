@@ -12,7 +12,7 @@ import rusbik.Rusbik;
 @Mixin(WorldBorderCommand.class)
 public class WorldBorderCommandMixin {
     @Inject(method = "register", at = @At("RETURN"))
-    private static void registerCollax(CommandDispatcher<ServerCommandSource> dispatcher, CallbackInfo ci){
+    private static void registerRusbik(CommandDispatcher<ServerCommandSource> dispatcher, CallbackInfo ci){
         Rusbik.registerCommand(dispatcher);
     }
 }

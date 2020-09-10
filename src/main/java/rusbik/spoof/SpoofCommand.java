@@ -28,7 +28,7 @@ public class SpoofCommand {
     public static int spoofEC(ServerCommandSource source, String playerE) throws CommandSyntaxException {
         ServerPlayerEntity player = source.getPlayer();
         ServerPlayerEntity player2 = source.getMinecraftServer().getPlayerManager().getPlayer(playerE);
-        if (player2 instanceof ServerPlayerEntity){
+        if (player2 != null){
             EnderChestInventory enderChestInventory = player2.getEnderChestInventory();
             player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChestInventory), new LiteralText("Ender Chest")));
         }

@@ -25,7 +25,7 @@ public class CustomTeleportCommand {
 
     private static int tp(ServerCommandSource source, String player) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
-        if (playerEntity instanceof ServerPlayerEntity){
+        if (playerEntity != null){
             if (Integer.parseInt(Rusbik.permsArray.get(source.getPlayer().getName().getString())) > 1){
                 if (playerEntity.isSpectator()){
                     source.getPlayer().setGameMode(GameMode.SPECTATOR);

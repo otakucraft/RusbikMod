@@ -41,7 +41,7 @@ public class AdminTeleportCommand {
 
     private static int tp(ServerCommandSource source, String player, BlockPos pos) {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
-        if (playerEntity instanceof ServerPlayerEntity){
+        if (playerEntity != null){
             playerEntity.teleport(source.getWorld(), pos.getX(), pos.getY(), pos.getZ(), playerEntity.yaw, playerEntity.pitch);
         }
         else source.sendFeedback(new LiteralText("Este jugador no existe D:"), false);
@@ -51,7 +51,7 @@ public class AdminTeleportCommand {
     private static int tp(ServerCommandSource source, String player, String player2) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
         ServerPlayerEntity playerEntity2 = source.getMinecraftServer().getPlayerManager().getPlayer(player2);
-        if (playerEntity instanceof ServerPlayerEntity && playerEntity2 instanceof ServerPlayerEntity){
+        if (playerEntity != null && playerEntity2 != null){
             if (playerEntity2.isSpectator()){
                 source.getPlayer().setGameMode(GameMode.SPECTATOR);
                 source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));
@@ -65,7 +65,7 @@ public class AdminTeleportCommand {
 
     private static int tp(ServerCommandSource source, String player) throws CommandSyntaxException {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
-        if (playerEntity instanceof ServerPlayerEntity){
+        if (playerEntity != null){
             if (playerEntity.isSpectator()){
                 source.getPlayer().setGameMode(GameMode.SPECTATOR);
                 source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));

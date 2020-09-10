@@ -22,7 +22,7 @@ public class HereCommand {
     }
 
     public static int sendLocation(ServerCommandSource source) throws CommandSyntaxException {
-        if (source.getPlayer() instanceof ServerPlayerEntity){
+        if (source.getPlayer() != null){
             ServerPlayerEntity player = source.getPlayer();
             String playerPos = Rusbik.formatCoords(source.getPlayer().getPos().x, source.getPlayer().getPos().y, source.getPlayer().getPos().z);
             String playerNetherPos = Rusbik.formatCoords(source.getPlayer().getPos().x / 8, source.getPlayer().getPos().y / 8, source.getPlayer().getPos().z / 8);

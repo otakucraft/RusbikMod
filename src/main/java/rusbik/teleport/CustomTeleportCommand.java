@@ -27,7 +27,7 @@ public class CustomTeleportCommand {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
         if (playerEntity != null){
             try {
-                if (RusbikDatabase.getPlayerPerms(player) > 1) {
+                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 1) {
                     if (playerEntity.isSpectator()) {
                         source.getPlayer().setGameMode(GameMode.SPECTATOR);
                         source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));

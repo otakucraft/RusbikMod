@@ -30,13 +30,10 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 
 public class Rusbik {
-
-    public static HashMap<String, String> permsArray = new HashMap<>();
 
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher){
         RandomTpCommand.register(dispatcher);

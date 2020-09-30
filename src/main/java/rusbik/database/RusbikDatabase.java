@@ -154,9 +154,9 @@ public class RusbikDatabase {
         }
     }
 
-    public static List<String> getInfo(int X, int Y, int Z, String dim) throws SQLException {
+    public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC;", X, Y, Z, dim));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC LIMIT 10 OFFSET %d;", X, Y, Z, dim, (page - 1) * 10));
         List<String> msg = new ArrayList<>();
         int i = 0;
         while (rs.next() && i <= 10){
@@ -169,5 +169,14 @@ public class RusbikDatabase {
         }
 
         return msg;
+    }
+
+    public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT (COUNT(*) / 10) + 1 AS line FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s';", X, Y, Z, dim));
+        int lines = rs.getInt("line");
+        rs.close();
+        stmt.close();
+        return lines;
     }
 }

@@ -3,6 +3,10 @@ package rusbik;
 import com.google.common.collect.Sets;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.*;
+import net.minecraft.fluid.LavaFluid;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -116,11 +120,16 @@ public class Rusbik {
         return date.format(format);
     }
 
-    public static boolean shouldRegister(Block block, ServerPlayerEntity player){
+    public static boolean shouldRegisterBlock(Block block, ServerPlayerEntity player){
         return !player.isInSneakingPose() && (block instanceof BlockWithEntity
                 || block instanceof DoorBlock || block instanceof FenceGateBlock
                 || block instanceof TrapdoorBlock || block instanceof LeverBlock
                 || block instanceof AbstractButtonBlock || block instanceof NoteBlock);
+    }
+
+    public static boolean shouldRegisterItem(ServerPlayerEntity player, ItemStack itemStack){
+        return !player.isInSneakingPose() && (itemStack.getItem() == Items.LAVA_BUCKET
+                || itemStack.getItem() == Items.WATER_BUCKET);
     }
 
     public static String buildLine(ResultSet rs) throws SQLException {

@@ -24,8 +24,11 @@ public class PlayerInteractionMixin {
 
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldCancelInteraction()Z"))
     private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) throws SQLException {
-        if (Rusbik.shouldRegister(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)){
+        if (Rusbik.shouldRegisterBlock(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)){
             RusbikDatabase.blockLogging(player.getName().getString(), world.getBlockState(hitResult.getBlockPos()).getBlock().getTranslationKey(), hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), Rusbik.getDim(world), 2, Rusbik.getDate());
+        }
+        else if (Rusbik.shouldRegisterItem(player, stack)) {
+            RusbikDatabase.blockLogging(player.getName().getString(), stack.getItem().getTranslationKey(), hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), Rusbik.getDim(world), 2, Rusbik.getDate());
         }
     }
 }

@@ -13,7 +13,7 @@ import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 
 import static net.minecraft.server.command.CommandManager.literal;
-import static net.minecraft.server.command.CommandSource.suggestMatching;
+import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class CustomTeleportCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){

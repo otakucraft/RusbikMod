@@ -25,7 +25,7 @@ public class DiscordCommand {
 
     private static int setup(ServerCommandSource src, String token, String channelId){
         if (DiscordListener.chatBridge){
-            src.sendFeedback(new LiteralText("Please stop the CollaxGaming before you make any changes"), false);
+            src.sendFeedback(new LiteralText("Please stop the server before you make any changes"), false);
         }
         else{
             DiscordFileManager.writeFile(token, channelId, false);

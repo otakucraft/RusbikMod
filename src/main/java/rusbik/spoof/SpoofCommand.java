@@ -13,7 +13,7 @@ import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
 
 import static net.minecraft.server.command.CommandManager.literal;
-import static net.minecraft.server.command.CommandSource.suggestMatching;
+import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class SpoofCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){

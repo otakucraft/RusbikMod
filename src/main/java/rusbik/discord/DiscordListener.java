@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class DiscordListener extends ListenerAdapter {
     private static final Pattern url_patt = Pattern.compile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)");
-    private static JDA process = null;
+    private static JDA jda = null;
     public static String channelId = "";
     public static String token = "";
     public static boolean chatBridge = false;
@@ -43,8 +43,8 @@ public class DiscordListener extends ListenerAdapter {
         try{
             chatBridge = false;
             DiscordFileManager.updateFile(false);
-            process = new JDABuilder(token).addEventListeners(new DiscordListener(server)).build();
-            process.awaitReady();
+            jda = JDABuilder.createDefault(token).addEventListeners(new DiscordListener(server)).build();
+            jda.awaitReady();
             chatBridge = true;
             DiscordFileManager.updateFile(true);
         }
@@ -207,7 +207,7 @@ public class DiscordListener extends ListenerAdapter {
     public static void sendMessage(String msg){
         if (chatBridge){
             try {
-                TextChannel ch = process.getTextChannelById(channelId);
+                TextChannel ch = jda.getTextChannelById(channelId);
                 if (ch != null) ch.sendMessage(msg).queue();
             }
             catch (Exception e){
@@ -217,7 +217,7 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     public static void stop(){
-        process.shutdownNow();
+        jda.shutdownNow();
         chatBridge = false;
     }
 

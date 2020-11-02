@@ -10,6 +10,10 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+repositories {
+	jcenter()
+}
+
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -24,7 +28,7 @@ dependencies {
 
 	compile 'com.googlecode.json-simple:json-simple:1.1.1'
 	compile 'org.slf4j:slf4j-nop:1.7.25'
-	compile 'net.dv8tion:JDA:4.1.1_126'
+	compile 'net.dv8tion:JDA:4.2.0_214'
 	compile 'org.xerial:sqlite-jdbc:3.32.3.2'
 
 	include 'com.googlecode.json-simple:json-simple:1.1.1'

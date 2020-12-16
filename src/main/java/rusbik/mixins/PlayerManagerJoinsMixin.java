@@ -24,12 +24,12 @@ public class PlayerManagerJoinsMixin {
     private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) throws SQLException {
         if (DiscordListener.chatBridge) DiscordListener.sendMessage(":arrow_right: **" + player.getName().getString().replace("_", "\\_") + " joined the game!**");
         if (!RusbikDatabase.playerExists(player.getName().getString())){
+            RusbikDatabase.updateCount(player.getName().getString());
             for (Team team : server.getScoreboard().getTeams()){
                 if (team.getName().equals("MIEMBRO")){
                     server.getScoreboard().addPlayerToTeam(player.getName().getString(), team);
                 }
             }
         }
-        RusbikDatabase.addPlayerInformation(player.getName().getString());
     }
 }

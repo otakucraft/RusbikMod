@@ -25,7 +25,13 @@ public class RusbikDatabase {
 
             String createPlayerDB = "CREATE TABLE IF NOT EXISTS `player` (" +
                     "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
-                    "`perms` INT DEFAULT 1," +
+                    "`discordId` NUMERIC DEFAULT NULL," +
+                    "`timesJoined` NUMERIC DEFAULT 0," +
+                    "`perms` NUMERIC DEFAULT 1);";
+            stmt.executeUpdate(createPlayerDB);
+
+            String createPlayerInfo = "CREATE TABLE IF NOT EXISTS `pos` (" +
+                    "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
                     "`deathX` NUMERIC DEFAULT NULL," +
                     "`deathY` NUMERIC DEFAULT NULL," +
                     "`deathZ` NUMERIC DEFAULT NULL," +
@@ -34,17 +40,17 @@ public class RusbikDatabase {
                     "`homeY` NUMERIC DEFAULT NULL," +
                     "`homeZ` NUMERIC DEFAULT NULL," +
                     "`homeDim` char(20) DEFAULT NULL);";
-            stmt.executeUpdate(createPlayerDB);
+            stmt.executeUpdate(createPlayerInfo);
 
             String createLoggerDB = "CREATE TABLE IF NOT EXISTS `logger` (" +
                     "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "`name` VARCHAR(20) NOT NULL," +
                     "`block` VARCHAR(30) NOT NULL," +
-                    "`posX` INT NOT NULL," +
-                    "`posY` INT NOT NULL," +
-                    "`posZ` INT NOT NULL," +
+                    "`posX` NUMERIC NOT NULL," +
+                    "`posY` NUMERIC NOT NULL," +
+                    "`posZ` NUMERIC NOT NULL," +
                     "`dim` CHAR(20) NOT NULL," +
-                    "`action` INT(1) NOT NULL," +
+                    "`action` NUMERIC(1) NOT NULL," +
                     "`date` TEXT NOT NULL);";
             stmt.executeUpdate(createLoggerDB);
             stmt.close();
@@ -55,12 +61,16 @@ public class RusbikDatabase {
         }
     }
 
-    public static void addPlayerInformation(String name) throws SQLException {
+    public static void addPlayerInformation(String name, long discordId) throws SQLException {
         if (c != null){
             Statement stmt = c.createStatement();
-            String addPlayer = String.format("INSERT OR IGNORE INTO player (name,perms) " +
-                    "VALUES ('%s',1);", name); // only on new player
+            String addPlayer = String.format("INSERT OR IGNORE INTO player (name, discordId) " +
+                    "VALUES ('%s',%d);", name, discordId);
             stmt.executeUpdate(addPlayer);
+            String regPlayerPosTable = String.format("INSERT OR IGNORE INTO pos (name) VALUES ('%s');", name);
+            stmt.executeUpdate(regPlayerPosTable);
+            String addDiscId = String.format("UPDATE player SET discordId = %d WHERE name LIKE '%s'", discordId, name);
+            stmt.executeUpdate(addDiscId);
             stmt.close();
             c.commit();
         }
@@ -69,7 +79,7 @@ public class RusbikDatabase {
     public static void addPlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             Statement stmt = c.createStatement();
-            String addPlayer = String.format("UPDATE player SET deathX = %f, deathY = %f, deathZ = %f, deathDim = '%s' " +
+            String addPlayer = String.format("UPDATE pos SET deathX = %f, deathY = %f, deathZ = %f, deathDim = '%s' " +
                     "WHERE name LIKE '%s';", X, Y, Z, Dim, name); // on player death
             stmt.executeUpdate(addPlayer);
             stmt.close();
@@ -80,7 +90,7 @@ public class RusbikDatabase {
     public static void addPlayerInformation(ServerPlayerEntity player, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             Statement stmt = c.createStatement();
-            String addPlayer = String.format("UPDATE player SET homeX = %f, homeY = %f, homeZ = %f, homeDim = '%s' " +
+            String addPlayer = String.format("UPDATE pos SET homeX = %f, homeY = %f, homeZ = %f, homeDim = '%s' " +
                     "WHERE name LIKE '%s';", X, Y, Z, Dim, player.getName().getString()); // on player /setHome
             stmt.executeUpdate(addPlayer);
             stmt.close();
@@ -100,7 +110,7 @@ public class RusbikDatabase {
 
     public static BackPos getDeathPos(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM pos WHERE name LIKE '%s';", playerName));
         double X = rs.getDouble("deathX");
         double Y = rs.getDouble("deathY");
         double Z = rs.getDouble("deathZ");
@@ -113,7 +123,7 @@ public class RusbikDatabase {
 
     public static HomePos getHomePos(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM pos WHERE name LIKE '%s';", playerName));
         double X = rs.getDouble("homeX");
         double Y = rs.getDouble("homeY");
         double Z = rs.getDouble("homeZ");
@@ -136,11 +146,77 @@ public class RusbikDatabase {
 
     public static boolean playerExists(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT timesJoined FROM player WHERE name LIKE '%s';", playerName));
+        long times = rs.getLong("timesJoined");
+        rs.close();
+        stmt.close();
+        return times != 0;
+    }
+
+    public static boolean userExists(String playerName) throws SQLException {
+        Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE name LIKE '%s';", playerName));
-        boolean exists = rs.next();
+        boolean exists = false;
+        if (rs.next()) {
+            ResultSet rs2 = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+            exists = rs2.getLong("discordId") != 0;
+        }
+        System.out.println(exists);
         rs.close();
         stmt.close();
         return exists;
+    }
+
+    public static boolean allowedToUpdate(long discId, String playerName) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+        boolean isAllowed = rs.getLong("discordId") == discId;
+        rs.close();
+        stmt.close();
+        return isAllowed;
+    }
+
+    public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+        boolean isAllowed = rs.getLong("discordId") == discId;
+        rs.close();
+        stmt.close();
+        return isAllowed;
+    }
+
+    public static void removeData(String playerName) throws SQLException {
+        if (c != null){
+            Statement stmt = c.createStatement();
+            String deleteDiscId = String.format("UPDATE player SET discordId = NULL WHERE name LIKE '%s';", playerName);
+            stmt.executeUpdate(deleteDiscId);
+            String deletePos = String.format("UPDATE pos SET homeX = NULL, homeY = NULL, homeZ = NULL, homeDim = NULL, " +
+                    "deathX = NULL, deathY = NULL, deathZ = NULL, deathDim = NULL WHERE name LIKE '%s';", playerName);
+            stmt.executeUpdate(deletePos);
+            stmt.close();
+            c.commit();
+        }
+    }
+
+    public static boolean hasPlayer(long discId) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId LIKE '%d';", discId));
+        boolean hasPlayer = rs.next();
+        rs.close();
+        stmt.close();
+        return hasPlayer;
+    }
+
+    public static void updateCount(String playerName) throws SQLException {
+        if (c != null) {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(String.format("SELECT timesJoined FROM player WHERE name LIKE '%s';", playerName));
+            long times = rs.getLong("timesJoined");
+            String playerJoined = String.format("UPDATE player SET timesJoined = %d WHERE name LIKE '%s';", times + 1, playerName);
+            stmt.executeUpdate(playerJoined);
+            stmt.close();
+            c.commit();
+        }
     }
 
     public static void blockLogging(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {

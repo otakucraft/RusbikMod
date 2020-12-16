@@ -20,6 +20,8 @@ import rusbik.database.RusbikDatabase;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,18 +62,18 @@ public class DiscordListener extends ListenerAdapter {
             if (event.getMessage().getContentDisplay().equals("")) return;
             if (event.getMessage().getContentRaw().equals("")) return;
             if (event.getMessage().getContentRaw().equals("!online")){
-                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
+                // if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
                     StringBuilder msg = new StringBuilder();
                     int n = server.getPlayerManager().getPlayerList().size();
-                    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()){
+                    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                         msg.append(player.getName().getString().replace("_", "\\_")).append("\n");
                     }
-                    event.getChannel().sendMessage(Objects.requireNonNull(generateEmbed(msg, n)).build()).queue();
-                }
+                    event.getChannel().sendMessage(Objects.requireNonNull(DiscordUtils.generateEmbed(msg, n)).build()).queue();
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!miembro ")){
-                if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
+            else if (event.getMessage().getContentRaw().startsWith("!miembro ")) {
+                // if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         for (Team team : server.getScoreboard().getTeams()){
@@ -82,11 +84,11 @@ public class DiscordListener extends ListenerAdapter {
                         }
                     }
                     else event.getChannel().sendMessage("!miembro <playerName>").queue();
-                }
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!add ")){
-                if (event.getChannel().getId().equals("730011967980306452")){
+            else if (event.getMessage().getContentRaw().startsWith("!add ")) {
+                // if (event.getChannel().getId().equals("730011967980306452")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         Whitelist whitelist = server.getPlayerManager().getWhitelist();
@@ -94,47 +96,71 @@ public class DiscordListener extends ListenerAdapter {
                         if (gameProfile != null){
                             if (!whitelist.isAllowed(gameProfile)){
                                 WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
-                                whitelist.add(whitelistEntry);
-                                event.getChannel().sendMessage("Añadido :)").queue();
+                                long id = Long.parseLong(event.getAuthor().getId());
+                                try {
+                                    if (RusbikDatabase.hasPlayer(id)) {
+                                        event.getChannel().sendMessage("Solo puedes meter en la whitelist a 1 persona").queue();
+                                    }
+                                    else {
+                                        RusbikDatabase.addPlayerInformation(req[1], id);
+                                        whitelist.add(whitelistEntry);
+                                        event.getChannel().sendMessage("Añadido :)").queue();
+                                    }
+                                } catch (SQLException throwables) {
+                                    whitelist.remove(whitelistEntry);
+                                    event.getChannel().sendMessage("RIP :(, algo falló.").queue();
+                                    throwables.printStackTrace();
+                                }
                             }
                             else event.getChannel().sendMessage("Ya estaba en whitelist").queue();
                         }
                         else event.getChannel().sendMessage("No es premium :P").queue();
                     }
                     else event.getChannel().sendMessage("!add <playerName>").queue();
-                }
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!remove ")){
-                if (event.getChannel().getId().equals("730011967980306452")){
+            else if (event.getMessage().getContentRaw().startsWith("!remove ")) {
+                // if (event.getChannel().getId().equals("730011967980306452")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         Whitelist whitelist = server.getPlayerManager().getWhitelist();
                         GameProfile gameProfile = server.getUserCache().findByName(req[1]);
                         if (gameProfile != null){
-                            if (whitelist.isAllowed(gameProfile)){
-                                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
-                                whitelist.remove(whitelistEntry);
-                                event.getChannel().sendMessage("Eliminado ;(").queue();
+                            if (whitelist.isAllowed(gameProfile)) {
+                                long id = Long.parseLong(event.getAuthor().getId());
+                                try {
+                                    if (RusbikDatabase.allowedToRemove(id, req[1])) {
+                                        RusbikDatabase.removeData(req[1]);
+                                        WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+                                        whitelist.remove(whitelistEntry);
+                                        event.getChannel().sendMessage("Eliminado ;(").queue();
+                                    }
+                                    else {
+                                        event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();
+                                    }
+                                } catch (SQLException throwables) {
+                                    throwables.printStackTrace();
+                                }
                             }
                             else event.getChannel().sendMessage("No está en la whitelist").queue();
                         }
                         else event.getChannel().sendMessage("No es premium :P").queue();
                     }
                     else event.getChannel().sendMessage("!remove <playerName>").queue();
-                }
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().equals("!reload")){
-                if (event.getChannel().getId().equals("730011967980306452")) {
+            else if (event.getMessage().getContentRaw().equals("!reload")) {
+                // if (event.getChannel().getId().equals("730011967980306452")) {
                     server.getPlayerManager().reloadWhitelist();
                     event.getChannel().sendMessage("Whitelist reloaded").queue();
                     server.kickNonWhitelistedPlayers(server.getCommandSource());
-                }
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().equals("!list")){
-                if (event.getChannel().getId().equals("730011967980306452")) {
+            else if (event.getMessage().getContentRaw().equals("!list")) {
+                // if (event.getChannel().getId().equals("730011967980306452")) {
                     String[] names = server.getPlayerManager().getWhitelistedNames();
                     if (names.length == 0) {
                         event.getChannel().sendMessage("Whitelist is empty").queue();
@@ -151,10 +177,10 @@ public class DiscordListener extends ListenerAdapter {
                         }
                         event.getChannel().sendMessage(msg.append(names[names.length - 1]).append("`")).queue();
                     }
-                }
+                // }
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!give ")){
+            else if (event.getMessage().getContentRaw().startsWith("!give ")) {
                 if (event.getChannel().getId().equals("730011967980306452")){
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 3){
@@ -181,7 +207,7 @@ public class DiscordListener extends ListenerAdapter {
                 else event.getChannel().sendMessage("You can't use this command here").queue();
             }
 
-            else if (event.getChannel().getId().equals(channelId)){
+            else if (event.getChannel().getId().equals(channelId)) {
                 String msg = "[Discord] <" + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay();
                 if (msg.length() >= 256) msg = msg.substring(0, 253) + "...";
 
@@ -204,7 +230,7 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
 
-    public static void sendMessage(String msg){
+    public static void sendMessage(String msg) {
         if (chatBridge){
             try {
                 TextChannel ch = jda.getTextChannelById(channelId);
@@ -216,21 +242,8 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
 
-    public static void stop(){
+    public static void stop() {
         jda.shutdownNow();
         chatBridge = false;
-    }
-
-    public static EmbedBuilder generateEmbed(StringBuilder msg, int n) {
-        try {
-            final EmbedBuilder emb = new EmbedBuilder();
-            emb.setColor(Color.decode("#2ECC71"));
-            if (n > 1) emb.setDescription("**" + n + " jugadores conectados** \n\n" + msg.toString());
-            else emb.setDescription(n == 0 ? "**No hay nadie online :(**" : "**" + n + " jugador conectado** \n\n" + msg.toString());
-            return emb;
-        } catch (final Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 }

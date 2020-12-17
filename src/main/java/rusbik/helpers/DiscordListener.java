@@ -89,10 +89,12 @@ public class DiscordListener extends ListenerAdapter {
                                         RusbikDatabase.addPlayerInformation(req[1], id);
                                         whitelist.add(whitelistEntry);
                                         event.getChannel().sendMessage("Añadido :)").queue();
-                                        Guild guild = event.getGuild();
-                                        Role role = guild.getRoleById(788922147841507371L);
-                                        assert role != null;
-                                        guild.addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
+                                        if (Rusbik.config.discordRole != 0) {
+                                            Guild guild = event.getGuild();
+                                            Role role = guild.getRoleById(Rusbik.config.discordRole);
+                                            assert role != null;
+                                            guild.addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
+                                        }
                                     }
                                 } catch (SQLException throwables) {
                                     whitelist.remove(whitelistEntry);
@@ -123,7 +125,9 @@ public class DiscordListener extends ListenerAdapter {
                                         WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
                                         whitelist.remove(whitelistEntry);
                                         event.getChannel().sendMessage("Eliminado ;(").queue();
-                                        event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(788922147841507371L))).queue();
+                                        if (Rusbik.config.discordRole != 0) {
+                                            event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.discordRole))).queue();
+                                        }
                                     }
                                     else {
                                         event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();

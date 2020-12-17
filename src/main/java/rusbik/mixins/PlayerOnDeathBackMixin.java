@@ -33,7 +33,8 @@ public abstract class PlayerOnDeathBackMixin extends PlayerEntity {
 
         this.sendMessage(new LiteralText("RIP ;( : " + Rusbik.getDimensionWithColor(this.world) + Rusbik.formatCoords(this.getPos().x, this.getPos().y, this.getPos().z)), false);
 
-        RusbikDatabase.addPlayerInformation(this.getEntityName(), this.getX(), this.getY(), this.getZ(), Rusbik.getDim(this.world));
-
+        if (RusbikDatabase.userExists(this.getEntityName())) {
+            RusbikDatabase.addPlayerInformation(this.getEntityName(), this.getX(), this.getY(), this.getZ(), Rusbik.getDim(this.world));
+        }
     }
 }

@@ -26,7 +26,7 @@ public class DiscordFileManager {
                 List<Long> adminChat = new ArrayList<>();
                 adminChat.add(4L);
                 adminChat.add(5L);
-                Rusbik.config = new RusbisConfig("", 0, false, whitelistChat, allowedChat, adminChat);
+                Rusbik.config = new RusbisConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat);
                 mapper.writeValue(file, Rusbik.config);
             } catch (IOException e) {
                 e.printStackTrace();

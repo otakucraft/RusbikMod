@@ -20,12 +20,15 @@ public class RusbisCameraCommand {
 
     public static int setCameraMode(ServerCommandSource source) {
         try {
-            if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 2) {
-                source.getPlayer().setGameMode(GameMode.SPECTATOR);
-                source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));
-                source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 999999, 0, false, false));
+            if (RusbikDatabase.userExists(source.getPlayer().getName().getString())) {
+                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 2) {
+                    source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                    source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));
+                    source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 999999, 0, false, false));
+                }
+                else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
             }
-            else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+            else source.sendFeedback(new LiteralText("Parece que no estás registrado correctamente y no puedes ejecutar esta acción."), false);
         }
         catch (Exception e){
             source.sendFeedback(new LiteralText("No ha sido posible ejecutar este comando"), false);

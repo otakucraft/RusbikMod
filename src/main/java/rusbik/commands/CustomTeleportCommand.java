@@ -27,17 +27,20 @@ public class CustomTeleportCommand {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
         if (playerEntity != null){
             try {
-                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 1) {
-                    if (playerEntity.isSpectator()) {
-                        source.getPlayer().setGameMode(GameMode.SPECTATOR);
-                        source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));
-                        source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 999999, 0, false, false));
-                        source.getPlayer().teleport(playerEntity.getServerWorld(), playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z, source.getPlayer().yaw, source.getPlayer().pitch);
-                        source.sendFeedback(new LiteralText("Recuerda usar /s para volver a survival"), false);
-                    } else {
-                        source.getPlayer().teleport(playerEntity.getServerWorld(), playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z, source.getPlayer().yaw, source.getPlayer().pitch);
-                    }
-                } else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+                if (RusbikDatabase.userExists(playerEntity.getName().getString())) {
+                    if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 1) {
+                        if (playerEntity.isSpectator()) {
+                            source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                            source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 999999, 0, false, false));
+                            source.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 999999, 0, false, false));
+                            source.getPlayer().teleport(playerEntity.getServerWorld(), playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z, source.getPlayer().yaw, source.getPlayer().pitch);
+                            source.sendFeedback(new LiteralText("Recuerda usar /s para volver a survival"), false);
+                        } else {
+                            source.getPlayer().teleport(playerEntity.getServerWorld(), playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z, source.getPlayer().yaw, source.getPlayer().pitch);
+                        }
+                    } else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+                }
+                else source.sendFeedback(new LiteralText("Parece que no estas registrado correctamente y no puedes ejecutar esta acción."), false);
             }
             catch (Exception e){
                 source.sendFeedback(new LiteralText("No ha sido posible ejecutar este comando"), false);

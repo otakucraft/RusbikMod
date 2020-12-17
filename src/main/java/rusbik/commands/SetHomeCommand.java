@@ -20,16 +20,19 @@ public class SetHomeCommand {
         ServerPlayerEntity playerEntity = source.getPlayer();
         if (playerEntity != null){
             try {
-                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0){
-                    RusbikDatabase.addPlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), Rusbik.getDim(playerEntity.world));
-                    source.sendFeedback(new LiteralText("Casa en: " + Rusbik.getDimensionWithColor(playerEntity.world) + Rusbik.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ())), false);
+                if (RusbikDatabase.userExists(playerEntity.getName().getString())) {
+                    if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0){
+                        RusbikDatabase.addPlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), Rusbik.getDim(playerEntity.world));
+                        source.sendFeedback(new LiteralText("Casa en: " + Rusbik.getDimensionWithColor(playerEntity.world) + Rusbik.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ())), false);
+                    }
+                    else {
+                        source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+                    }
                 }
-                else {
-                    source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
-                }
+                else source.sendFeedback(new LiteralText("Parece que no estás registrado correctamente y no puedes ejecutar esta acción."), false);
             }
             catch (Exception e){
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
         return 1;

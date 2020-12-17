@@ -5,10 +5,11 @@ import rusbik.helpers.DiscordFileManager;
 import java.util.List;
 
 public class RusbisConfig {
-    public RusbisConfig(String discordToken, long chatChannelId, boolean isRunning, List<Long> whitelistChat, List<Long> allowedChat, List<Long> adminChat) {
+    public RusbisConfig(String discordToken, long chatChannelId, boolean isRunning, long discordRole, List<Long> whitelistChat, List<Long> allowedChat, List<Long> adminChat) {
         this.discordToken = discordToken;
         this.chatChannelId = chatChannelId;
         this.isRunning = isRunning;
+        this.discordRole = discordRole;
         this.whitelistChat = whitelistChat;
         this.allowedChat = allowedChat;
         this.adminChat = adminChat;
@@ -19,6 +20,7 @@ public class RusbisConfig {
     public String discordToken;
     public long chatChannelId;
     public boolean isRunning;
+    public long discordRole;
     public List<Long> whitelistChat;
     public List<Long> allowedChat;
     public List<Long> adminChat;
@@ -44,6 +46,10 @@ public class RusbisConfig {
                 "discordToken='" + discordToken + '\'' +
                 ", chatChannelId=" + chatChannelId +
                 ", isRunning=" + isRunning +
+                ", discordRole=" + discordRole +
+                ", whitelistChat=" + whitelistChat +
+                ", allowedChat=" + allowedChat +
+                ", adminChat=" + adminChat +
                 '}';
     }
 }

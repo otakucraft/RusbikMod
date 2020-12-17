@@ -26,8 +26,11 @@ public class PermsCommand {
 
     public static int givePerms(ServerCommandSource source, String player, int value) {
         try {
-            RusbikDatabase.updatePerms(player, value);
-            source.sendFeedback(new LiteralText(String.format("Player %s => %d", player, value)), false);
+            if (RusbikDatabase.userExists(player)) {
+                RusbikDatabase.updatePerms(player, value);
+                source.sendFeedback(new LiteralText(String.format("Player %s => %d", player, value)), false);
+            }
+            else source.sendFeedback(new LiteralText("Parece que este usuario registrado correctamente y no puedes ejecutar esta acción."), false);
         }
         catch (Exception ignored){}
         return 1;

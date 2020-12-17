@@ -20,8 +20,11 @@ public class HomeCommand {
         ServerPlayerEntity playerEntity = source.getPlayer();
         if (playerEntity != null){
             try{
-                if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0) HomeManager.tpHome(source.getPlayer());
-                else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+                if (RusbikDatabase.userExists(playerEntity.getName().getString())) {
+                    if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0) HomeManager.tpHome(source.getPlayer());
+                    else source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);
+                }
+                else source.sendFeedback(new LiteralText("Parece que no estás registrado correctamente y no puedes ejecutar esta acción."), false);
             }
             catch (Exception e){
                 System.out.println(e);

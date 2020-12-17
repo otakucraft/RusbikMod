@@ -181,11 +181,14 @@ public class RusbikDatabase {
     }
 
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
-        boolean isAllowed = rs.getLong("discordId") == discId;
-        rs.close();
-        stmt.close();
+        boolean isAllowed = true;
+        if (userExists(playerName)) {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+            isAllowed = rs.getLong("discordId") == discId;
+            rs.close();
+            stmt.close();
+        }
         return isAllowed;
     }
 

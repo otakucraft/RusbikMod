@@ -147,10 +147,15 @@ public class RusbikDatabase {
     public static boolean playerExists(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery(String.format("SELECT timesJoined FROM player WHERE name LIKE '%s';", playerName));
-        long times = rs.getLong("timesJoined");
+        if (rs.next()) {
+            long times = rs.getLong("timesJoined");
+            rs.close();
+            stmt.close();
+            return times != 0;
+        }
         rs.close();
         stmt.close();
-        return times != 0;
+        return true;
     }
 
     public static boolean userExists(String playerName) throws SQLException {
@@ -161,7 +166,6 @@ public class RusbikDatabase {
             ResultSet rs2 = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
             exists = rs2.getLong("discordId") != 0;
         }
-        System.out.println(exists);
         rs.close();
         stmt.close();
         return exists;

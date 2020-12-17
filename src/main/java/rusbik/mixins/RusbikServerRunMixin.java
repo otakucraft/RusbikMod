@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 import rusbik.discord.DiscordFileManager;
 import rusbik.discord.DiscordListener;
@@ -15,22 +16,21 @@ import java.sql.SQLException;
 public class RusbikServerRunMixin {
     @Inject(method = "runServer", at = @At("HEAD"))
     public void run (CallbackInfo ci){
-
         RusbikDatabase.initializeDB();
-
         try {
-            String[] result = DiscordFileManager.readFile();
-            if (!result[0].equals("") && !result[1].equals("") && !result[2].equals("")) {
-                if (result[2].equals("true")) {
+            DiscordFileManager.initializeYaml();
+            if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
+                if (Rusbik.config.isRunning) {
                     try {
-                        DiscordListener.connect((MinecraftServer) (Object) this, result[0], result[1]);
+                        DiscordListener.connect((MinecraftServer) (Object) this, Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
                     } catch (Exception e) {
-                        System.out.println(e);
+                        e.printStackTrace();
                     }
                 }
             }
         }
         catch (Exception e){
+            e.printStackTrace();
             System.out.println("config file not created");
         }
     }

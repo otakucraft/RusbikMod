@@ -1,71 +1,52 @@
 package rusbik.discord;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import rusbik.Rusbik;
+import rusbik.RusbisConfig;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscordFileManager {
-    public static String name = "discord.conf";
+    public static String yamlFile = "config.yaml";
 
-    private static void createFile(){
-        File file = new File(name);
-        try{
-            file.createNewFile();
+    public static void initializeYaml() {
+        File file = new File(yamlFile);
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        if (!file.exists()) {
+            try {
+                List<Long> whitelistChat = new ArrayList<>();
+                whitelistChat.add(0L);
+                whitelistChat.add(1L);
+                List<Long> allowedChat = new ArrayList<>();
+                allowedChat.add(2L);
+                allowedChat.add(3L);
+                List<Long> adminChat = new ArrayList<>();
+                adminChat.add(4L);
+                adminChat.add(5L);
+                Rusbik.config = new RusbisConfig("", 0, false, whitelistChat, allowedChat, adminChat);
+                mapper.writeValue(file, Rusbik.config);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        catch (Exception e){
-            System.out.println(e);
+        else {
+            try {
+                Rusbik.config = mapper.readValue(file, RusbisConfig.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
-    public static void writeFile(String token, String channelId, Boolean running){
-        File file = new File(name);
-        if (!file.exists()){
-            createFile();
-        }
+    public static void updateFile() {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
-            FileWriter writer = new FileWriter(name);
-            writer.write("discord " + token + " " + channelId + " " + running);
-            writer.flush();
-            writer.close();
-        }
-        catch (IOException e){
-            System.out.println(e);
-        }
-
-    }
-
-    public static String[] readFile(){
-        String token = "";
-        String channelId = "";
-        String running = "";
-        try{
-            FileReader fr = new FileReader(name);
-            BufferedReader br = new BufferedReader(fr);
-            int i;
-            StringBuilder result = new StringBuilder();
-            while((i = br.read())!=-1){
-                result.append((char) i);
-            }
-            if (result.toString().startsWith("discord")){
-                token = result.toString().split(" ")[1];
-                channelId = result.toString().split(" ")[2];
-                running = result.toString().split(" ")[3];
-            }
-            br.close();
-            fr.close();
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-        return new String[] {token, channelId, running};
-    }
-
-    public static void updateFile(Boolean running){
-        String[] result = readFile();
-        try{
-            DiscordFileManager.writeFile(result[0], result[1], running);
-        }
-        catch (Exception e){
-            System.out.println(e);
+            mapper.writeValue(new File(yamlFile), Rusbik.config);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

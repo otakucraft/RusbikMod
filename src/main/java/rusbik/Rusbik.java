@@ -3,8 +3,6 @@ package rusbik;
 import com.google.common.collect.Sets;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.*;
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
@@ -38,6 +36,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Rusbik {
+
+    public static RusbisConfig config;
 
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher){
         RandomTpCommand.register(dispatcher);

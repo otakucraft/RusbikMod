@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
+import rusbik.Rusbik;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -28,7 +29,8 @@ public class DiscordCommand {
             src.sendFeedback(new LiteralText("Please stop the server before you make any changes"), false);
         }
         else{
-            DiscordFileManager.writeFile(token, channelId, false);
+            Rusbik.config.setDiscordToken(token);
+            Rusbik.config.setChatChannelId(Long.parseLong(channelId));
             src.sendFeedback(new LiteralText("Done!"), false);
         }
         return 1;
@@ -37,7 +39,7 @@ public class DiscordCommand {
     private static int stop(ServerCommandSource src){
         if (DiscordListener.chatBridge){
             DiscordListener.stop();
-            DiscordFileManager.updateFile(false);
+            Rusbik.config.setRunning(false);
             src.sendFeedback(new LiteralText("Discord integration has stopped"), false);
         }
         else{
@@ -47,14 +49,13 @@ public class DiscordCommand {
     }
 
     private static int start(ServerCommandSource src){
-        String[] result = DiscordFileManager.readFile();
         if (!DiscordListener.chatBridge){
-            if (!result[0].equals("") && !result[1].equals("") && !result[2].equals("")) {
+            if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
                 try {
-                    DiscordListener.connect(src.getMinecraftServer(), result[0], result[1]);
+                    DiscordListener.connect(src.getMinecraftServer(), Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
                     src.sendFeedback(new LiteralText("Discord integration is running"), false);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    e.printStackTrace();
                     src.sendFeedback(new LiteralText("Unable to start the process, is the token correct?"), false);
                 }
             }

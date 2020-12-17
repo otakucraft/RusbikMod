@@ -1,6 +1,7 @@
 package rusbik.discord;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import rusbik.Rusbik;
 
 import java.awt.*;
 
@@ -17,5 +18,21 @@ public class DiscordUtils {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean isAllowed(int id, long chatId) {
+        boolean shouldWork = false;
+        switch (id) {
+            case 0:
+                shouldWork = Rusbik.config.adminChat.contains(chatId);
+                break;
+            case 1:
+                shouldWork = Rusbik.config.whitelistChat.contains(chatId);
+                break;
+            case 2:
+                shouldWork = Rusbik.config.allowedChat.contains(chatId);
+                break;
+        }
+        return shouldWork;
     }
 }

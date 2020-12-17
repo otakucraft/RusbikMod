@@ -1,14 +1,14 @@
 package rusbik.discord;
 
 import com.mojang.authlib.GameProfile;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.network.MessageType;
-import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
@@ -16,11 +16,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -44,14 +43,14 @@ public class DiscordListener extends ListenerAdapter {
         channelId = c;
         try{
             chatBridge = false;
-            DiscordFileManager.updateFile(false);
+            Rusbik.config.setRunning(false);
             jda = JDABuilder.createDefault(token).addEventListeners(new DiscordListener(server)).build();
             jda.awaitReady();
             chatBridge = true;
-            DiscordFileManager.updateFile(true);
+            Rusbik.config.setRunning(true);
         }
         catch (Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -61,34 +60,19 @@ public class DiscordListener extends ListenerAdapter {
             if (event.getAuthor().isBot()) return;
             if (event.getMessage().getContentDisplay().equals("")) return;
             if (event.getMessage().getContentRaw().equals("")) return;
-            if (event.getMessage().getContentRaw().equals("!online")){
-                // if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
+            if (event.getMessage().getContentRaw().equals("!online")) {
+                if (DiscordUtils.isAllowed(2, event.getChannel().getIdLong())) {
                     StringBuilder msg = new StringBuilder();
                     int n = server.getPlayerManager().getPlayerList().size();
                     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                         msg.append(player.getName().getString().replace("_", "\\_")).append("\n");
                     }
                     event.getChannel().sendMessage(Objects.requireNonNull(DiscordUtils.generateEmbed(msg, n)).build()).queue();
-                // }
-            }
-
-            else if (event.getMessage().getContentRaw().startsWith("!miembro ")) {
-                // if (event.getChannel().getId().equals("730028309173370931") || event.getChannel().getId().equals("608960549845467155") || event.getChannel().getId().equals("730011967980306452")){
-                    String[] req = event.getMessage().getContentRaw().split(" ");
-                    if (req.length == 2){
-                        for (Team team : server.getScoreboard().getTeams()){
-                            if (team.getName().equals("MIEMBRO")){
-                                server.getScoreboard().addPlayerToTeam(req[1], team);
-                                event.getChannel().sendMessage("Añadido :D").queue();
-                            }
-                        }
-                    }
-                    else event.getChannel().sendMessage("!miembro <playerName>").queue();
-                // }
+                }
             }
 
             else if (event.getMessage().getContentRaw().startsWith("!add ")) {
-                // if (event.getChannel().getId().equals("730011967980306452")){
+                if (DiscordUtils.isAllowed(1, event.getChannel().getIdLong())) {
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         Whitelist whitelist = server.getPlayerManager().getWhitelist();
@@ -105,6 +89,10 @@ public class DiscordListener extends ListenerAdapter {
                                         RusbikDatabase.addPlayerInformation(req[1], id);
                                         whitelist.add(whitelistEntry);
                                         event.getChannel().sendMessage("Añadido :)").queue();
+                                        Guild guild = event.getGuild();
+                                        Role role = guild.getRoleById(788922147841507371L);
+                                        assert role != null;
+                                        guild.addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
                                     }
                                 } catch (SQLException throwables) {
                                     whitelist.remove(whitelistEntry);
@@ -117,11 +105,11 @@ public class DiscordListener extends ListenerAdapter {
                         else event.getChannel().sendMessage("No es premium :P").queue();
                     }
                     else event.getChannel().sendMessage("!add <playerName>").queue();
-                // }
+                }
             }
 
             else if (event.getMessage().getContentRaw().startsWith("!remove ")) {
-                // if (event.getChannel().getId().equals("730011967980306452")){
+                if (DiscordUtils.isAllowed(1, event.getChannel().getIdLong())) {
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 2){
                         Whitelist whitelist = server.getPlayerManager().getWhitelist();
@@ -135,6 +123,7 @@ public class DiscordListener extends ListenerAdapter {
                                         WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
                                         whitelist.remove(whitelistEntry);
                                         event.getChannel().sendMessage("Eliminado ;(").queue();
+                                        event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(788922147841507371L))).queue();
                                     }
                                     else {
                                         event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();
@@ -148,19 +137,19 @@ public class DiscordListener extends ListenerAdapter {
                         else event.getChannel().sendMessage("No es premium :P").queue();
                     }
                     else event.getChannel().sendMessage("!remove <playerName>").queue();
-                // }
+                }
             }
 
             else if (event.getMessage().getContentRaw().equals("!reload")) {
-                // if (event.getChannel().getId().equals("730011967980306452")) {
+                if (DiscordUtils.isAllowed(0, event.getChannel().getIdLong())) {
                     server.getPlayerManager().reloadWhitelist();
-                    event.getChannel().sendMessage("Whitelist reloaded").queue();
                     server.kickNonWhitelistedPlayers(server.getCommandSource());
-                // }
+                    DiscordFileManager.initializeYaml();
+                }
             }
 
             else if (event.getMessage().getContentRaw().equals("!list")) {
-                // if (event.getChannel().getId().equals("730011967980306452")) {
+                if (DiscordUtils.isAllowed(1, event.getChannel().getIdLong())) {
                     String[] names = server.getPlayerManager().getWhitelistedNames();
                     if (names.length == 0) {
                         event.getChannel().sendMessage("Whitelist is empty").queue();
@@ -177,11 +166,11 @@ public class DiscordListener extends ListenerAdapter {
                         }
                         event.getChannel().sendMessage(msg.append(names[names.length - 1]).append("`")).queue();
                     }
-                // }
+                }
             }
 
             else if (event.getMessage().getContentRaw().startsWith("!give ")) {
-                if (event.getChannel().getId().equals("730011967980306452")){
+                if (DiscordUtils.isAllowed(0, event.getChannel().getIdLong())) {
                     String[] req = event.getMessage().getContentRaw().split(" ");
                     if (req.length == 3){
                         String player = req[1];
@@ -207,7 +196,7 @@ public class DiscordListener extends ListenerAdapter {
                 else event.getChannel().sendMessage("You can't use this command here").queue();
             }
 
-            else if (event.getChannel().getId().equals(channelId)) {
+            else if (event.getChannel().getIdLong() == (Rusbik.config.chatChannelId)) {
                 String msg = "[Discord] <" + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay();
                 if (msg.length() >= 256) msg = msg.substring(0, 253) + "...";
 

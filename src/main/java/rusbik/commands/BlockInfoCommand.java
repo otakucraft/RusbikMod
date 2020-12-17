@@ -1,4 +1,4 @@
-package rusbik.blockInfo;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

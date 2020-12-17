@@ -1,4 +1,4 @@
-package rusbik.spoof;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -30,7 +30,7 @@ public class SpoofCommand {
         ServerPlayerEntity player2 = source.getMinecraftServer().getPlayerManager().getPlayer(playerE);
         if (player2 != null){
             EnderChestInventory enderChestInventory = player2.getEnderChestInventory();
-            player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChestInventory), new LiteralText("Ender Chest")));
+            player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChestInventory), new LiteralText(String.format("%s stop hax >:(", player.getName().getString()))));
         }
         else {
             source.sendFeedback(new LiteralText("player offline"), false);

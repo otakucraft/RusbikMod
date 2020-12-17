@@ -1,6 +1,6 @@
-package rusbik;
+package rusbik.settings;
 
-import rusbik.discord.DiscordFileManager;
+import rusbik.helpers.DiscordFileManager;
 
 import java.util.List;
 

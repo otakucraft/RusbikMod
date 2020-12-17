@@ -1,4 +1,4 @@
-package rusbik.home;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -6,6 +6,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import rusbik.database.RusbikDatabase;
+import rusbik.helpers.HomeManager;
 
 import static net.minecraft.server.command.CommandManager.literal;
 

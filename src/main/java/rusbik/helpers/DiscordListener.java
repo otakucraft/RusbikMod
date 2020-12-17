@@ -1,4 +1,4 @@
-package rusbik.discord;
+package rusbik.helpers;
 
 import com.mojang.authlib.GameProfile;
 import net.dv8tion.jda.api.JDA;

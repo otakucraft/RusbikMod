@@ -1,4 +1,4 @@
-package rusbik.randomTp;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Blocks;

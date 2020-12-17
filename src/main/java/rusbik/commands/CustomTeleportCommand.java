@@ -1,4 +1,4 @@
-package rusbik.teleport;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;

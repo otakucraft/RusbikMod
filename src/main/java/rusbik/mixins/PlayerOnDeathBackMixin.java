@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
-import rusbik.discord.DiscordListener;
+import rusbik.helpers.DiscordListener;
 
 import java.sql.SQLException;
 

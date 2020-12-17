@@ -1,4 +1,4 @@
-package rusbik.pito;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.ServerCommandSource;

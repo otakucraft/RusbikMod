@@ -1,4 +1,4 @@
-package rusbik.home;
+package rusbik.helpers;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;

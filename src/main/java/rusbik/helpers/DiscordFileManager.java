@@ -1,9 +1,9 @@
-package rusbik.discord;
+package rusbik.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import rusbik.Rusbik;
-import rusbik.RusbisConfig;
+import rusbik.settings.RusbisConfig;
 
 import java.io.*;
 import java.util.ArrayList;

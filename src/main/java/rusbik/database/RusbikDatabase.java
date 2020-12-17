@@ -2,8 +2,8 @@ package rusbik.database;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import rusbik.Rusbik;
-import rusbik.back.BackPos;
-import rusbik.home.HomePos;
+import rusbik.helpers.BackPos;
+import rusbik.helpers.HomePos;
 
 import java.io.File;
 import java.sql.*;

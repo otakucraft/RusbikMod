@@ -1,4 +1,4 @@
-package rusbik.discord;
+package rusbik.helpers;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import rusbik.Rusbik;

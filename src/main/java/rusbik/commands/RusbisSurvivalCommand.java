@@ -1,4 +1,4 @@
-package rusbik.cameraAndSurvival;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

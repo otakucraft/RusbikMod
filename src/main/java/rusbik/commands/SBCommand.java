@@ -1,6 +1,6 @@
 // by: slowik -- https://github.com/SlowikGZ
 
-package rusbik.scoreboard;
+package rusbik.commands;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;

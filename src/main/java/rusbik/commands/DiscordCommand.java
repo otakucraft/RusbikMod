@@ -1,4 +1,4 @@
-package rusbik.discord;
+package rusbik.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -6,6 +6,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
+import rusbik.helpers.DiscordListener;
 
 import static net.minecraft.server.command.CommandManager.literal;
 

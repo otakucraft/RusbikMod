@@ -30,6 +30,7 @@ public class RusbikDatabase {
                     "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
                     "`discordId` NUMERIC DEFAULT NULL," +
                     "`timesJoined` NUMERIC DEFAULT 0," +
+                    "`isBanned` NUMERIC DEFAULT 0," +
                     "`perms` NUMERIC DEFAULT 1);";
             stmt.executeUpdate(createPlayerDB);
 
@@ -44,11 +45,6 @@ public class RusbikDatabase {
                     "`homeZ` NUMERIC DEFAULT NULL," +
                     "`homeDim` char(20) DEFAULT NULL);";
             stmt.executeUpdate(createPlayerInfo);
-
-            String createBanList = "CREATE TABLE IF NOT EXISTS `ban` (" +
-                    "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
-                    "`discordId` NUMERIC DEFAULT NULL);";
-            stmt.executeUpdate(createBanList);
 
             String createLoggerDB = "CREATE TABLE IF NOT EXISTS `logger` (" +
                     "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -188,10 +184,38 @@ public class RusbikDatabase {
         return exists;
     }
 
-    // WIP.
-    public static boolean banUser(String playerName) throws SQLException {
-        Statement statement = c.createStatement();
-        return true;
+    // Banear usuario para que no pueda meter a más gente.
+    public static void banUser(long userID) throws SQLException {
+        Statement stmt = c.createStatement();
+        String giveBan = String.format("UPDATE player SET isBanned = 1 WHERE discordId = %d;", userID);
+        stmt.executeUpdate(giveBan);
+        stmt.close();
+    }
+
+    // Retirar el ban.
+    public static void pardonUser(long userID) throws SQLException {
+        Statement stmt = c.createStatement();
+        String giveBan = String.format("UPDATE player SET isBanned = 0 WHERE discordId = %d;", userID);
+        stmt.executeUpdate(giveBan);
+        stmt.close();
+    }
+
+    public static boolean isBanned(long userID) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId = %d AND isBanned = 1;", userID));
+        boolean exists = rs.next();
+        rs.close();
+        stmt.close();
+        return exists;
+    }
+
+    public static long getID(String playerName) throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE name LIKE '%s';", playerName));
+        long id = rs.getLong("discordId");
+        rs.close();
+        stmt.close();
+        return id;
     }
 
     // Si tiene permitido actualizar (por ejemplo su nombre de mc?) WIP.
@@ -235,7 +259,7 @@ public class RusbikDatabase {
     // Check de si el jugador ya ha registrado algún usuario, solo puedes registrar una cuenta.
     public static boolean hasPlayer(long discId) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId LIKE '%d';", discId));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId = %d;", discId));
         boolean hasPlayer = rs.next();
         rs.close();
         stmt.close();
@@ -250,6 +274,7 @@ public class RusbikDatabase {
             long times = rs.getLong("timesJoined");
             String playerJoined = String.format("UPDATE player SET timesJoined = %d WHERE name LIKE '%s';", times + 1, playerName);
             stmt.executeUpdate(playerJoined);
+            rs.close();
             stmt.close();
             c.commit();
         }
@@ -281,6 +306,9 @@ public class RusbikDatabase {
         if (msg.isEmpty()){
             msg.add("Este bloque nunca ha sido modificado");
         }
+
+        rs.close();
+        stmt.close();
 
         return msg;
     }

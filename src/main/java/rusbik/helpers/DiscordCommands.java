@@ -159,6 +159,13 @@ public class DiscordCommands {
                 return;
             }
 
+            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+
+            if (gameProfile == null) {  // El Jugador tiene que ser premium.
+                event.getChannel().sendMessage("Este usuario no existe!").queue();
+                return;
+            }
+
             try {
                 if (!RusbikDatabase.userExists(playerName)) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
@@ -173,14 +180,12 @@ public class DiscordCommands {
                 }
 
                 BannedPlayerList list = server.getPlayerManager().getUserBanList();
-                GameProfile gameProfile = server.getUserCache().findByName(playerName);
 
                 if (!list.contains(gameProfile)) {  // Vanilla ban
 
                     BannedPlayerEntry playerEntry = new BannedPlayerEntry(gameProfile, null, "DiscordBan", null, null);
                     list.add(playerEntry);
 
-                    assert gameProfile != null;
                     ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());  // kickear si está conectado.
                     if (serverPlayerEntity != null) serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.banned"));
                 }
@@ -209,6 +214,13 @@ public class DiscordCommands {
                 return;
             }
 
+            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+
+            if (gameProfile == null) {  // El Jugador tiene que ser premium.
+                event.getChannel().sendMessage("Este usuario no existe!").queue();
+                return;
+            }
+
             try {
                 if (!RusbikDatabase.userExists(playerName)) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
@@ -223,7 +235,6 @@ public class DiscordCommands {
                 }
 
                 BannedPlayerList list = server.getPlayerManager().getUserBanList();
-                GameProfile gameProfile = server.getUserCache().findByName(playerName);
 
                 if (list.contains(gameProfile)) {  // Vanilla pardon
                     list.remove(gameProfile);

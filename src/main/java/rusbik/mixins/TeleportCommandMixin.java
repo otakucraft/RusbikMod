@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TeleportCommand.class)
+// Mixin cancelar el comando /tp vanilla.
 public class TeleportCommandMixin {
     @Inject(method = "register", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;register(Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)Lcom/mojang/brigadier/tree/LiteralCommandNode;", ordinal = 1), cancellable = true)
     private static void onRegister(CommandDispatcher<ServerCommandSource> dispatcher, CallbackInfo ci){

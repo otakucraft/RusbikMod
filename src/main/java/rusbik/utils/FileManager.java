@@ -1,4 +1,4 @@
-package rusbik.helpers;
+package rusbik.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -9,7 +9,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscordFileManager {
+public class FileManager {
+    // Archivo de configuración.
     public static String yamlFile = "config.yaml";
 
     public static void initializeYaml() {
@@ -17,6 +18,7 @@ public class DiscordFileManager {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         if (!file.exists()) {
             try {
+                // Se ejecuta al crearse el archivo a modo de helper.
                 List<Long> whitelistChat = new ArrayList<>();
                 whitelistChat.add(0L);
                 whitelistChat.add(1L);
@@ -41,6 +43,7 @@ public class DiscordFileManager {
         }
     }
 
+    // Actualizar el archivo con los nuevos datos.
     public static void updateFile() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {

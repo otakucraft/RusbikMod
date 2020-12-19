@@ -1,4 +1,4 @@
-package rusbik.helpers;
+package rusbik.utils;
 
 import com.mojang.authlib.GameProfile;
 import net.dv8tion.jda.api.JDA;
@@ -148,7 +148,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (DiscordUtils.isAllowed(0, event.getChannel().getIdLong())) {
                     server.getPlayerManager().reloadWhitelist();
                     server.kickNonWhitelistedPlayers(server.getCommandSource());
-                    DiscordFileManager.initializeYaml();
+                    FileManager.initializeYaml();
                 }
             }
 

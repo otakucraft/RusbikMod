@@ -1,6 +1,7 @@
 package rusbik.helpers;
 
 public class HomePos {
+    // Clase para instanciar la homePos.
     public double X;
     public double Y;
     public double Z;

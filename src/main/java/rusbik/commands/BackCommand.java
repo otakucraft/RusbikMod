@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class BackCommand {
+    // Comando back, para hacerte tp a tu última posición de muerte.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("back").
                 executes(context -> tpDeathPos(context.getSource())));

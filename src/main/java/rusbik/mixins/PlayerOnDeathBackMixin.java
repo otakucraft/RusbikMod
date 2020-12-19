@@ -11,13 +11,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
-import rusbik.helpers.DiscordListener;
+import rusbik.utils.DiscordListener;
+import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
 
 @Mixin(ServerPlayerEntity.class)
+// Mixin para notificar por discord cuando un jugador muere, asi como actualizar su posición de muerte en la base de datos y enviar la posición por privado.
 public abstract class PlayerOnDeathBackMixin extends PlayerEntity {
 
 
@@ -31,10 +32,10 @@ public abstract class PlayerOnDeathBackMixin extends PlayerEntity {
             DiscordListener.sendMessage(":skull_crossbones: **" + this.getDamageTracker().getDeathMessage().getString().replace("_", "\\_") + "**");
         }
 
-        this.sendMessage(new LiteralText("RIP ;( : " + Rusbik.getDimensionWithColor(this.world) + Rusbik.formatCoords(this.getPos().x, this.getPos().y, this.getPos().z)), false);
+        this.sendMessage(new LiteralText("RIP ;( : " + KrusbibUtils.getDimensionWithColor(this.world) + KrusbibUtils.formatCoords(this.getPos().x, this.getPos().y, this.getPos().z)), false);
 
         if (RusbikDatabase.userExists(this.getEntityName())) {
-            RusbikDatabase.addPlayerInformation(this.getEntityName(), this.getX(), this.getY(), this.getZ(), Rusbik.getDim(this.world));
+            RusbikDatabase.updatePlayerInformation(this.getEntityName(), this.getX(), this.getY(), this.getZ(), KrusbibUtils.getDim(this.world));
         }
     }
 }

@@ -9,20 +9,22 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.world.GameMode;
-import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
+import rusbik.utils.KrusbibUtils;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class CustomTeleportCommand {
+    // Comando creado para que los moderadores puedan hacerse tp a otros jugadores, solo tiene 1 uso y reemplaza al "tp" vanilla.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("tp").
                 then(CommandManager.argument("player", StringArgumentType.word()).
-                        suggests((c, b) -> suggestMatching(Rusbik.getPlayers(c.getSource()), b)).
+                        suggests((c, b) -> suggestMatching(KrusbibUtils.getPlayers(c.getSource()), b)).
                         executes(context -> tp(context.getSource(), StringArgumentType.getString(context, "player")))));
     }
 
+    // No es más que la función de adminTp de tp de administrador a jugador.
     private static int tp(ServerCommandSource source, String player) {
         ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
         if (playerEntity != null){

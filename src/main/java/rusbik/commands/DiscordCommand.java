@@ -6,11 +6,12 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
-import rusbik.helpers.DiscordListener;
+import rusbik.utils.DiscordListener;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class DiscordCommand {
+    // Comando para vincular discord con minecraft, para hacer gestión de whitelist, chatbridge, etc.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("discord")
                 .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
@@ -25,6 +26,7 @@ public class DiscordCommand {
                 .executes(context -> info(context.getSource())));
     }
 
+    // Configurar la token para el bot y el channelId para el chatbridge.
     private static int setup(ServerCommandSource src, String token, String channelId){
         if (DiscordListener.chatBridge){
             src.sendFeedback(new LiteralText("Please stop the server before you make any changes"), false);
@@ -37,6 +39,7 @@ public class DiscordCommand {
         return 1;
     }
 
+    // Detener el bot de discord.
     private static int stop(ServerCommandSource src){
         if (DiscordListener.chatBridge){
             DiscordListener.stop();
@@ -49,10 +52,12 @@ public class DiscordCommand {
         return 1;
     }
 
+    // Inicializar el bot.
     private static int start(ServerCommandSource src){
         if (!DiscordListener.chatBridge){
             if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
                 try {
+                    // Envio la información al bot para que inicie.
                     DiscordListener.connect(src.getMinecraftServer(), Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
                     src.sendFeedback(new LiteralText("Discord integration is running"), false);
                 } catch (Exception e) {
@@ -70,6 +75,7 @@ public class DiscordCommand {
         return 1;
     }
 
+    // Información del estado del bot.
     private static int info(ServerCommandSource src){
         if (DiscordListener.chatBridge) src.sendFeedback(new LiteralText("Chat bridge is currently on!"), false);
         else src.sendFeedback(new LiteralText("Chat bridge is currently off!"), false);

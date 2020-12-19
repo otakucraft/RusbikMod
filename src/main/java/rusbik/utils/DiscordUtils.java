@@ -1,4 +1,4 @@
-package rusbik.helpers;
+package rusbik.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import rusbik.Rusbik;
@@ -6,7 +6,7 @@ import rusbik.Rusbik;
 import java.awt.*;
 
 public class DiscordUtils {
-
+    // Crear el embed de jugadores conectados.
     public static EmbedBuilder generateEmbed(StringBuilder msg, int n) {
         try {
             final EmbedBuilder emb = new EmbedBuilder();
@@ -20,6 +20,7 @@ public class DiscordUtils {
         }
     }
 
+    // Chats en los que están permitidos determinados determinados comandos.
     public static boolean isAllowed(int id, long chatId) {
         boolean shouldWork = false;
         switch (id) {

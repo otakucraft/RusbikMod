@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CommandManager.class)
+// Mixin para habilitar el comando /seed para todos los jugadores.
 public class CommandManagerSeedMixin {
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/command/SeedCommand;register(Lcom/mojang/brigadier/CommandDispatcher;Z)V"))
     public void onRegister(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated){

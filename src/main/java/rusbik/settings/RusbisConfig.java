@@ -1,10 +1,11 @@
 package rusbik.settings;
 
-import rusbik.helpers.DiscordFileManager;
+import rusbik.utils.FileManager;
 
 import java.util.List;
 
 public class RusbisConfig {
+    // Esquema del yaml.
     public RusbisConfig(String discordToken, long chatChannelId, boolean isRunning, long discordRole, List<Long> whitelistChat, List<Long> allowedChat, List<Long> adminChat) {
         this.discordToken = discordToken;
         this.chatChannelId = chatChannelId;
@@ -15,7 +16,7 @@ public class RusbisConfig {
         this.adminChat = adminChat;
     }
 
-    public RusbisConfig() {}
+    public RusbisConfig() {}  // El constructor vacio es necesario o hace epic crash.
 
     public String discordToken;
     public long chatChannelId;
@@ -25,19 +26,21 @@ public class RusbisConfig {
     public List<Long> allowedChat;
     public List<Long> adminChat;
 
+    // Configuro los setters para modificar información.
+
     public void setDiscordToken(String discordToken) {
         this.discordToken = discordToken;
-        DiscordFileManager.updateFile();
+        FileManager.updateFile();  // Actualiza el archivo con los datos nuevos.
     }
 
     public void setChatChannelId(long chatChannelId) {
         this.chatChannelId = chatChannelId;
-        DiscordFileManager.updateFile();
+        FileManager.updateFile();
     }
 
     public void setRunning(boolean running) {
         isRunning = running;
-        DiscordFileManager.updateFile();
+        FileManager.updateFile();
     }
 
     @Override

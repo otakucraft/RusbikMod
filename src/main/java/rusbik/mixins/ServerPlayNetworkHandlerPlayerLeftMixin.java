@@ -8,9 +8,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import rusbik.helpers.DiscordListener;
+import rusbik.utils.DiscordListener;
 
 @Mixin(ServerPlayNetworkHandler.class)
+// Mixin para notificar por discord cuando un jugador se desconecta.
 public class ServerPlayNetworkHandlerPlayerLeftMixin {
     @Shadow public ServerPlayerEntity player;
     @Inject(method = "onDisconnected", at = @At("RETURN"))

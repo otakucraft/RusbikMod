@@ -1,6 +1,7 @@
 package rusbik.helpers;
 
 public class BackPos {
+    // Clase para instanciar la deathPos.
     public double X;
     public double Y;
     public double Z;

@@ -16,6 +16,7 @@ import java.util.Random;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class RandomTpCommand {
+    // Hacer tp al jugador a una posición random en un radio de 10k bloques.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("randomCoords").
                 requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2)).
@@ -31,9 +32,10 @@ public class RandomTpCommand {
             double Y = 255;
             player.teleport(X, Y, Z);
             BlockPos pos1 = source.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, new BlockPos(X, Y, Z));
-            BlockPos posBelow = new BlockPos(pos1.getX(), pos1.getY() - 1, pos1.getZ());
+            BlockPos posBelow = new BlockPos(pos1.getX(), pos1.getY() - 1, pos1.getZ());  // hacky way de conseguir el bloque más alto de la posición sobre la que te harás tp.
             if (source.getWorld().getBlockState(posBelow).getBlock().equals(Blocks.WATER) || source.getWorld().getBlockState(posBelow).getBlock().equals(Blocks.LAVA)){
-                tpAndSpawnPoint(source, player);
+                tpAndSpawnPoint(source, player);  // Recursion de hacer tp si va a spawnear en agua o lava.
+                // stackOverflow en mundos 100% agua? :D
             }
             else{
                 player.teleport(X, pos1.getY(), Z);

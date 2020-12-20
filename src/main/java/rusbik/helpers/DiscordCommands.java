@@ -134,8 +134,9 @@ public class DiscordCommands {
                 whitelist.remove(whitelistEntry);
 
                 ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
-                assert serverPlayerEntity != null;
-                serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                if (serverPlayerEntity != null) {
+                    serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                }
 
                 event.getChannel().sendMessage("Eliminado ;(").queue();
 
@@ -254,6 +255,7 @@ public class DiscordCommands {
             server.getPlayerManager().reloadWhitelist();
             server.kickNonWhitelistedPlayers(server.getCommandSource());
             FileManager.initializeYaml();
+            event.getChannel().sendMessage("Reloaded!").queue();
         }
     }
 

@@ -43,6 +43,46 @@ public class RusbisConfig {
         FileManager.updateFile();
     }
 
+    public void setAdminChat(List<Long> adminChat) {
+        this.adminChat = adminChat;
+    }
+
+    public void setAllowedChat(List<Long> allowedChat) {
+        this.allowedChat = allowedChat;
+    }
+
+    public void setDiscordRole(long discordRole) {
+        this.discordRole = discordRole;
+    }
+
+    public void setWhitelistChat(List<Long> whitelistChat) {
+        this.whitelistChat = whitelistChat;
+    }
+
+    public String getDiscordToken() {
+        return discordToken;
+    }
+
+    public List<Long> getAdminChat() {
+        return adminChat;
+    }
+
+    public List<Long> getAllowedChat() {
+        return allowedChat;
+    }
+
+    public List<Long> getWhitelistChat() {
+        return whitelistChat;
+    }
+
+    public long getChatChannelId() {
+        return chatChannelId;
+    }
+
+    public long getDiscordRole() {
+        return discordRole;
+    }
+
     @Override
     public String toString() {
         return "RusbisConfig{" +

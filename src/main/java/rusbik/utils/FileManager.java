@@ -28,7 +28,10 @@ public class FileManager {
                 List<Long> adminChat = new ArrayList<>();
                 adminChat.add(4L);
                 adminChat.add(5L);
-                Rusbik.config = new RusbisConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat);
+                List<Long> validRoles = new ArrayList<>();
+                validRoles.add(6L);
+                validRoles.add(7L);
+                Rusbik.config = new RusbisConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat, 0, validRoles);
                 mapper.writeValue(file, Rusbik.config);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -218,15 +218,15 @@ public class RusbikDatabase {
         return id;
     }
 
-    // Si tiene permitido actualizar (por ejemplo su nombre de mc?) WIP.
-    public static boolean allowedToUpdate(long discId, String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
-        boolean isAllowed = rs.getLong("discordId") == discId;
-        rs.close();
-        stmt.close();
-        return isAllowed;
-    }
+//    // Si tiene permitido actualizar (por ejemplo su nombre de mc?) WIP.
+//    public static boolean allowedToUpdate(long discId, String playerName) throws SQLException {
+//        Statement stmt = c.createStatement();
+//        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+//        boolean isAllowed = rs.getLong("discordId") == discId;
+//        rs.close();
+//        stmt.close();
+//        return isAllowed;
+//    }
 
     // Si tiene permitido eliminar. Para que desde el comando !remove nadie elimine que no sea a sí mismo.
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
@@ -243,7 +243,7 @@ public class RusbikDatabase {
 
     // Acción al eliminarte de la whitelist.
     public static void removeData(String playerName) throws SQLException {
-        if (c != null){
+        if (c != null) {
             Statement stmt = c.createStatement();
             // Reset de tu discord ID, posiciones de muerte y home, pero se deja la row con tu nombre creado.
             String deleteDiscId = String.format("UPDATE player SET discordId = NULL WHERE name LIKE '%s';", playerName);
@@ -254,6 +254,18 @@ public class RusbikDatabase {
             stmt.close();
             c.commit();
         }
+    }
+
+    public static String getPlayerName(long discordID) throws SQLException {
+        if (c != null) {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d;", discordID));
+            String playerName = rs.getString("name");
+            rs.close();
+            stmt.close();
+            return playerName;
+        }
+        return null;
     }
 
     // Check de si el jugador ya ha registrado algún usuario, solo puedes registrar una cuenta.
@@ -321,5 +333,18 @@ public class RusbikDatabase {
         rs.close();
         stmt.close();
         return lines;
+    }
+
+    // Extraer todos los IDs de gente no baneada.
+    public static List<Long> getIDs() throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT discordId FROM player WHERE isBanned = 0 AND discordId IS NOT NULL;");
+        List<Long> idList = new ArrayList<>();
+        while (rs.next()) {
+            idList.add(rs.getLong("discordId"));
+        }
+        rs.close();
+        stmt.close();
+        return idList;
     }
 }

@@ -2,6 +2,7 @@ package rusbik.utils;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -10,6 +11,7 @@ import rusbik.Rusbik;
 import rusbik.helpers.DiscordCommands;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
     private static JDA jda = null;
@@ -17,10 +19,10 @@ public class DiscordListener extends ListenerAdapter {
     public static String token = "";
     public static boolean chatBridge = false;
 
-    MinecraftServer server;
+    private static MinecraftServer server;
 
     public DiscordListener (MinecraftServer s){
-        this.server = s;
+        server = s;
     }
 
     public static void connect(MinecraftServer server, String t, String c){
@@ -94,8 +96,26 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
 
+    public static void sendAdminMessage(String msg) {
+        if (chatBridge){
+            try {
+                TextChannel ch = jda.getTextChannelById(Rusbik.config.adminChat.get(0));
+                if (ch != null) ch.sendMessage(msg).queue();
+            }
+            catch (Exception e){
+                System.out.println("wrong channelId :(");
+            }
+        }
+    }
+
     public static void stop() {
         jda.shutdownNow();
         chatBridge = false;
+    }
+
+    public static void checkSub(List<Long> ids) {
+        assert jda != null;
+        Thread dbCheck = new DiscordCheckThread("discordRoles", jda, ids, server);
+        dbCheck.start();
     }
 }

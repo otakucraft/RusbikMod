@@ -11,6 +11,7 @@ import rusbik.utils.FileManager;
 import rusbik.utils.DiscordListener;
 
 import java.sql.SQLException;
+import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
 // Mixin que inicializa todos los procesos.
@@ -41,5 +42,10 @@ public class RusbikServerRunMixin {
     public void stop (CallbackInfo ci) throws SQLException {
         if (RusbikDatabase.c != null) RusbikDatabase.c.close();
         if (DiscordListener.chatBridge) DiscordListener.stop();
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;saveAllPlayerData()V"))
+    public void onSave(BooleanSupplier shouldKeepTicking, CallbackInfo ci) throws SQLException {
+        DiscordListener.checkSub(RusbikDatabase.getIDs());
     }
 }

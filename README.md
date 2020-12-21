@@ -47,6 +47,8 @@ Comandos disponibles para el bot de discord:
 * `!add`: funciona en los chats dentro de la categoría `whitelistChat`, añade un solo jugador a la whitelist, además de registrarlo en la base de datos junto con su id de discord, y aplicar un rol.
 * `!remove`: funciona en los chats dentro de la categoría `whitelistChat`, elimina al jugador nombrado, solo si corresponde con el registrado anteriormente, tiene la finalidad de facilitar el cambio de cuentas de minecraft.
 * `!list`: funciona en los chats dentro de la categoría `whitelistChat`, lista jugadores en whitelist.
+* `!exadd`: funciona en los chats dentro de la categoría `adminChat`, puedes añadir jugadores que no son subs a la whitelist, estos jugadores solo saldrán de la whitelist con el comando !exremove.
+* `!exremove`: funciona en los chats dentro de la categoría `adminChat`, eliminar jugadores añadidos con el comando !exadd.
 * `!ban`: funciona en los chats dentro de la categoría `adminChat`, banea al jugador del server de minecraft y bloquea que pueda añadir o eliminar a nadie de la whitelist.
 * `!pardon`: funciona en los chats dentro de la categoría `adminChat`, desbanea al jugador del server de minecraft, se le devuelve el permiso de añadir o eliminar de whitelist.
 * `!reload`: funciona en los chats dentro de la categoría `adminChat`, hace un reload además de re sincronizar la información modificada en el archivo `config.yml`.

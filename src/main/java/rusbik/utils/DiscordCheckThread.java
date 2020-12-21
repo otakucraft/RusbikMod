@@ -87,7 +87,6 @@ public class DiscordCheckThread extends Thread {
             throwables.printStackTrace();
         }
 
-        DiscordListener.latch.countDown();
         System.out.println("Discord User check - END");
     }
 
@@ -125,9 +124,7 @@ public class DiscordCheckThread extends Thread {
 
     private void syncWhitelist() throws SQLException {
         List<String> nameList = RusbikDatabase.getNames();
-        System.out.println(nameList);
         Whitelist whitelist = server.getPlayerManager().getWhitelist();
-        System.out.println(Arrays.toString(whitelist.getNames()));
         List<String> actualWhitelist = Arrays.asList(whitelist.getNames());
         for (String name : nameList) {
             if (!actualWhitelist.contains(name)) {  // Añadir a los que están en la base de datos pero no en whitelist.

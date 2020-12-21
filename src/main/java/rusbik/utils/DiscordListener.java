@@ -11,14 +11,12 @@ import rusbik.helpers.DiscordCommands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 public class DiscordListener extends ListenerAdapter {
     private static JDA jda = null;
     public static String channelId = "";
     public static String token = "";
     public static boolean chatBridge = false;
-    public static CountDownLatch latch = null;
 
     private static MinecraftServer server;
 
@@ -45,13 +43,6 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         if (chatBridge) {
-            if (latch != null) {
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             if (event.getAuthor().isBot()) return;
 
             if (event.getMessage().getContentDisplay().equals("")) return;
@@ -132,7 +123,6 @@ public class DiscordListener extends ListenerAdapter {
     public static void checkSub(List<Long> ids) {
         assert jda != null;
         Thread dbCheck = new DiscordCheckThread("discordSubThread", jda, ids, server);
-        latch = new CountDownLatch(1);
         dbCheck.start();
     }
 }

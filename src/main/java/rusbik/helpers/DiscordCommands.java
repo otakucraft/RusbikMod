@@ -328,7 +328,7 @@ public class DiscordCommands {
     }
 
     public static void exceptionRemove(MessageReceivedEvent event, MinecraftServer server) {
-        if (DiscordUtils.isAllowed(1, event.getChannel().getIdLong())) {
+        if (DiscordUtils.isAllowed(0, event.getChannel().getIdLong())) {
             String[] req = event.getMessage().getContentRaw().split(" ");
             String playerName = req[1];
 

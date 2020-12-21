@@ -2,6 +2,7 @@ package rusbik.utils;
 
 import com.mojang.authlib.GameProfile;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.minecraft.server.MinecraftServer;
@@ -14,6 +15,7 @@ import rusbik.database.RusbikDatabase;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,10 +43,24 @@ public class DiscordCheckThread extends Thread {
             currentIDs.add(member.getIdLong());
             if (!hasValidRole(member.getRoles())) {  // Users a los que se les ha acabado la sub.
                 try {
+                    if (Rusbik.config.discordRole != 0) {  // Eliminar rol de discord.
+                        Guild guild = jda.getGuildById(Rusbik.config.groupID);
+                        if (guild != null) {
+                            Role role = guild.getRoleById(Rusbik.config.discordRole);
+                            if (role != null) {
+                                guild.removeRoleFromMember(member, role).queue();
+                            }
+                        }
+                    }
+
                     String name = RusbikDatabase.getPlayerName(member.getIdLong());
-                    assert name != null;
+
+                    if (name == null) {
+                        continue;
+                    }
                     RusbikDatabase.removeData(name);
                     removeFromWhitelist(name);
+
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
@@ -64,6 +80,14 @@ public class DiscordCheckThread extends Thread {
             }
         }
 
+        try {
+            syncWhitelist();  // Sincronizar la base de datos con la whitelist
+            // Hago esto porque hay una forma de bypassear el dejar de ser sub y mantener acceso cambiándote de nombre de mc.
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        DiscordListener.latch.countDown();
         System.out.println("Discord User check - END");
     }
 
@@ -96,6 +120,43 @@ public class DiscordCheckThread extends Thread {
             serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
         }
 
-        DiscordListener.sendAdminMessage(String.format("A %s se le acabó la sub :(", playerName));
+        DiscordListener.sendAdminMessage(String.format("A %s se le acabó la sub, F.", playerName));
+    }
+
+    private void syncWhitelist() throws SQLException {
+        List<String> nameList = RusbikDatabase.getNames();
+        System.out.println(nameList);
+        Whitelist whitelist = server.getPlayerManager().getWhitelist();
+        System.out.println(Arrays.toString(whitelist.getNames()));
+        List<String> actualWhitelist = Arrays.asList(whitelist.getNames());
+        for (String name : nameList) {
+            if (!actualWhitelist.contains(name)) {  // Añadir a los que están en la base de datos pero no en whitelist.
+                GameProfile gameProfile = server.getUserCache().findByName(name);
+                if (gameProfile == null) {  // El Jugador es premium.
+                    RusbikDatabase.removeData(name);
+                    continue;
+                }
+
+                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+                whitelist.add(whitelistEntry);
+                DiscordListener.sendAdminMessage(String.format("%s añadido a la whitelist.", name));
+            }
+        }
+
+        server.getPlayerManager().reloadWhitelist();
+
+        whitelist = server.getPlayerManager().getWhitelist();
+        actualWhitelist = Arrays.asList(whitelist.getNames());
+
+        for (String player : actualWhitelist) {  // Sacar a los que están wn whitelist pero no en la base de datos.
+            if (!nameList.contains(player)) {
+                GameProfile gameProfile = server.getUserCache().findByName(player);
+                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+                whitelist.remove(whitelistEntry);
+                DiscordListener.sendAdminMessage(String.format("%s eliminado de la whitelist.", player));
+            }
+        }
+
+        server.getPlayerManager().reloadWhitelist();
     }
 }

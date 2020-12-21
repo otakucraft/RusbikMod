@@ -2,7 +2,6 @@ package rusbik.utils;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,12 +11,14 @@ import rusbik.helpers.DiscordCommands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class DiscordListener extends ListenerAdapter {
     private static JDA jda = null;
     public static String channelId = "";
     public static String token = "";
     public static boolean chatBridge = false;
+    public static CountDownLatch latch = null;
 
     private static MinecraftServer server;
 
@@ -43,7 +44,14 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-        if (chatBridge){
+        if (chatBridge) {
+            if (latch != null) {
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             if (event.getAuthor().isBot()) return;
 
             if (event.getMessage().getContentDisplay().equals("")) return;
@@ -60,6 +68,14 @@ public class DiscordListener extends ListenerAdapter {
 
             else if (event.getMessage().getContentRaw().startsWith("!remove ")) {  // Eliminar de la whitelist
                 DiscordCommands.removeCommand(event, server);
+            }
+
+            else if (event.getMessage().getContentRaw().startsWith("!exadd ")) {  // Añadir a la whitelist como excepción.
+                DiscordCommands.exceptionAdd(event, server);
+            }
+
+            else if (event.getMessage().getContentRaw().startsWith("!exremove ")) {  // Eliminar de la whitelist de un jugador añadido como excepción.
+                DiscordCommands.exceptionRemove(event, server);
             }
 
             else if (event.getMessage().getContentRaw().startsWith("!ban ")) {  // Banear de mc y base de datos.
@@ -97,12 +113,12 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     public static void sendAdminMessage(String msg) {
-        if (chatBridge){
+        if (chatBridge) {
             try {
                 TextChannel ch = jda.getTextChannelById(Rusbik.config.adminChat.get(0));
                 if (ch != null) ch.sendMessage(msg).queue();
             }
-            catch (Exception e){
+            catch (Exception e) {
                 System.out.println("wrong channelId :(");
             }
         }
@@ -115,7 +131,8 @@ public class DiscordListener extends ListenerAdapter {
 
     public static void checkSub(List<Long> ids) {
         assert jda != null;
-        Thread dbCheck = new DiscordCheckThread("discordRoles", jda, ids, server);
+        Thread dbCheck = new DiscordCheckThread("discordSubThread", jda, ids, server);
+        latch = new CountDownLatch(1);
         dbCheck.start();
     }
 }

@@ -195,8 +195,8 @@ public class RusbikDatabase {
     // Retirar el ban.
     public static void pardonUser(long userID) throws SQLException {
         Statement stmt = c.createStatement();
-        String giveBan = String.format("UPDATE player SET isBanned = 0 WHERE discordId = %d;", userID);
-        stmt.executeUpdate(giveBan);
+        String removeBan = String.format("UPDATE player SET isBanned = 0 WHERE discordId = %d;", userID);
+        stmt.executeUpdate(removeBan);
         stmt.close();
     }
 
@@ -335,10 +335,10 @@ public class RusbikDatabase {
         return lines;
     }
 
-    // Extraer todos los IDs de gente no baneada.
+    // Extraer todos los IDs de gente no baneada o añadida por excepción.
     public static List<Long> getIDs() throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT discordId FROM player WHERE isBanned = 0 AND discordId IS NOT NULL;");
+        ResultSet rs = stmt.executeQuery("SELECT discordId FROM player WHERE isBanned = 0 AND discordId IS NOT NULL AND discordId IS NOT 999999;");
         List<Long> idList = new ArrayList<>();
         while (rs.next()) {
             idList.add(rs.getLong("discordId"));
@@ -346,5 +346,18 @@ public class RusbikDatabase {
         rs.close();
         stmt.close();
         return idList;
+    }
+
+    // Extraer todos los nicknames.
+    public static List<String> getNames() throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT name FROM player WHERE isBanned = 0 AND discordId IS NOT NULL");
+        List<String> nameList = new ArrayList<>();
+        while (rs.next()) {
+            nameList.add(rs.getString("name"));
+        }
+        rs.close();
+        stmt.close();
+        return nameList;
     }
 }

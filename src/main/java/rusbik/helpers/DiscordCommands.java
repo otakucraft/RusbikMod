@@ -46,13 +46,14 @@ public class DiscordCommands {
                 return;
             }
 
-            Whitelist whitelist = server.getPlayerManager().getWhitelist();
             GameProfile gameProfile = server.getUserCache().findByName(playerName);
 
             if (gameProfile == null) {  // El Jugador es premium.
                 event.getChannel().sendMessage("No es premium :P").queue();
                 return;
             }
+
+            Whitelist whitelist = server.getPlayerManager().getWhitelist();
 
             if (whitelist.isAllowed(gameProfile)) {  // Si ya estaba en la whitelist.
                 event.getChannel().sendMessage("Ya estaba en whitelist").queue();
@@ -68,7 +69,8 @@ public class DiscordCommands {
                     return;
                 }
 
-                RusbikDatabase.addPlayerInformation(playerName, id);  // Añadir a la base de datos
+                RusbikDatabase.addPlayerInformation(gameProfile.getName(), id);  // Añadir a la base de datos
+                // Uso el getName del gameProfile porque confío en que el usuario no hará lo lógico y pondrá el nombre con mayúsculas donde le dé la gana.
                 whitelist.add(whitelistEntry);  // Añadir a la whitelist vanilla.
 
                 event.getChannel().sendMessage("Añadido :)").queue();
@@ -123,12 +125,12 @@ public class DiscordCommands {
             long id = Long.parseLong(event.getAuthor().getId());
 
             try {
-                if (!RusbikDatabase.allowedToRemove(id, playerName)) {
+                if (!RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
                     event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();
                     return;
                 }
 
-                RusbikDatabase.removeData(playerName);  // Eliminar discordID, home y deathPos.
+                RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
 
                 WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
                 whitelist.remove(whitelistEntry);
@@ -168,12 +170,12 @@ public class DiscordCommands {
             }
 
             try {
-                if (!RusbikDatabase.userExists(playerName)) {
+                if (!RusbikDatabase.userExists(gameProfile.getName())) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
                     return;
                 }
 
-                long id = RusbikDatabase.getID(playerName);
+                long id = RusbikDatabase.getID(gameProfile.getName());
 
                 if (RusbikDatabase.isBanned(id)) {
                     event.getChannel().sendMessage("Ya estaba baneado.").queue();
@@ -192,10 +194,6 @@ public class DiscordCommands {
                 }
 
                 RusbikDatabase.banUser(id);
-
-                if (Rusbik.config.discordRole != 0) {  // Quitar rol de discord.
-                    event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.discordRole))).queue();
-                }
 
                 event.getChannel().sendMessage("Baneado!").queue();
             }
@@ -223,12 +221,12 @@ public class DiscordCommands {
             }
 
             try {
-                if (!RusbikDatabase.userExists(playerName)) {
+                if (!RusbikDatabase.userExists(gameProfile.getName())) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
                     return;
                 }
 
-                long id = RusbikDatabase.getID(playerName);
+                long id = RusbikDatabase.getID(gameProfile.getName());
 
                 if (!RusbikDatabase.isBanned(id)) {
                     event.getChannel().sendMessage("No estaba baneado.").queue();
@@ -242,6 +240,7 @@ public class DiscordCommands {
                 }
 
                 RusbikDatabase.pardonUser(id);
+                RusbikDatabase.removeData(gameProfile.getName());
                 event.getChannel().sendMessage("Desbaneado!").queue();
             }
             catch (SQLException e) {
@@ -276,6 +275,107 @@ public class DiscordCommands {
                     }
                 }
                 event.getChannel().sendMessage(msg.append(names[names.length - 1]).append("`")).queue();
+            }
+        }
+    }
+
+    public static void exceptionAdd(MessageReceivedEvent event, MinecraftServer server) {
+        if (DiscordUtils.isAllowed(0, event.getChannel().getIdLong())) {
+            String[] req = event.getMessage().getContentRaw().split(" ");
+            String playerName = req[1];
+
+            if (req.length != 2) {  // El comando es !exadd Kahzerx.
+                event.getChannel().sendMessage("!exadd <playerName>").queue();
+                return;
+            }
+
+            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+
+            if (gameProfile == null) {  // El Jugador es premium.
+                event.getChannel().sendMessage("No es premium :P").queue();
+                return;
+            }
+
+            Whitelist whitelist = server.getPlayerManager().getWhitelist();
+
+            if (whitelist.isAllowed(gameProfile)) {  // Si ya estaba en la whitelist.
+                event.getChannel().sendMessage("Ya estaba en whitelist").queue();
+                return;
+            }
+
+            WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+            long id = 999999L;
+
+            try {
+                RusbikDatabase.addPlayerInformation(gameProfile.getName(), id);  // Añadir a la base de datos
+                whitelist.add(whitelistEntry);  // Añadir a la whitelist vanilla.
+
+                event.getChannel().sendMessage("Añadido :)").queue();
+
+                if (Rusbik.config.discordRole != 0) {  // Dar rol de discord.
+                    Guild guild = event.getGuild();
+                    Role role = guild.getRoleById(Rusbik.config.discordRole);
+                    assert role != null;
+                    guild.addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
+                }
+
+            } catch (SQLException throwables) {
+                whitelist.remove(whitelistEntry);
+                event.getChannel().sendMessage("RIP :(, algo falló.").queue();
+                throwables.printStackTrace();
+            }
+        }
+    }
+
+    public static void exceptionRemove(MessageReceivedEvent event, MinecraftServer server) {
+        if (DiscordUtils.isAllowed(1, event.getChannel().getIdLong())) {
+            String[] req = event.getMessage().getContentRaw().split(" ");
+            String playerName = req[1];
+
+            if (req.length != 2) {  // El comando es !exremove Kahzerx.
+                event.getChannel().sendMessage("!exremove <playerName>").queue();
+                return;
+            }
+
+            Whitelist whitelist = server.getPlayerManager().getWhitelist();
+            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+
+            if (gameProfile == null) {  // El Jugador es premium.
+                event.getChannel().sendMessage("No es premium :P").queue();
+                return;
+            }
+
+            if (!whitelist.isAllowed(gameProfile)) {
+                event.getChannel().sendMessage("No está en la whitelist").queue();
+                return;
+            }
+
+            long id = 999999L;
+
+            try {
+                if (!RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
+                    event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();
+                    return;
+                }
+
+                RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
+
+                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
+                whitelist.remove(whitelistEntry);
+
+                ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
+                if (serverPlayerEntity != null) {
+                    serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                }
+
+                event.getChannel().sendMessage("Eliminado ;(").queue();
+
+                if (Rusbik.config.discordRole != 0) {  // Quitar rol de discord.
+                    event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.discordRole))).queue();
+                }
+            }
+            catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
         }
     }

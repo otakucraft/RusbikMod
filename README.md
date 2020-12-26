@@ -41,6 +41,8 @@ Vinculación con un chat de discord para la gestión de la whitelist, chatbridge
 * Comando: `/discord (setBot,start,stop) token channelID(para el chatbridge)`
 * Privilegios: `OP`
 
+El bot realiza un check en cada autosave (cada 6000 ticks), de los members de discord que han abandonado el discord, o simplemente han dejado de ser suscriptores para sacarles de la whitelist.
+Además de una sincronización completa de whitelist con base de datos para sacar a aquellos que ya estaban en la whitelist pero no han escrito !add o un administrador los ha registrado con !exadd.
 La configuración se guarda en un archivo `config.yml`.
 Comandos disponibles para el bot de discord:
 * `!online`: funciona en los chats dentro de la categoría `allowedChat`, lista jugadores conectados al servidor.

@@ -70,7 +70,7 @@ Hará tp al jugador a la posición previamente configurada por medio del comando
 * Privilegios: `0`
 
 ## randomTp
-Hacer tp random al jugador en un radio de 10000 bloques con la finalidad de alejar del spawn y evitar griefing (no funciona BTW, los aleja pero la gente se junta y al final es inutil...), solo disponible para OP.
+Hacer tp random al jugador en un radio de 10000 bloques con la finalidad de alejar del spawn y evitar griefing (no funciona BTW, los aleja pero la gente se junta y al final es inútil...), solo disponible para OP.
 * Comando: `/randomCoords`
 * Privilegios: `OP`
 

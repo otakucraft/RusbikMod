@@ -88,7 +88,7 @@ Todos los usuarios pueden visualizar cualquier scoreboard.
 * Privilegios: `null`
 
 ## spoof
-Visualizar el contenido del ender chest de cualquier jugador conectado, únicamente disponible para OP.
+Visualizar el contenido del ender chest/inventario (el enderchest es el del jugador y se actualizará con los movimientos de items que se hagan dentro, en el caso del inventario no es más que una copia, no se modificará el inventario del jugador real) de cualquier jugador conectado, únicamente disponible para OP.
 * Comando: `/spoof`
 * Privilegios: `OP`
 

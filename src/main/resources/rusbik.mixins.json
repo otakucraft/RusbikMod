@@ -4,6 +4,7 @@
   "package": "rusbik.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ContainerBEMixin",
     "BlockBreakingLoggingMixin",
     "BlockPlacementLoggingMixin",
     "CommandManagerSeedMixin",
@@ -11,9 +12,8 @@
     "DiscordServerChatListerMixin",
     "PlayerInteractionMixin",
     "PlayerManagerJoinsMixin",
-    "PlayerOnDeathBackMixin",
     "RusbikServerRunMixin",
-    "ServerPlayNetworkHandlerPlayerLeftMixin",
+    "ServerPlayerMixin",
     "TeleportCommandMixin",
     "WorldBorderCommandMixin"
   ],

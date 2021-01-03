@@ -19,10 +19,9 @@ import java.sql.SQLException;
 
 @Mixin(ServerPlayerEntity.class)
 // Mixin para notificar por discord cuando un jugador muere, asi como actualizar su posición de muerte en la base de datos y enviar la posición por privado.
-public abstract class PlayerOnDeathBackMixin extends PlayerEntity {
+public abstract class ServerPlayerMixin extends PlayerEntity {
 
-
-    public PlayerOnDeathBackMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
+    public ServerPlayerMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
     }
 

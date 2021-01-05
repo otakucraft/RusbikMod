@@ -4,7 +4,6 @@
   "package": "rusbik.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ContainerBEMixin",
     "BlockBreakingLoggingMixin",
     "BlockPlacementLoggingMixin",
     "CommandManagerSeedMixin",

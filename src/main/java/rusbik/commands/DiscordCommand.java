@@ -6,7 +6,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
-import rusbik.utils.DiscordListener;
+import rusbik.discord.utils.DiscordListener;
 
 import static net.minecraft.server.command.CommandManager.literal;
 

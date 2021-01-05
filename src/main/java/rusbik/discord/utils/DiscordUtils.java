@@ -1,4 +1,4 @@
-package rusbik.utils;
+package rusbik.discord.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -33,8 +33,9 @@ public class DiscordUtils {
     }
 
     // Chats en los que están permitidos determinados determinados comandos.
-    public static boolean isAllowed(int id, long chatId) {
+    public static boolean isAllowed(DiscordPermission permission, long chatId) {
         boolean shouldWork = false;
+        int id = permission.getId();
         switch (id) {
             case 0:
                 shouldWork = Rusbik.config.adminChat.contains(chatId);

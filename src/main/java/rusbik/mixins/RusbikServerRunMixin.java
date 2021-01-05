@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 import rusbik.utils.FileManager;
-import rusbik.utils.DiscordListener;
+import rusbik.discord.utils.DiscordListener;
 
 import java.sql.SQLException;
 import java.util.function.BooleanSupplier;

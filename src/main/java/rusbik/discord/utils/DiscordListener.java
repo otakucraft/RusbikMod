@@ -1,18 +1,19 @@
-package rusbik.utils;
+package rusbik.discord.utils;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.minecraft.server.*;
+import net.minecraft.server.MinecraftServer;
 import rusbik.Rusbik;
-import rusbik.helpers.DiscordCommands;
+import rusbik.discord.commands.*;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
+
     private static JDA jda = null;
     public static String channelId = "";
     public static String token = "";
@@ -49,40 +50,52 @@ public class DiscordListener extends ListenerAdapter {
 
             if (event.getMessage().getContentRaw().equals("")) return;
 
-            if (event.getMessage().getContentRaw().equals("!online")) {
-                DiscordCommands.onlineCommand(event, server);
+            Commands online = new Online();
+            Commands add = new Add();
+            Commands remove = new Remove();
+            Commands exadd = new Exadd();
+            Commands exremove = new Exremove();
+            Commands ban = new Ban();
+            Commands pardon = new Pardon();
+            Commands reload = new Reload();
+            Commands list = new WList();
+
+            String prefix = "!";
+
+            if (event.getMessage().getContentRaw().equals(prefix + online.getCBody())) {
+                online.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!add ")) {  // Añadir a la whitelist
-                DiscordCommands.addCommand(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + add.getCBody() + " ")) {  // Añadir a la whitelist
+                add.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!remove ")) {  // Eliminar de la whitelist
-                DiscordCommands.removeCommand(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + remove.getCBody() + " ")) {  // Eliminar de la whitelist
+                remove.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!exadd ")) {  // Añadir a la whitelist como excepción.
-                DiscordCommands.exceptionAdd(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + exadd.getCBody() + " ")) {  // Añadir a la whitelist como excepción.
+                exadd.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!exremove ")) {  // Eliminar de la whitelist de un jugador añadido como excepción.
-                DiscordCommands.exceptionRemove(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + exremove.getCBody() + " ")) {  // Eliminar de la whitelist de un jugador añadido como excepción.
+                exremove.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!ban ")) {  // Banear de mc y base de datos.
-                DiscordCommands.banCommand(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + ban.getCBody() + " ")) {  // Banear de mc y base de datos.
+                ban.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().startsWith("!pardon ")) {  // Desbanear.
-                DiscordCommands.pardonCommand(event, server);
+            else if (event.getMessage().getContentRaw().startsWith(prefix + pardon.getCBody() + " ")) {  // Desbanear.
+                pardon.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().equals("!reload")) {  // Recargar la whitelist y archivo de configuración.
-                DiscordCommands.reloadCommand(event, server);
+            else if (event.getMessage().getContentRaw().equals(prefix + reload.getCBody())) {  // Recargar la whitelist y archivo de configuración.
+                reload.execute(event, server);
             }
 
-            else if (event.getMessage().getContentRaw().equals("!list")) {  // Listar gente en la whitelist.
-                DiscordCommands.listCommand(event, server);
+            else if (event.getMessage().getContentRaw().equals(prefix + list.getCBody())) {  // Listar gente en la whitelist.
+                list.execute(event, server);
             }
 
             else if (event.getChannel().getIdLong() == (Rusbik.config.chatChannelId)) {
@@ -122,7 +135,7 @@ public class DiscordListener extends ListenerAdapter {
 
     public static void checkSub(List<Long> ids) {
         assert jda != null;
-        Thread dbCheck = new DiscordCheckThread("discordSubThread", jda, ids, server);
+        Thread dbCheck = new SubCheckThread("discordSubCheckThread", jda, ids, server);
         dbCheck.start();
     }
 }

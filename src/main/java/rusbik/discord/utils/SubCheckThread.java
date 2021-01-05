@@ -1,4 +1,4 @@
-package rusbik.utils;
+package rusbik.discord.utils;
 
 import com.mojang.authlib.GameProfile;
 import net.dv8tion.jda.api.JDA;
@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class DiscordCheckThread extends Thread {
+public class SubCheckThread extends Thread {
     private final JDA jda;
     private final List<Long> ids;
 
     MinecraftServer server;
 
-    public DiscordCheckThread(String name, JDA jda, List<Long> ids, MinecraftServer s) {
+    public SubCheckThread(String name, JDA jda, List<Long> ids, MinecraftServer s) {
         super(name);
         this.jda = jda;
         this.ids = ids;

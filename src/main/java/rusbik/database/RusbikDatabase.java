@@ -10,14 +10,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Toda la gestión de bases de datos.
+// Toda la gestiÃ³n de bases de datos.
 public class RusbikDatabase {
 
     public static Connection c = null;
 
     public static void initializeDB(){
         try {
-            // Creo la conexión.
+            // Creo la conexiÃ³n.
             Class.forName("org.sqlite.JDBC");
             boolean createDir = new File("information").mkdirs();
             if (createDir) System.out.println("information dir created");
@@ -65,7 +65,7 @@ public class RusbikDatabase {
         }
     }
 
-    // Se ejecuta al añadir al jugador a la whitelist desde el comando !add de discord.
+    // Se ejecuta al aÃ±adir al jugador a la whitelist desde el comando !add de discord.
     public static void addPlayerInformation(String name, long discordId) throws SQLException {
         if (c != null){
             // Intentar dedicar una row en la tabla player vincular el id de discord
@@ -84,7 +84,7 @@ public class RusbikDatabase {
             rsPlayerPos.close();
             psPlayerPos.close();
             
-            //A�adir el id de discord
+            //Añadir el id de discord
             /* No se hace junto con el primer insert porque el jugador puede estar registrado pero tener null en esta columna al sacar de la whitelist por ejemplo
                no se elimina so row por completo, simplemente el discordId, para dar facilidad ante posibles cambios de cuenta de discord.*/
             String queryDiscId = "UPDATE player SET discordId = ? WHERE name LIKE ?";
@@ -148,7 +148,7 @@ public class RusbikDatabase {
         return playerPerm;
     }
 
-    // Conseguir la posición de la última muerte.
+    // Conseguir la posiciÃ³n de la Ãºltima muerte.
     public static BackPos getDeathPos(String playerName) throws SQLException {
         String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name LIKE ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -164,7 +164,7 @@ public class RusbikDatabase {
         return new BackPos(X, Y, Z, dim);
     }
 
-    // Conseguir la posición de "home".
+    // Conseguir la posiciÃ³n de "home".
     public static HomePos getHomePos(String playerName) throws SQLException {
         String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name LIKE ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -210,7 +210,7 @@ public class RusbikDatabase {
         return true;
     }
 
-    // Check de si este jugador está registrado en la base de datos con nombre y discord ID.
+    // Check de si este jugador estÃ¡ registrado en la base de datos con nombre y discord ID.
     public static boolean userExists(String playerName) throws SQLException {
         String query = "SELECT name FROM player WHERE name LIKE ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -231,7 +231,7 @@ public class RusbikDatabase {
         return exists;
     }
 
-    // Banear usuario para que no pueda meter a más gente.
+    // Banear usuario para que no pueda meter a mÃ¡s gente.
     public static void banUser(long userID) throws SQLException {
         String query = "UPDATE player SET isBanned = 1 WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -283,7 +283,7 @@ public class RusbikDatabase {
 //        return isAllowed;
 //    }
 
-    // Si tiene permitido eliminar. Para que desde el comando !remove nadie elimine que no sea a sí mismo.
+    // Si tiene permitido eliminar. Para que desde el comando !remove nadie elimine que no sea a sÃ­ mismo.
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
         boolean isAllowed = true;
         if (userExists(playerName)) {
@@ -298,7 +298,7 @@ public class RusbikDatabase {
         return isAllowed;
     }
 
-    // Acción al eliminarte de la whitelist.
+    // AcciÃ³n al eliminarte de la whitelist.
     public static void removeData(String playerName) throws SQLException {
         if (c != null) {
             String query = "UPDATE player SET discordId = NULL WHERE name LIKE ?";
@@ -334,7 +334,7 @@ public class RusbikDatabase {
         return null;
     }
 
-    // Check de si el jugador ya ha registrado algún usuario, solo puedes registrar una cuenta.
+    // Check de si el jugador ya ha registrado algÃºn usuario, solo puedes registrar una cuenta.
     public static boolean hasPlayer(long discId) throws SQLException {
         String query = "SELECT name FROM player WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -346,7 +346,7 @@ public class RusbikDatabase {
         return hasPlayer;
     }
 
-    // Actualizar número cada vez que te conectas, solo se usa para comprobar si es la primera vez que te unes.
+    // Actualizar nÃºmero cada vez que te conectas, solo se usa para comprobar si es la primera vez que te unes.
     public static void updateCount(String playerName) throws SQLException {
         if (c != null) {
             String query = "SELECT timesJoined FROM player WHERE name LIKE ?";
@@ -390,7 +390,7 @@ public class RusbikDatabase {
         }
     }
 
-    // Extraer la información de un bloque especificado por coordenadas, dimensión, y la página.
+    // Extraer la informaciÃ³n de un bloque especificado por coordenadas, dimensiÃ³n, y la pÃ¡gina.
     public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
         String query = "SELECT action , date , name , block  FROM logger " +
                 "WHERE posX = ? AND posY = ? AND posZ = ? AND dim LIKE ? ORDER BY id DESC LIMIT 10 OFFSET ?";
@@ -419,7 +419,7 @@ public class RusbikDatabase {
         return msg;
     }
 
-    // Número de páginas que puede tener de historial el bloque.
+    // NÃºmero de pÃ¡ginas que puede tener de historial el bloque.
     public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
         String query = "SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = ? AND posY = ? AND posZ = ? AND dim LIKE ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -435,7 +435,7 @@ public class RusbikDatabase {
         return lines;
     }
 
-    // Extraer todos los IDs de gente no baneada o añadida por excepción.
+    // Extraer todos los IDs de gente no baneada o aÃ±adida por excepciÃ³n.
     public static List<Long> getIDs() throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT discordId FROM player WHERE isBanned = 0 AND discordId IS NOT NULL AND discordId IS NOT 999999;");
@@ -461,7 +461,7 @@ public class RusbikDatabase {
         return nameList;
     }
     
-    // Elimina registros del logor si se supera un n�mero de registros
+    // Elimina registros del logger si se supera un número de registros
     public static void clearLogger() throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");

@@ -460,4 +460,18 @@ public class RusbikDatabase {
         stmt.close();
         return nameList;
     }
+    
+    // Elimina registros del logor si se supera un número de registros
+    public static void clearLogger() throws SQLException {
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");
+        
+        if(rs.next()){
+            ResultSet rs2 = stmt.executeQuery("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,5))");
+            rs2.close();
+        }
+        rs.close();
+        stmt.close();
+        
+    }
 }

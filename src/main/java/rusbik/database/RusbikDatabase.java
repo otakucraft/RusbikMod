@@ -108,7 +108,7 @@ public class RusbikDatabase {
     // Conseguir los permisos de cada jugador.
     public static int getPlayerPerms(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT perms FROM player WHERE name LIKE '%s';", playerName));
         int playerPerm = rs.getInt("perms");
         rs.close();
         stmt.close();
@@ -119,7 +119,7 @@ public class RusbikDatabase {
     // Conseguir la posición de la última muerte.
     public static BackPos getDeathPos(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM pos WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name LIKE '%s';", playerName));
         double X = rs.getDouble("deathX");
         double Y = rs.getDouble("deathY");
         double Z = rs.getDouble("deathZ");
@@ -133,7 +133,7 @@ public class RusbikDatabase {
     // Conseguir la posición de "home".
     public static HomePos getHomePos(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM pos WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name LIKE '%s';", playerName));
         double X = rs.getDouble("homeX");
         double Y = rs.getDouble("homeY");
         double Z = rs.getDouble("homeZ");
@@ -202,7 +202,7 @@ public class RusbikDatabase {
 
     public static boolean isBanned(long userID) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId = %d AND isBanned = 1;", userID));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d AND isBanned = 1;", userID));
         boolean exists = rs.next();
         rs.close();
         stmt.close();
@@ -211,7 +211,7 @@ public class RusbikDatabase {
 
     public static long getID(String playerName) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE name LIKE '%s';", playerName));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
         long id = rs.getLong("discordId");
         rs.close();
         stmt.close();
@@ -271,7 +271,7 @@ public class RusbikDatabase {
     // Check de si el jugador ya ha registrado algún usuario, solo puedes registrar una cuenta.
     public static boolean hasPlayer(long discId) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM player WHERE discordId = %d;", discId));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d;", discId));
         boolean hasPlayer = rs.next();
         rs.close();
         stmt.close();
@@ -307,7 +307,7 @@ public class RusbikDatabase {
     // Extraer la información de un bloque especificado por coordenadas, dimensión, y la página.
     public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC LIMIT 10 OFFSET %d;", X, Y, Z, dim, (page - 1) * 10));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT action , date , name , block  FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC LIMIT 10 OFFSET %d;", X, Y, Z, dim, (page - 1) * 10));
         List<String> msg = new ArrayList<>();
         int i = 0;
         while (rs.next() && i <= 10){
@@ -328,7 +328,7 @@ public class RusbikDatabase {
     // Número de páginas que puede tener de historial el bloque.
     public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT (COUNT(*) / 10) + 1 AS line FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s';", X, Y, Z, dim));
+        ResultSet rs = stmt.executeQuery(String.format("SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s';", X, Y, Z, dim));
         int lines = rs.getInt("line");
         rs.close();
         stmt.close();

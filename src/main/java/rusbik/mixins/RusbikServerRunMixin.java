@@ -47,5 +47,6 @@ public class RusbikServerRunMixin {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;saveAllPlayerData()V"))
     public void onSave(BooleanSupplier shouldKeepTicking, CallbackInfo ci) throws SQLException {
         DiscordListener.checkSub(RusbikDatabase.getIDs());
+        RusbikDatabase.clearLogger();
     }
 }

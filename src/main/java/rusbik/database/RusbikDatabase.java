@@ -68,78 +68,114 @@ public class RusbikDatabase {
     // Se ejecuta al añadir al jugador a la whitelist desde el comando !add de discord.
     public static void addPlayerInformation(String name, long discordId) throws SQLException {
         if (c != null){
-            Statement stmt = c.createStatement();
-            String addPlayer = String.format("INSERT OR IGNORE INTO player (name) " +
-                    "VALUES ('%s');", name);  // Intentar dedicar una row en la tabla player vincular el id de discord.
-            stmt.executeUpdate(addPlayer);
-            String regPlayerPosTable = String.format("INSERT OR IGNORE INTO pos (name) VALUES ('%s');", name);  // Intentar dedicar una row en la tabla pos para home y death.
-            stmt.executeUpdate(regPlayerPosTable);
-            String addDiscId = String.format("UPDATE player SET discordId = %d WHERE name LIKE '%s'", discordId, name);  // Añadir el id de discord.
-            // No se hace junto con el primer insert porque el jugador puede estar registrado pero tener null en esta columna al sacar de la whitelist por ejemplo
-            // no se elimina so row por completo, simplemente el discordId, para dar facilidad ante posibles cambios de cuenta de discord.
-            stmt.executeUpdate(addDiscId);
-            stmt.close();
+            // Intentar dedicar una row en la tabla player vincular el id de discord
+            String queryAddPlayer = "INSERT OR IGNORE INTO player (name) VALUES (?)";
+            PreparedStatement psAddPlayer = c.prepareStatement(queryAddPlayer);
+            psAddPlayer.setString(1, name);
+            ResultSet rsAddPlayer = psAddPlayer.executeQuery();
+            rsAddPlayer.close();
+            psAddPlayer.close();
+            
+            // Intentar dedicar una row en la tabla pos para home y death
+            String queryPlayerPos = "INSERT OR IGNORE INTO pos (name) VALUES (?)";
+            PreparedStatement psPlayerPos = c.prepareStatement(queryPlayerPos);
+            psPlayerPos.setString(1, name);
+            ResultSet rsPlayerPos = psPlayerPos.executeQuery();
+            rsPlayerPos.close();
+            psPlayerPos.close();
+            
+            //A�adir el id de discord
+            /* No se hace junto con el primer insert porque el jugador puede estar registrado pero tener null en esta columna al sacar de la whitelist por ejemplo
+               no se elimina so row por completo, simplemente el discordId, para dar facilidad ante posibles cambios de cuenta de discord.*/
+            String queryDiscId = "UPDATE player SET discordId = ? WHERE name LIKE ?";
+            PreparedStatement psDiscId = c.prepareStatement(queryDiscId);
+            psDiscId.setLong(1, discordId);
+            psDiscId.setString(2, name);
+            ResultSet rsDiscId = psDiscId.executeQuery();
+            rsDiscId.close();
+            psDiscId.close();
+            
             c.commit();
         }
     }
 
+    // Actualiza la muerte del jugador
     public static void updatePlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
-            Statement stmt = c.createStatement();
-            String addPlayer = String.format("UPDATE pos SET deathX = %f, deathY = %f, deathZ = %f, deathDim = '%s' " +
-                    "WHERE name LIKE '%s';", X, Y, Z, Dim, name);  // Actualizar la posición de muerte del jugador.
-            stmt.executeUpdate(addPlayer);
-            stmt.close();
+            String query = "UPDATE pos SET deathX = ?, deathY = ?, deathZ = ?, deathDim = ? WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setDouble(1, X);
+            ps.setDouble(2, Y);
+            ps.setDouble(3, Z);
+            ps.setString(4, Dim);
+            ps.setString(5, name);
+            ResultSet rs = ps.executeQuery();
+            rs.close();
+            ps.close();
+            
             c.commit();
         }
     }
 
+    // Actualiza la home del jugador
     public static void updatePlayerInformation(ServerPlayerEntity player, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
-            Statement stmt = c.createStatement();
-            String addPlayer = String.format("UPDATE pos SET homeX = %f, homeY = %f, homeZ = %f, homeDim = '%s' " +
-                    "WHERE name LIKE '%s';", X, Y, Z, Dim, player.getName().getString());  // Actualizar la home del jugador.
-            stmt.executeUpdate(addPlayer);
-            stmt.close();
+            String query = "UPDATE pos SET homeX = ?, homeY = ?, homeZ = ?, homeDim = ? WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setDouble(1, X);
+            ps.setDouble(2, Y);
+            ps.setDouble(3, Z);
+            ps.setString(4, Dim);
+            ps.setString(5, player.getName().getString());
+            ResultSet rs = ps.executeQuery();
+            rs.close();
+            ps.close();
+
             c.commit();
         }
     }
 
     // Conseguir los permisos de cada jugador.
     public static int getPlayerPerms(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT perms FROM player WHERE name LIKE '%s';", playerName));
+        String query = "SELECT perms FROM player WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         int playerPerm = rs.getInt("perms");
         rs.close();
-        stmt.close();
-
+        ps.close();
+        
         return playerPerm;
     }
 
     // Conseguir la posición de la última muerte.
     public static BackPos getDeathPos(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name LIKE '%s';", playerName));
+        String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         double X = rs.getDouble("deathX");
         double Y = rs.getDouble("deathY");
         double Z = rs.getDouble("deathZ");
         String dim = rs.getString("deathDim");
         rs.close();
-        stmt.close();
+        ps.close();
 
         return new BackPos(X, Y, Z, dim);
     }
 
     // Conseguir la posición de "home".
     public static HomePos getHomePos(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name LIKE '%s';", playerName));
+        String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         double X = rs.getDouble("homeX");
         double Y = rs.getDouble("homeY");
         double Z = rs.getDouble("homeZ");
         String dim = rs.getString("homeDim");
         rs.close();
-        stmt.close();
+        ps.close();
 
         return new HomePos(X, Y, Z, dim);
     }
@@ -147,74 +183,93 @@ public class RusbikDatabase {
     // Actualizar los permisos para un jugador.
     public static void updatePerms(String playerName, int value) throws SQLException {
         if (c != null) {
-            Statement stmt = c.createStatement();
-            String addPlayer = String.format("UPDATE player SET perms = %d WHERE name LIKE '%s';", value, playerName); // on perms update
-            stmt.executeUpdate(addPlayer);
-            stmt.close();
+            String query = "UPDATE player SET perms = ? WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setInt(1, value);
+            ps.setString(2, playerName);
+            ResultSet rs = ps.executeQuery();
+            rs.close();
             c.commit();
         }
     }
 
     // Check de si es la primera vez que este jugador se conecta.
     public static boolean playerExists(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT timesJoined FROM player WHERE name LIKE '%s';", playerName));
+        String query = "SELECT timesJoined FROM player WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             long times = rs.getLong("timesJoined");
             rs.close();
-            stmt.close();
+            ps.close();
             return times != 0;
         }
         rs.close();
-        stmt.close();
+        ps.close();
         return true;
     }
 
     // Check de si este jugador está registrado en la base de datos con nombre y discord ID.
     public static boolean userExists(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE name LIKE '%s';", playerName));
+        String query = "SELECT name FROM player WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         boolean exists = false;
         if (rs.next()) {
-            ResultSet rs2 = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+            String query2 = "SELECT discordId FROM player WHERE name LIKE ?";
+            PreparedStatement ps2 = c.prepareStatement(query2);
+            ps2.setString(1, playerName);
+            ResultSet rs2 = ps2.executeQuery();
             exists = rs2.getLong("discordId") != 0;
+            rs2.close();
+            ps2.close();
         }
         rs.close();
-        stmt.close();
+        ps.close();
         return exists;
     }
 
     // Banear usuario para que no pueda meter a más gente.
     public static void banUser(long userID) throws SQLException {
-        Statement stmt = c.createStatement();
-        String giveBan = String.format("UPDATE player SET isBanned = 1 WHERE discordId = %d;", userID);
-        stmt.executeUpdate(giveBan);
-        stmt.close();
+        String query = "UPDATE player SET isBanned = 1 WHERE discordId = ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setLong(1, userID);
+        ResultSet rs = ps.executeQuery();
+        rs.close();
+        ps.close();
     }
 
     // Retirar el ban.
     public static void pardonUser(long userID) throws SQLException {
-        Statement stmt = c.createStatement();
-        String removeBan = String.format("UPDATE player SET isBanned = 0 WHERE discordId = %d;", userID);
-        stmt.executeUpdate(removeBan);
-        stmt.close();
+        String query = "UPDATE player SET isBanned = 0 WHERE discordId = ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setLong(1, userID);
+        ResultSet rs = ps.executeQuery();
+        rs.close();
+        ps.close();
     }
 
     public static boolean isBanned(long userID) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d AND isBanned = 1;", userID));
+        String query = "SELECT name FROM player WHERE discordId = ? AND isBanned = 1";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setLong(1, userID);
+        ResultSet rs = ps.executeQuery();
         boolean exists = rs.next();
         rs.close();
-        stmt.close();
+        ps.close();
         return exists;
     }
 
     public static long getID(String playerName) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+        String query = "SELECT discordId FROM player WHERE name LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
         long id = rs.getLong("discordId");
         rs.close();
-        stmt.close();
+        ps.close();
         return id;
     }
 
@@ -232,11 +287,13 @@ public class RusbikDatabase {
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
         boolean isAllowed = true;
         if (userExists(playerName)) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
+            String query = "SELECT discordId FROM player WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, playerName);
+            ResultSet rs = ps.executeQuery();
             isAllowed = rs.getLong("discordId") == discId;
             rs.close();
-            stmt.close();
+            ps.close();
         }
         return isAllowed;
     }
@@ -244,25 +301,34 @@ public class RusbikDatabase {
     // Acción al eliminarte de la whitelist.
     public static void removeData(String playerName) throws SQLException {
         if (c != null) {
-            Statement stmt = c.createStatement();
-            // Reset de tu discord ID, posiciones de muerte y home, pero se deja la row con tu nombre creado.
-            String deleteDiscId = String.format("UPDATE player SET discordId = NULL WHERE name LIKE '%s';", playerName);
-            stmt.executeUpdate(deleteDiscId);
-            String deletePos = String.format("UPDATE pos SET homeX = NULL, homeY = NULL, homeZ = NULL, homeDim = NULL, " +
-                    "deathX = NULL, deathY = NULL, deathZ = NULL, deathDim = NULL WHERE name LIKE '%s';", playerName);
-            stmt.executeUpdate(deletePos);
-            stmt.close();
+            String query = "UPDATE player SET discordId = NULL WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, playerName);
+            ResultSet rs = ps.executeQuery();
+            rs.close();
+            ps.close();
+            
+            String query2 = "UPDATE pos SET homeX = NULL, homeY = NULL, homeZ = NULL, homeDim = NULL, " +
+                    "deathX = NULL, deathY = NULL, deathZ = NULL, deathDim = NULL WHERE name LIKE ?";
+            PreparedStatement ps2 = c.prepareStatement(query2);
+            ps2.setString(1, playerName);
+            ResultSet rs2 = ps2.executeQuery();
+            rs2.close();
+            ps2.close();
+
             c.commit();
         }
     }
 
     public static String getPlayerName(long discordID) throws SQLException {
         if (c != null) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d;", discordID));
+            String query = "SELECT name FROM player WHERE discordId = ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setLong(1, discordID);
+            ResultSet rs = ps.executeQuery();
             String playerName = rs.getString("name");
             rs.close();
-            stmt.close();
+            ps.close();
             return playerName;
         }
         return null;
@@ -270,24 +336,35 @@ public class RusbikDatabase {
 
     // Check de si el jugador ya ha registrado algún usuario, solo puedes registrar una cuenta.
     public static boolean hasPlayer(long discId) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT name FROM player WHERE discordId = %d;", discId));
+        String query = "SELECT name FROM player WHERE discordId = ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setLong(1, discId);
+        ResultSet rs = ps.executeQuery();
         boolean hasPlayer = rs.next();
         rs.close();
-        stmt.close();
+        ps.close();
         return hasPlayer;
     }
 
     // Actualizar número cada vez que te conectas, solo se usa para comprobar si es la primera vez que te unes.
     public static void updateCount(String playerName) throws SQLException {
         if (c != null) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery(String.format("SELECT timesJoined FROM player WHERE name LIKE '%s';", playerName));
+            String query = "SELECT timesJoined FROM player WHERE name LIKE ?";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, playerName);
+            ResultSet rs = ps.executeQuery();
             long times = rs.getLong("timesJoined");
-            String playerJoined = String.format("UPDATE player SET timesJoined = %d WHERE name LIKE '%s';", times + 1, playerName);
-            stmt.executeUpdate(playerJoined);
             rs.close();
-            stmt.close();
+            ps.close();
+            
+            String query2 = "UPDATE player SET timesJoined = ? WHERE name LIKE ?";
+            PreparedStatement ps2 = c.prepareStatement(query2);
+            ps2.setLong(1, times + 1);
+            ps2.setString(2, playerName);
+            ResultSet rs2 = ps2.executeQuery();
+            rs2.close();
+            ps2.close();
+            
             c.commit();
         }
     }
@@ -295,19 +372,36 @@ public class RusbikDatabase {
     // Registrar acciones de bloques en la base de datos.
     public static void blockLogging(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {
         if (c != null){
-            Statement stmt = c.createStatement();
-            String addBrokenBlock = String.format("INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
-                    "VALUES ('%s','%s',%d,%d,%d,'%s',%d,'%s');", init, block, X, Y, Z, dim, actionType, date);
-            stmt.executeUpdate(addBrokenBlock);
-            stmt.close();
+            String query = "INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
+                    "VALUES (?,?,?,?,?,?,?,?)";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, init);
+            ps.setString(2, block);
+            ps.setInt(3, X);
+            ps.setInt(4, Y);
+            ps.setInt(5, Z);
+            ps.setString(6, dim);
+            ps.setInt(7, actionType);            
+            ps.setString(8, date);
+            ResultSet rs = ps.executeQuery();
+            rs.close();
+            ps.close();
             c.commit();
         }
     }
 
     // Extraer la información de un bloque especificado por coordenadas, dimensión, y la página.
     public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT action , date , name , block  FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s' ORDER BY id DESC LIMIT 10 OFFSET %d;", X, Y, Z, dim, (page - 1) * 10));
+        String query = "SELECT action , date , name , block  FROM logger " +
+                "WHERE posX = ? AND posY = ? AND posZ = ? AND dim LIKE ? ORDER BY id DESC LIMIT 10 OFFSET ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setInt(1, X);
+        ps.setInt(2, Y);
+        ps.setInt(3, Z);
+        ps.setString(4, dim);
+        ps.setInt(5, (page - 1) * 10);
+        ResultSet rs = ps.executeQuery();
+
         List<String> msg = new ArrayList<>();
         int i = 0;
         while (rs.next() && i <= 10){
@@ -320,18 +414,24 @@ public class RusbikDatabase {
         }
 
         rs.close();
-        stmt.close();
+        ps.close();
 
         return msg;
     }
 
     // Número de páginas que puede tener de historial el bloque.
     public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
-        Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery(String.format("SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = %d AND posY = %d AND posZ = %d AND dim LIKE '%s';", X, Y, Z, dim));
+        String query = "SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = ? AND posY = ? AND posZ = ? AND dim LIKE ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setInt(1, X);
+        ps.setInt(2, Y);
+        ps.setInt(3, Z);
+        ps.setString(4, dim);
+        ResultSet rs = ps.executeQuery();
+            
         int lines = rs.getInt("line");
         rs.close();
-        stmt.close();
+        ps.close();
         return lines;
     }
 

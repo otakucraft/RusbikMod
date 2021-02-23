@@ -23,7 +23,7 @@ public class RusbikServerRunMixin {
 
     @Inject(method = "runServer", at = @At("HEAD"))
     public void run (CallbackInfo ci){
-        RusbikDatabase.initializeDB();  // Crear si fuera necesario y establecer con conexión con la base de datos.
+        RusbikDatabase.initializeDB(session.getDirectoryName());  // Crear si fuera necesario y establecer con conexión con la base de datos.
         FileManager.directoryName = session.getDirectoryName();
         try {
             FileManager.initializeJson();  // Cargar la configuración del archivo .yaml

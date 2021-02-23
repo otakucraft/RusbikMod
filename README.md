@@ -1,7 +1,7 @@
 # RusbikMod
 Mod para la administración del server de subs de Rubik.
 
-Este mod cuenta con una base de datos SQLite con 3 tablas:
+Este mod cuenta con una base de datos SQLite con 3 tablas (La base de datos se almacena en la carpeta `information` dentro de la carpeta del mapa):
 * player: name, discordId, timesJoined, isBanned, perms
 * pos: name, deathX, deathY, deathZ, deathDim, homeX, homeY, homeZ, homeDim
 * logger: id, name, block, posX, posY, posZ, dim, action, date

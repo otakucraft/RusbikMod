@@ -15,13 +15,13 @@ public class RusbikDatabase {
 
     public static Connection c = null;
 
-    public static void initializeDB(){
+    public static void initializeDB(String directoryName){
         try {
             // Creo la conexiÃ³n.
             Class.forName("org.sqlite.JDBC");
-            boolean createDir = new File("information").mkdirs();
+            boolean createDir = new File(String.format("%s/information", directoryName)).mkdirs();
             if (createDir) System.out.println("information dir created");
-            c = DriverManager.getConnection("jdbc:sqlite:information/server.db");
+            c = DriverManager.getConnection(String.format("jdbc:sqlite:%s/information/server.db", directoryName));
             c.setAutoCommit(false);
             Statement stmt = c.createStatement();
 

@@ -8,7 +8,7 @@ Este mod cuenta con una base de datos SQLite con 3 tablas (La base de datos se a
 
 Relacionado con la `action` mencionado previamente:
 * 0 = Break
-* 1 = place
+* 1 = Place
 * 2 = Use
 
 ## Configuración

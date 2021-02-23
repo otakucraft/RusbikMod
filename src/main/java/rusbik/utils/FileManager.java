@@ -11,9 +11,11 @@ import java.util.List;
 
 public class FileManager {
     // Archivo de configuración.
-    public static String jsonConfigFile = "config.json";
+    public static String directoryName = "";
+    public static String jsonConfigFile = "RConfig.json";
 
     public static void initializeJson() {
+        if (!directoryName.equals("")) jsonConfigFile = String.format("%s/%s", directoryName, jsonConfigFile);
         File file = new File(jsonConfigFile);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!file.exists()) {
@@ -55,6 +57,7 @@ public class FileManager {
     // Actualizar el archivo con los nuevos datos.
     public static void updateFile() {
         try {
+            if (!directoryName.equals("")) jsonConfigFile = String.format("%s/%s", directoryName, jsonConfigFile);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(jsonConfigFile);
             gson.toJson(Rusbik.config, writer);

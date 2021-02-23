@@ -100,5 +100,6 @@ Aplicar un nivel de permisos a cualquier jugador conectado para tener disponible
 ## otros
 * Al morir se envía al jugador un mensaje con la posición de muerte y dimensión.
 * Jugadores añadidos manualmente a la whitelist no podrán ejecutar ningún comando con privilegios distinto de `null`, al no tener un registro en la base de datos.
+* Los phantoms sueltan elytras al morir por shulker.
 * `/seed` está habilitado para todos los jugadores independientemente del OP.
 * `/pito` ¯\\\_(ツ)_/¯

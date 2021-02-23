@@ -17,11 +17,11 @@ import rusbik.commands.SBCommand;
 import rusbik.commands.SpoofCommand;
 import rusbik.commands.AdminTeleportCommand;
 import rusbik.commands.CustomTeleportCommand;
-import rusbik.settings.RusbisConfig;
+import rusbik.settings.RubiConfig;
 
 public class Rusbik {
 
-    public static RusbisConfig config;
+    public static RubiConfig config;
 
     public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
         RandomTpCommand.register(dispatcher);

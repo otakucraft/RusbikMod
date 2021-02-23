@@ -29,7 +29,7 @@ public class HomeCommand {
                 else source.sendFeedback(new LiteralText("Parece que no estás registrado correctamente y no puedes ejecutar esta acción."), false);
             }
             catch (Exception e){
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
         return 1;

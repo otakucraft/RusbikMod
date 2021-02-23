@@ -1,9 +1,9 @@
 package rusbik.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import rusbik.Rusbik;
-import rusbik.settings.RusbisConfig;
+import rusbik.settings.RubiConfig;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,14 +11,13 @@ import java.util.List;
 
 public class FileManager {
     // Archivo de configuración.
-    public static String yamlFile = "config.yaml";
+    public static String jsonConfigFile = "config.json";
 
-    public static void initializeYaml() {
-        File file = new File(yamlFile);
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    public static void initializeJson() {
+        File file = new File(jsonConfigFile);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!file.exists()) {
             try {
-                // Se ejecuta al crearse el archivo a modo de helper.
                 List<Long> whitelistChat = new ArrayList<>();
                 whitelistChat.add(0L);
                 whitelistChat.add(1L);
@@ -31,15 +30,22 @@ public class FileManager {
                 List<Long> validRoles = new ArrayList<>();
                 validRoles.add(6L);
                 validRoles.add(7L);
-                Rusbik.config = new RusbisConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat, 0, validRoles);
-                mapper.writeValue(file, Rusbik.config);
+                Rusbik.config = new RubiConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat, 0, validRoles);
+                FileWriter writer = new FileWriter(file);
+                gson.toJson(Rusbik.config, writer);
+                writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             try {
-                Rusbik.config = mapper.readValue(file, RusbisConfig.class);
+                StringBuilder result = new StringBuilder();
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    result.append(line);
+                }
+                Rusbik.config = gson.fromJson(result.toString(), RubiConfig.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -48,9 +54,11 @@ public class FileManager {
 
     // Actualizar el archivo con los nuevos datos.
     public static void updateFile() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
-            mapper.writeValue(new File(yamlFile), Rusbik.config);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(jsonConfigFile);
+            gson.toJson(Rusbik.config, writer);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

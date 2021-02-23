@@ -20,11 +20,11 @@ public class RusbikServerRunMixin {
     public void run (CallbackInfo ci){
         RusbikDatabase.initializeDB();  // Crear si fuera necesario y establecer con conexión con la base de datos.
         try {
-            FileManager.initializeYaml();  // Cargar la configuración del archivo .yaml
-            if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
-                if (Rusbik.config.isRunning) {  // Iniciar el bot de discord.
+            FileManager.initializeJson();  // Cargar la configuración del archivo .yaml
+            if (Rusbik.config.getChatChannelId() != 0 && !Rusbik.config.getDiscordToken().equals("")) {
+                if (Rusbik.config.isRunning()) {  // Iniciar el bot de discord.
                     try {
-                        DiscordListener.connect((MinecraftServer) (Object) this, Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
+                        DiscordListener.connect((MinecraftServer) (Object) this, Rusbik.config.getDiscordToken(), String.valueOf(Rusbik.config.getChatChannelId()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

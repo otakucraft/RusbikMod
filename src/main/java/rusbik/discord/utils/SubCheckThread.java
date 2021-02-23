@@ -36,17 +36,17 @@ public class SubCheckThread extends Thread {
     public void run() {
         System.out.println("Discord User check - START");
 
-        List<Member> members = Objects.requireNonNull(jda.getGuildById(Rusbik.config.groupID)).retrieveMembersByIds(ids).get();
+        List<Member> members = Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(ids).get();
         List<Long> currentIDs = new ArrayList<>();
 
         for (Member member : members) {
             currentIDs.add(member.getIdLong());
             if (!hasValidRole(member.getRoles())) {  // Users a los que se les ha acabado la sub.
                 try {
-                    if (Rusbik.config.discordRole != 0) {  // Eliminar rol de discord.
-                        Guild guild = jda.getGuildById(Rusbik.config.groupID);
+                    if (Rusbik.config.getDiscordRole() != 0) {  // Eliminar rol de discord.
+                        Guild guild = jda.getGuildById(Rusbik.config.getGroupID());
                         if (guild != null) {
-                            Role role = guild.getRoleById(Rusbik.config.discordRole);
+                            Role role = guild.getRoleById(Rusbik.config.getDiscordRole());
                             if (role != null) {
                                 guild.removeRoleFromMember(member, role).queue();
                             }
@@ -92,7 +92,7 @@ public class SubCheckThread extends Thread {
 
     private boolean hasValidRole(List<Role> roles) {
         for (Role role : roles) {
-            if (Rusbik.config.validRoles.contains(role.getIdLong())) {
+            if (Rusbik.config.getValidRoles().contains(role.getIdLong())) {
                 return true;
             }
         }

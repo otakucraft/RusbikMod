@@ -9,23 +9,14 @@ import java.util.List;
 
 public class Commands {
     private String cBody;
-    private final List<String> aliases = new ArrayList<>();
     private DiscordPermission permission;
 
     Commands() {}
 
     public void execute(MessageReceivedEvent event, MinecraftServer server) {}
 
-    public void addAlias(String alias) {
-        this.aliases.add(alias);
-    }
-
     public void setCBody(String cBody) {
         this.cBody = cBody;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
     }
 
     public String getCBody() {

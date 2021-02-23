@@ -74,8 +74,8 @@ public class Remove extends Commands {
 
                 event.getChannel().sendMessage("Eliminado ;(").queue();
 
-                if (Rusbik.config.discordRole != 0) {  // Quitar rol de discord.
-                    event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.discordRole))).queue();
+                if (Rusbik.config.getDiscordRole() != 0) {  // Quitar rol de discord.
+                    event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.getDiscordRole()))).queue();
                 }
             }
             catch (SQLException throwables) {

@@ -72,14 +72,14 @@ public class RusbikDatabase {
             String queryAddPlayer = "INSERT OR IGNORE INTO player (name) VALUES (?)";
             PreparedStatement psAddPlayer = c.prepareStatement(queryAddPlayer);
             psAddPlayer.setString(1, name);
-            int rsAddPlayer = psAddPlayer.executeUpdate();
+            psAddPlayer.executeUpdate();
             psAddPlayer.close();
             
             // Intentar dedicar una row en la tabla pos para home y death
             String queryPlayerPos = "INSERT OR IGNORE INTO pos (name) VALUES (?)";
             PreparedStatement psPlayerPos = c.prepareStatement(queryPlayerPos);
             psPlayerPos.setString(1, name);
-            int rsPlayerPos = psPlayerPos.executeUpdate();
+            psPlayerPos.executeUpdate();
             psPlayerPos.close();
             
             //Añadir el id de discord
@@ -89,7 +89,7 @@ public class RusbikDatabase {
             PreparedStatement psDiscId = c.prepareStatement(queryDiscId);
             psDiscId.setLong(1, discordId);
             psDiscId.setString(2, name);
-            int rsDiscId = psDiscId.executeUpdate();
+            psDiscId.executeUpdate();
             psDiscId.close();
             
             c.commit();
@@ -106,7 +106,7 @@ public class RusbikDatabase {
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
             ps.setString(5, name);
-            int rs = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
             
             c.commit();
@@ -123,7 +123,7 @@ public class RusbikDatabase {
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
             ps.setString(5, player.getName().getString());
-            int rs = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
 
             c.commit();
@@ -182,7 +182,7 @@ public class RusbikDatabase {
             PreparedStatement ps = c.prepareStatement(query);
             ps.setInt(1, value);
             ps.setString(2, playerName);
-            int rs = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
             c.commit();
         }
@@ -231,8 +231,9 @@ public class RusbikDatabase {
         String query = "UPDATE player SET isBanned = 1 WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
         ps.setLong(1, userID);
-        int rs = ps.executeUpdate();
+        ps.executeUpdate();
         ps.close();
+        c.commit();
     }
 
     // Retirar el ban.
@@ -240,8 +241,9 @@ public class RusbikDatabase {
         String query = "UPDATE player SET isBanned = 0 WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
         ps.setLong(1, userID);
-        int rs = ps.executeUpdate();
+        ps.executeUpdate();
         ps.close();
+        c.commit();
     }
 
     public static boolean isBanned(long userID) throws SQLException {
@@ -266,7 +268,7 @@ public class RusbikDatabase {
         return id;
     }
 
-//    // Si tiene permitido actualizar (por ejemplo su nombre de mc?) WIP.
+//    Si tiene permitido actualizar (por ejemplo su nombre de mc?) WIP.
 //    public static boolean allowedToUpdate(long discId, String playerName) throws SQLException {
 //        Statement stmt = c.createStatement();
 //        ResultSet rs = stmt.executeQuery(String.format("SELECT discordId FROM player WHERE name LIKE '%s';", playerName));
@@ -297,14 +299,14 @@ public class RusbikDatabase {
             String query = "UPDATE player SET discordId = NULL WHERE name LIKE ?";
             PreparedStatement ps = c.prepareStatement(query);
             ps.setString(1, playerName);
-            int rs = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
             
             String query2 = "UPDATE pos SET homeX = NULL, homeY = NULL, homeZ = NULL, homeDim = NULL, " +
                     "deathX = NULL, deathY = NULL, deathZ = NULL, deathDim = NULL WHERE name LIKE ?";
             PreparedStatement ps2 = c.prepareStatement(query2);
             ps2.setString(1, playerName);
-            int rs2 = ps2.executeUpdate();
+            ps2.executeUpdate();
             ps2.close();
 
             c.commit();
@@ -352,7 +354,7 @@ public class RusbikDatabase {
             PreparedStatement ps2 = c.prepareStatement(query2);
             ps2.setLong(1, times + 1);
             ps2.setString(2, playerName);
-            int rs2 = ps2.executeUpdate();
+            ps2.executeUpdate();
             ps2.close();
             
             c.commit();
@@ -373,7 +375,7 @@ public class RusbikDatabase {
             ps.setString(6, dim);
             ps.setInt(7, actionType);            
             ps.setString(8, date);
-            int rs = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
             c.commit();
         }
@@ -456,7 +458,7 @@ public class RusbikDatabase {
         ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");
         
         if(rs.next()){
-            int rs2 = stmt.executeUpdate("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,5))");
+            stmt.executeUpdate("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,5))");
         }
         rs.close();
         stmt.close();

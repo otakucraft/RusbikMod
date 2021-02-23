@@ -55,10 +55,10 @@ public class DiscordCommand {
     // Inicializar el bot.
     private static int start(ServerCommandSource src){
         if (!DiscordListener.chatBridge){
-            if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
+            if (Rusbik.config.getChatChannelId() != 0 && !Rusbik.config.getDiscordToken().equals("")) {
                 try {
                     // Envio la información al bot para que inicie.
-                    DiscordListener.connect(src.getMinecraftServer(), Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
+                    DiscordListener.connect(src.getMinecraftServer(), Rusbik.config.getDiscordToken(), String.valueOf(Rusbik.config.getChatChannelId()));
                     src.sendFeedback(new LiteralText("Discord integration is running"), false);
                 } catch (Exception e) {
                     e.printStackTrace();

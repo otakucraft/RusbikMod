@@ -12,7 +12,7 @@ Relacionado con la `action` mencionado previamente:
 * 2 = Use
 
 ## Configuración
-Al iniciar por primera vez con el mod instalado, se generará un archivo `config.yaml`, en él encontrarás información como chats permitidos, chat del chatbridge, lugar para la token, etc.
+Al iniciar por primera vez con el mod instalado, se generará un archivo `config.json`, en él encontrarás información como chats permitidos, chat del chatbridge, lugar para la token, etc.
 
 # Funciones
 

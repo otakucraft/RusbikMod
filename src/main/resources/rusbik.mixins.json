@@ -9,6 +9,7 @@
     "CommandManagerSeedMixin",
     "DiscordAdvancementMixin",
     "DiscordServerChatListerMixin",
+    "PhantomEntityMixin",
     "PlayerInteractionMixin",
     "PlayerManagerJoinsMixin",
     "RusbikServerRunMixin",

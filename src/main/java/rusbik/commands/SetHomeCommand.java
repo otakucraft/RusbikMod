@@ -27,7 +27,7 @@ public class SetHomeCommand {
                         // Actualizar la base de datos y mensaje.
                         RusbikDatabase.updatePlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
                         playerEntity.setSpawnPoint(World.OVERWORLD, playerEntity.getBlockPos(), 0.0F, true, false);
-                        source.sendFeedback(new LiteralText("Casa en: " + KrusbibUtils.getDimensionWithColor(playerEntity.world) + KrusbibUtils.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ())), false);
+                        source.sendFeedback(new LiteralText(String.format("Casa en: %s %s", KrusbibUtils.getDimensionWithColor(playerEntity.world), KrusbibUtils.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ()))), false);
                     }
                     else {
                         source.sendFeedback(new LiteralText("No puedes usar este comando :P"), false);

@@ -31,7 +31,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity {
             DiscordListener.sendMessage(":skull_crossbones: **" + this.getDamageTracker().getDeathMessage().getString().replace("_", "\\_") + "**");
         }
 
-        this.sendMessage(new LiteralText("RIP ;( : " + KrusbibUtils.getDimensionWithColor(this.world) + KrusbibUtils.formatCoords(this.getPos().x, this.getPos().y, this.getPos().z)), false);
+        this.sendMessage(new LiteralText(String.format("RIP ;( %s %s", KrusbibUtils.getDimensionWithColor(this.world), KrusbibUtils.formatCoords(this.getPos().x, this.getPos().y, this.getPos().z))), false);
 
         if (RusbikDatabase.userExists(this.getEntityName())) {
             RusbikDatabase.updatePlayerInformation(this.getEntityName(), this.getX(), this.getY(), this.getZ(), KrusbibUtils.getDim(this.world));

@@ -70,9 +70,9 @@ public class Add extends Commands {
 
                 event.getChannel().sendMessage("Añadido :)").queue();
 
-                if (Rusbik.config.discordRole != 0) {  // Dar rol de discord.
+                if (Rusbik.config.getDiscordRole() != 0) {  // Dar rol de discord.
                     Guild guild = event.getGuild();
-                    Role role = guild.getRoleById(Rusbik.config.discordRole);
+                    Role role = guild.getRoleById(Rusbik.config.getDiscordRole());
                     assert role != null;
                     guild.addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
                 }

@@ -38,13 +38,13 @@ public class DiscordUtils {
         int id = permission.getId();
         switch (id) {
             case 0:
-                shouldWork = Rusbik.config.adminChat.contains(chatId);
+                shouldWork = Rusbik.config.getAdminChat().contains(chatId);
                 break;
             case 1:
-                shouldWork = Rusbik.config.whitelistChat.contains(chatId);
+                shouldWork = Rusbik.config.getWhitelistChat().contains(chatId);
                 break;
             case 2:
-                shouldWork = Rusbik.config.allowedChat.contains(chatId);
+                shouldWork = Rusbik.config.getAllowedChat().contains(chatId);
                 break;
         }
         return shouldWork;

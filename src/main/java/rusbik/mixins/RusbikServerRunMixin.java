@@ -1,7 +1,10 @@
 package rusbik.mixins;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelStorage;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,15 +19,18 @@ import java.util.function.BooleanSupplier;
 @Mixin(MinecraftServer.class)
 // Mixin que inicializa todos los procesos.
 public class RusbikServerRunMixin {
+    @Shadow @Final protected LevelStorage.Session session;
+
     @Inject(method = "runServer", at = @At("HEAD"))
     public void run (CallbackInfo ci){
-        RusbikDatabase.initializeDB();  // Crear si fuera necesario y establecer con conexión con la base de datos.
+        RusbikDatabase.initializeDB(session.getDirectoryName());  // Crear si fuera necesario y establecer con conexión con la base de datos.
+        FileManager.directoryName = session.getDirectoryName();
         try {
-            FileManager.initializeYaml();  // Cargar la configuración del archivo .yaml
-            if (Rusbik.config.chatChannelId != 0 && !Rusbik.config.discordToken.equals("")) {
-                if (Rusbik.config.isRunning) {  // Iniciar el bot de discord.
+            FileManager.initializeJson();  // Cargar la configuración del archivo .yaml
+            if (Rusbik.config.getChatChannelId() != 0 && !Rusbik.config.getDiscordToken().equals("")) {
+                if (Rusbik.config.isRunning()) {  // Iniciar el bot de discord.
                     try {
-                        DiscordListener.connect((MinecraftServer) (Object) this, Rusbik.config.discordToken, String.valueOf(Rusbik.config.chatChannelId));
+                        DiscordListener.connect((MinecraftServer) (Object) this, Rusbik.config.getDiscordToken(), String.valueOf(Rusbik.config.getChatChannelId()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -48,25 +48,24 @@ public class Exremove extends Commands {
             long id = 999999L;
 
             try {
-                if (!RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
+                if (RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
+                    RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
+
+                    WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
+                    whitelist.remove(whitelistEntry);
+
+                    ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
+                    if (serverPlayerEntity != null) {
+                        serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                    }
+
+                    event.getChannel().sendMessage("Eliminado ;(").queue();
+
+                    if (Rusbik.config.getDiscordRole() != 0) {  // Quitar rol de discord.
+                        event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.getDiscordToken()))).queue();
+                    }
+                } else {
                     event.getChannel().sendMessage("No tienes permiso para eliminar a este usuario").queue();
-                    return;
-                }
-
-                RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
-
-                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
-                whitelist.remove(whitelistEntry);
-
-                ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
-                if (serverPlayerEntity != null) {
-                    serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
-                }
-
-                event.getChannel().sendMessage("Eliminado ;(").queue();
-
-                if (Rusbik.config.discordRole != 0) {  // Quitar rol de discord.
-                    event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()), Objects.requireNonNull(event.getGuild().getRoleById(Rusbik.config.discordRole))).queue();
                 }
             }
             catch (SQLException throwables) {

@@ -98,7 +98,7 @@ public class DiscordListener extends ListenerAdapter {
                 list.execute(event, server);
             }
 
-            else if (event.getChannel().getIdLong() == (Rusbik.config.chatChannelId)) {
+            else if (event.getChannel().getIdLong() == (Rusbik.config.getChatChannelId())) {
                 DiscordUtils.sendMessage(event, server);
             }
         }
@@ -119,7 +119,7 @@ public class DiscordListener extends ListenerAdapter {
     public static void sendAdminMessage(String msg) {
         if (chatBridge) {
             try {
-                TextChannel ch = jda.getTextChannelById(Rusbik.config.adminChat.get(0));
+                TextChannel ch = jda.getTextChannelById(Rusbik.config.getAdminChat().get(0));
                 if (ch != null) ch.sendMessage(msg).queue();
             }
             catch (Exception e) {

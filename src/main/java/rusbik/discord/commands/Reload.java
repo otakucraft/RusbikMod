@@ -17,7 +17,7 @@ public class Reload extends Commands {
         if (DiscordUtils.isAllowed(this.getPermission(), event.getChannel().getIdLong())) {
             server.getPlayerManager().reloadWhitelist();
             server.kickNonWhitelistedPlayers(server.getCommandSource());
-            FileManager.initializeYaml();
+            FileManager.initializeJson();
             event.getChannel().sendMessage("Reloaded!").queue();
         }
     }

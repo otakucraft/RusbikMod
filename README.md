@@ -1,18 +1,19 @@
 # RusbikMod
 Mod para la administración del server de subs de Rubik.
 
-Este mod cuenta con una base de datos SQLite con 3 tablas:
+Este mod cuenta con una base de datos SQLite con 3 tablas (La base de datos se almacena en la carpeta `information` dentro de la carpeta del mapa):
 * player: name, discordId, timesJoined, isBanned, perms
 * pos: name, deathX, deathY, deathZ, deathDim, homeX, homeY, homeZ, homeDim
 * logger: id, name, block, posX, posY, posZ, dim, action, date
 
 Relacionado con la `action` mencionado previamente:
 * 0 = Break
-* 1 = place
+* 1 = Place
 * 2 = Use
 
+
 ## Configuración
-Al iniciar por primera vez con el mod instalado, se generará un archivo `config.yaml`, en él encontrarás información como chats permitidos, chat del chatbridge, lugar para la token, etc.
+Al iniciar por primera vez con el mod instalado, se generará un archivo `config.json` dentro de la carpeta del mundo, en él encontrarás información como chats permitidos, chat del chatbridge, lugar para la token, etc.
 
 # Funciones
 
@@ -100,5 +101,6 @@ Aplicar un nivel de permisos a cualquier jugador conectado para tener disponible
 ## otros
 * Al morir se envía al jugador un mensaje con la posición de muerte y dimensión.
 * Jugadores añadidos manualmente a la whitelist no podrán ejecutar ningún comando con privilegios distinto de `null`, al no tener un registro en la base de datos.
+* Los phantoms sueltan elytras al morir por shulker.
 * `/seed` está habilitado para todos los jugadores independientemente del OP.
 * `/pito` ¯\\\_(ツ)_/¯

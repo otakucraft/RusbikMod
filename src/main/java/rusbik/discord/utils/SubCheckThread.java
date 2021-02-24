@@ -35,57 +35,62 @@ public class SubCheckThread extends Thread {
     @Override
     public void run() {
         System.out.println("Discord User check - START");
+        try {
+            List<Member> members = Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(ids).get();
+            List<Long> currentIDs = new ArrayList<>();
 
-        List<Member> members = Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(ids).get();
-        List<Long> currentIDs = new ArrayList<>();
-
-        for (Member member : members) {
-            currentIDs.add(member.getIdLong());
-            if (!hasValidRole(member.getRoles())) {  // Users a los que se les ha acabado la sub.
-                try {
-                    if (Rusbik.config.getDiscordRole() != 0) {  // Eliminar rol de discord.
-                        Guild guild = jda.getGuildById(Rusbik.config.getGroupID());
-                        if (guild != null) {
-                            Role role = guild.getRoleById(Rusbik.config.getDiscordRole());
-                            if (role != null) {
-                                guild.removeRoleFromMember(member, role).queue();
+            for (Member member : members) {
+                currentIDs.add(member.getIdLong());
+                if (!hasValidRole(member.getRoles())) {  // Users a los que se les ha acabado la sub.
+                    try {
+                        if (Rusbik.config.getDiscordRole() != 0) {  // Eliminar rol de discord.
+                            Guild guild = jda.getGuildById(Rusbik.config.getGroupID());
+                            if (guild != null) {
+                                Role role = guild.getRoleById(Rusbik.config.getDiscordRole());
+                                if (role != null) {
+                                    guild.removeRoleFromMember(member, role).queue();
+                                }
                             }
                         }
+
+                        String name = RusbikDatabase.getPlayerName(member.getIdLong());
+
+                        if (name == null) {
+                            continue;
+                        }
+                        RusbikDatabase.removeData(name);
+                        removeFromWhitelist(name);
+
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
-
-                    String name = RusbikDatabase.getPlayerName(member.getIdLong());
-
-                    if (name == null) {
-                        continue;
-                    }
-                    RusbikDatabase.removeData(name);
-                    removeFromWhitelist(name);
-
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
                 }
             }
-        }
 
-        for (long id : ids) {  // La cosa de isMember no va, a veces da true y otras false, idk.
-            if (!currentIDs.contains(id)) {  // Users que han dejado el server.
-                try {
-                    String name = RusbikDatabase.getPlayerName(id);
-                    assert name != null;
-                    RusbikDatabase.removeData(name);
-                    removeFromWhitelist(name);
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+            for (long id : ids) {  // La cosa de isMember no va, a veces da true y otras false, idk.
+                if (!currentIDs.contains(id)) {  // Users que han dejado el server.
+                    try {
+                        String name = RusbikDatabase.getPlayerName(id);
+                        assert name != null;
+                        RusbikDatabase.removeData(name);
+                        removeFromWhitelist(name);
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
                 }
             }
+
+            try {
+                syncWhitelist();  // Sincronizar la base de datos con la whitelist
+                // Hago esto porque hay una forma de bypassear el dejar de ser sub y mantener acceso cambiándote de nombre de mc.
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        catch (NullPointerException e) {
+            return;
         }
 
-        try {
-            syncWhitelist();  // Sincronizar la base de datos con la whitelist
-            // Hago esto porque hay una forma de bypassear el dejar de ser sub y mantener acceso cambiándote de nombre de mc.
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
 
         System.out.println("Discord User check - END");
     }

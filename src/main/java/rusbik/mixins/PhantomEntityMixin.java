@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(PhantomEntity.class)
 public abstract class PhantomEntityMixin extends FlyingEntity {
-    protected PhantomEntityMixin(EntityType<? extends FlyingEntity> entityType, World world) {
+    protected PhantomEntityMixin(EntityType<? extends PhantomEntity> entityType, World world) {
         super(entityType, world);
     }
 

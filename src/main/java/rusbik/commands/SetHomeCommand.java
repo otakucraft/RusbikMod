@@ -5,7 +5,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.world.World;
 import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
@@ -26,7 +25,7 @@ public class SetHomeCommand {
                     if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0) {
                         // Actualizar la base de datos y mensaje.
                         RusbikDatabase.updatePlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
-                        playerEntity.setSpawnPoint(World.OVERWORLD, playerEntity.getBlockPos(), 0.0F, true, false);
+                        playerEntity.setSpawnPoint(playerEntity.world.getRegistryKey(), playerEntity.getBlockPos(), 0.0F, true, false);
                         source.sendFeedback(new LiteralText(String.format("Casa en: %s %s", KrusbibUtils.getDimensionWithColor(playerEntity.world), KrusbibUtils.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ()))), false);
                     }
                     else {

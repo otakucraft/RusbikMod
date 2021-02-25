@@ -4,6 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.command.CommandManager;
@@ -14,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
 import rusbik.utils.KrusbibUtils;
 
+import java.util.Collection;
+
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
@@ -23,6 +27,12 @@ public class AdminTeleportCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("adminTp").
                 requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2)).
+                then(CommandManager.argument("targets", EntityArgumentType.entities()).
+                        then(CommandManager.argument("player", StringArgumentType.word()).
+                                suggests((c, b) -> suggestMatching(KrusbibUtils.getPlayers(c.getSource()), b)).
+                                executes(context -> tp(context.getSource(), EntityArgumentType.getEntities(context, "targets"), StringArgumentType.getString(context, "player")))).
+                        then(argument("pos", BlockPosArgumentType.blockPos()).
+                                executes(context -> tp(EntityArgumentType.getEntities(context, "targets"), BlockPosArgumentType.getBlockPos(context, "pos"))))).
                 then(CommandManager.argument("player", StringArgumentType.word()).
                         suggests((c, b) -> suggestMatching(KrusbibUtils.getPlayers(c.getSource()), b)).
                         executes(context -> tp(context.getSource(), StringArgumentType.getString(context, "player"))).
@@ -80,6 +90,24 @@ public class AdminTeleportCommand {
             source.getPlayer().teleport(playerEntity.getServerWorld(), playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z, source.getPlayer().yaw, source.getPlayer().pitch);
         }
         else source.sendFeedback(new LiteralText("Este jugador no existe D:"), false);
+        return 1;
+    }
+
+    private static int tp (ServerCommandSource source, Collection<? extends Entity> targets, String player) {
+        ServerPlayerEntity playerEntity = source.getMinecraftServer().getPlayerManager().getPlayer(player);
+        if (playerEntity != null) {
+            for (Entity e : targets) {
+                e.teleport(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ());
+            }
+        }
+        else source.sendFeedback(new LiteralText("Este jugador no existe D:"), false);
+        return 1;
+    }
+
+    private static int tp(Collection<? extends Entity> targets, BlockPos pos) {
+        for (Entity e : targets) {
+            e.teleport(pos.getX(), pos.getY(), pos.getZ());
+        }
         return 1;
     }
 }

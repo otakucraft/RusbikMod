@@ -3,6 +3,8 @@ package rusbik.database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RusbikLogger extends Thread{
     private volatile List<RusbikBlockAccionPerformLog> blockAccitionPerformLogs = new ArrayList<>();
@@ -31,6 +33,12 @@ public class RusbikLogger extends Thread{
                      e.printStackTrace();
                 }
                 this.blockAccitionPerformLogs.remove(0);
+             }else{
+                 try {
+                     Thread.sleep(500); // Sleep Thread execution 500 ms
+                 } catch (InterruptedException e) {
+                     e.printStackTrace();
+                 }
              }
          }
      }

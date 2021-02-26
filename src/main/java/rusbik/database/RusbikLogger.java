@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RusbikLogger extends Thread{
-    private volatile List<RusbikBlockActionPerformLog> blockAccitionPerformLogs = new ArrayList<>();
+    private volatile List<RusbikBlockActionPerformLog> blockActionPerformLogs = new ArrayList<>();
     private boolean running;
 
     /**
@@ -27,8 +27,8 @@ public class RusbikLogger extends Thread{
             e.printStackTrace();
         }
         if(this.isAlive()){this.stop();} // Just for prevent the threads stops
-        if(!this.blockAccitionPerformLogs.isEmpty()){ // Just for prevent all logs are in database
-            blockAccitionPerformLogs.forEach(log -> {
+        if(!this.blockActionPerformLogs.isEmpty()){ // Just for prevent all logs are in database
+            blockActionPerformLogs.forEach(log -> {
                 try {
                     RusbikDatabase.blockLogging(log);
                 } catch (SQLException e) {
@@ -43,7 +43,7 @@ public class RusbikLogger extends Thread{
      * @param log with the information of the action carried out on the block
      */
     public synchronized void addBlockActionPerformLog( RusbikBlockActionPerformLog log){
-         this.blockAccitionPerformLogs.add(log);
+         this.blockActionPerformLogs.add(log);
      }
      /**
       * Thread of writing logs in the database.
@@ -51,13 +51,13 @@ public class RusbikLogger extends Thread{
     @Override
      public void run(){
          while(this.running){// Write first list log in database and remove it from the list
-             if(!this.blockAccitionPerformLogs.isEmpty()){
+             if(!this.blockActionPerformLogs.isEmpty()){
                 try {
-                    RusbikDatabase.blockLogging(this.blockAccitionPerformLogs.get(0));
+                    RusbikDatabase.blockLogging(this.blockActionPerformLogs.get(0));
                 } catch (SQLException e) {
                      e.printStackTrace();
                 }
-                this.blockAccitionPerformLogs.remove(0);
+                this.blockActionPerformLogs.remove(0);
              }else{
                  try {// Sleep Thread execution 500 ms
                      Thread.sleep(500);

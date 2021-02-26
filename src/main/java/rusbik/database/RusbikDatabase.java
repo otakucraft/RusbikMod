@@ -94,7 +94,7 @@ public class RusbikDatabase {
             
             // Add discord id
             /* It is not done together with the first insert because the player can be registered but have null in this column when removing from the whitelist for example
-            so row is not completely removed, just the discordId, to make it easier for possible discord account changes. */
+            his row is not completely removed, just the discordId, to make it easier for possible discord account changes. */
             String queryDiscId = "UPDATE player SET discordId = ? WHERE name = ?";
             PreparedStatement psDiscId = c.prepareStatement(queryDiscId);
             psDiscId.setLong(1, discordId);
@@ -110,7 +110,7 @@ public class RusbikDatabase {
      * Update the player's death.
      * @param name player's name
      * @param X position X
-     * @param Y positión Y
+     * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
      * @throws SQLException 
@@ -135,7 +135,7 @@ public class RusbikDatabase {
      * Update the player's home.
      * @param player player entity
      * @param X position X
-     * @param Y positión Y
+     * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
      * @throws SQLException 

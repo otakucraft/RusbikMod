@@ -17,10 +17,10 @@ import java.sql.SQLException;
 import java.util.function.BooleanSupplier;
 
 
-@Mixin(MinecraftServer.class)
 /**
  * Mixin that initializes all processes.
  */
+@Mixin(MinecraftServer.class)
 public class RusbikServerRunMixin {
     @Shadow @Final protected LevelStorage.Session session;
 
@@ -50,21 +50,19 @@ public class RusbikServerRunMixin {
      * Server shut down
      * Stops the bot and the database connection when shutting down the server.
      * Stops all threads
-     * @param ci
-     * @throws SQLException 
      */
     @Inject(method = "runServer", at = @At("RETURN"))
-    public void stop (CallbackInfo ci) throws SQLException {
-        if (RusbikDatabase.logger.isAlive()) RusbikDatabase.logger.dispose(); // Needs conection to database until it stops
+    public void stop (CallbackInfo ci) throws SQLException, InterruptedException {
+        if (RusbikDatabase.logger.isAlive()) {
+            RusbikDatabase.logger.running = false; // Needs database connection until it stops
+            RusbikDatabase.logger.join();
+        }
         if (RusbikDatabase.c != null) RusbikDatabase.c.close();
         if (DiscordListener.chatBridge) DiscordListener.stop(); 
     }
 
     /**
      * Server regular tasks
-     * @param shouldKeepTicking
-     * @param ci
-     * @throws SQLException 
      */
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;saveAllPlayerData()V"))
     public void onSave(BooleanSupplier shouldKeepTicking, CallbackInfo ci) throws SQLException {

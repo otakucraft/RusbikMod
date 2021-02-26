@@ -10,8 +10,8 @@ public class RusbikBlockActionPerformLog {
     private final int actionType;
     private final String date;
 
-    public RusbikBlockActionPerformLog(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) {
-        this.init = init;
+    public RusbikBlockActionPerformLog(String player, String block, int X, int Y, int Z, String dim, int actionType, String date) {
+        this.init = player;
         this.block = block;
         this.X = X;
         this.Y = Y;
@@ -52,9 +52,4 @@ public class RusbikBlockActionPerformLog {
     public String getDate() {
         return date;
     }
-    
-    
-    
-    
-    
 }

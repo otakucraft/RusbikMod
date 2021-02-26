@@ -13,23 +13,21 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import rusbik.database.RusbikBlockActionPerformLog;
 import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
-import java.sql.SQLException;
-import rusbik.database.RusbikBlockActionPerformLog;
-
-@Mixin(ServerPlayerInteractionManager.class)
 /**
  * Mixin to record in the database when a player uses a block.
  */
+@Mixin(ServerPlayerInteractionManager.class)
 public class PlayerInteractionMixin {
     @Shadow public ServerWorld world;
 
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldCancelInteraction()Z"))
-    private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) throws SQLException {
+    private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (KrusbibUtils.shouldRegisterBlock(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)){
-            RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
+            RusbikDatabase.logger.log(new RusbikBlockActionPerformLog(
                         player.getName().getString(),
                         world.getBlockState(hitResult.getBlockPos()).getBlock().getTranslationKey(),
                         hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),
@@ -37,9 +35,8 @@ public class PlayerInteractionMixin {
                         KrusbibUtils.getDate()
                 )
             );
-        }
-        else if (KrusbibUtils.shouldRegisterItem(player, stack)) {
-            RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
+        } else if (KrusbibUtils.shouldRegisterItem(player, stack)) {
+            RusbikDatabase.logger.log(new RusbikBlockActionPerformLog(
                         player.getName().getString(),
                         stack.getItem().getTranslationKey(),
                         hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),
@@ -47,7 +44,6 @@ public class PlayerInteractionMixin {
                         KrusbibUtils.getDate()
                 )
             );
-            
         }
     }
 }

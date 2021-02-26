@@ -16,11 +16,11 @@ import java.util.List;
 public class RusbikDatabase {
 
     public static Connection c = null;
-    public static RusbikLogger logger = new RusbikLogger();
+    public static RusbikLogger logger = new RusbikLogger("RusbikLogger");
 
     public static void initializeDB(String directoryName){
         try {
-            // I create the connection.
+            // Connection creation.
             Class.forName("org.sqlite.JDBC");
             boolean createDir = new File(String.format("%s/information", directoryName)).mkdirs();
             if (createDir) System.out.println("information dir created");
@@ -28,7 +28,7 @@ public class RusbikDatabase {
             c.setAutoCommit(false);
             Statement stmt = c.createStatement();
 
-            // I create the tables.
+            // Table creation.
             String createPlayerDB = "CREATE TABLE IF NOT EXISTS `player` (" +
                     "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
                     "`discordId` NUMERIC DEFAULT NULL," +
@@ -73,8 +73,8 @@ public class RusbikDatabase {
      * Add player to the whitelist.
      * It is executed by adding the player to the whitelist from the discord !add command.
      * @param name player's name
-     * @param discordId discrod ID related to player
-     * @throws SQLException 
+     * @param discordId discord ID related to player
+     * @throws SQLException connection error
      */
     public static void addPlayerInformation(String name, long discordId) throws SQLException {
         if (c != null){
@@ -113,7 +113,7 @@ public class RusbikDatabase {
      * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void updatePlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
@@ -138,7 +138,7 @@ public class RusbikDatabase {
      * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void updatePlayerInformation(ServerPlayerEntity player, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
@@ -160,7 +160,7 @@ public class RusbikDatabase {
      * Get the player's permissions.
      * @param playerName player's name
      * @return player's permissions
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static int getPlayerPerms(String playerName) throws SQLException {
         String query = "SELECT perms FROM player WHERE name = ?";
@@ -178,7 +178,7 @@ public class RusbikDatabase {
      * Get the position of the last death.
      * @param playerName player's name
      * @return player's last death position
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static BackPos getDeathPos(String playerName) throws SQLException {
         String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name = ?";
@@ -199,7 +199,7 @@ public class RusbikDatabase {
      * Get the home position.
      * @param playerName player's name
      * @return player's home position
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static HomePos getHomePos(String playerName) throws SQLException {
         String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name = ?";
@@ -217,10 +217,10 @@ public class RusbikDatabase {
     }
 
     /**
-     * Update playe's permissions.
+     * Update player's permissions.
      * @param playerName player's name
      * @param value permissions ID
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void updatePerms(String playerName, int value) throws SQLException {
         if (c != null) {
@@ -237,8 +237,8 @@ public class RusbikDatabase {
     /**
      * Check if this is the first time this player has logged in.
      * @param playerName player's name
-     * @return true if it has not a previous login, false in othercase
-     * @throws SQLException 
+     * @return true if it has not a previous login, false otherwise
+     * @throws SQLException connection error
      */
     public static boolean playerExists(String playerName) throws SQLException {
         String query = "SELECT timesJoined FROM player WHERE name = ?";
@@ -259,8 +259,8 @@ public class RusbikDatabase {
     /**
      * Check if this player is registered in the database with name and discord ID.
      * @param playerName player's name
-     * @return true if it has a discord ID registered, false in othercase
-     * @throws SQLException 
+     * @return true if it has a discord ID registered, false otherwise
+     * @throws SQLException connection error
      */
     public static boolean userExists(String playerName) throws SQLException {
         String query = "SELECT name FROM player WHERE name = ?";
@@ -285,7 +285,7 @@ public class RusbikDatabase {
     /**
      * Ban user so they can't get more people.
      * @param userID discord ID
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void banUser(long userID) throws SQLException {
         String query = "UPDATE player SET isBanned = 1 WHERE discordId = ?";
@@ -299,7 +299,7 @@ public class RusbikDatabase {
     /**
      * Retirar el ban.
      * @param userID discord ID
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void pardonUser(long userID) throws SQLException {
         String query = "UPDATE player SET isBanned = 0 WHERE discordId = ?";
@@ -313,8 +313,8 @@ public class RusbikDatabase {
     /**
      * Check if the user is banned
      * @param userID discord ID
-     * @return true if the user is banned, false in othercases.
-     * @throws SQLException 
+     * @return true if the user is banned, false otherwise.
+     * @throws SQLException connection error
      */
     public static boolean isBanned(long userID) throws SQLException {
         String query = "SELECT name FROM player WHERE discordId = ? AND isBanned = 1";
@@ -331,7 +331,7 @@ public class RusbikDatabase {
      * Get the discord ID from a player's name.
      * @param playerName player's name
      * @return discord ID
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static long getID(String playerName) throws SQLException {
         String query = "SELECT discordId FROM player WHERE name = ?";
@@ -350,7 +350,7 @@ public class RusbikDatabase {
      * @param discId discord ID
      * @param playerName player's name
      * @return true if it can remove the player, false in other case
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
         boolean isAllowed = true;
@@ -370,7 +370,7 @@ public class RusbikDatabase {
      * Delete player's data
      * Action by removing yourself from the whitelist.
      * @param playerName player's name
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void removeData(String playerName) throws SQLException {
         if (c != null) {
@@ -394,8 +394,8 @@ public class RusbikDatabase {
     /**
      * Get the player's name
      * @param discordID discord ID
-     * @return
-     * @throws SQLException 
+     * @return player's name
+     * @throws SQLException connection error
      */
     public static String getPlayerName(long discordID) throws SQLException {
         if (c != null) {
@@ -415,8 +415,8 @@ public class RusbikDatabase {
      * Check if the discord user has already registered some player.
      * Discord users can only register one account.
      * @param discId discord ID
-     * @return true if it has register a player, false in othercase
-     * @throws SQLException 
+     * @return true if it has register a player, false otherwise
+     * @throws SQLException connection error
      */
     public static boolean hasPlayer(long discId) throws SQLException {
         String query = "SELECT name FROM player WHERE discordId = ?";
@@ -433,7 +433,7 @@ public class RusbikDatabase {
      * Update user's connection number
      * It is only used to check if it is the first time you join.
      * @param playerName player's name
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void updateCount(String playerName) throws SQLException {
         if (c != null) {
@@ -459,7 +459,7 @@ public class RusbikDatabase {
     /**
      * Register block actions in the database.
      * @param log log with the information of the action carried out on the block
-     * @throws java.sql.SQLException
+     * @throws java.sql.SQLException connection error
      */
     public static void blockLogging(RusbikBlockActionPerformLog log) throws SQLException {
         if (c != null){
@@ -491,8 +491,8 @@ public class RusbikDatabase {
      * @param dim block dimension
      * @param actionType identifier of the action type
      * @param date current date
-     * @throws java.sql.SQLException
-     * @deprecated Prioritizing the use of {@link #blockLogging (RusbikBlockAccionPerformLog log)}
+     * @throws java.sql.SQLException connection error
+     * @deprecated Prioritizing the use of {@link #blockLogging (RusbikBlockActionPerformLog log)}
      */
     @Deprecated
     public static void blockLogging(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {
@@ -522,7 +522,7 @@ public class RusbikDatabase {
      * @param dim block dimension
      * @param page pagination with 10 logs per page
      * @return requested logs
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
         String query = "SELECT action , date , name , block  FROM logger " +
@@ -559,7 +559,7 @@ public class RusbikDatabase {
      * @param Z block coordinate Z
      * @param dim block dimension
      * @return number of pages with 10 log
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
         String query = "SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = ? AND posY = ? AND posZ = ? AND dim = ?";
@@ -578,7 +578,7 @@ public class RusbikDatabase {
     /**
      * Extract all the IDs of people not banned or added by exception.
      * @return list of discord IDs
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static List<Long> getIDs() throws SQLException {
         Statement stmt = c.createStatement();
@@ -595,7 +595,7 @@ public class RusbikDatabase {
     /**
      * Extract all nicknames.
      * @return list with players' name
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static List<String> getNames() throws SQLException {
         Statement stmt = c.createStatement();
@@ -612,7 +612,7 @@ public class RusbikDatabase {
     /**
      * Clear blocks logger records
      * Delete first 100k records if it exists more than 1M records
-     * @throws SQLException 
+     * @throws SQLException connection error
      */
     public static void clearLogger() throws SQLException {
         Statement stmt = c.createStatement();

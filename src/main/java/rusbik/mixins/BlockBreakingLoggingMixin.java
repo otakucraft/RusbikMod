@@ -13,12 +13,22 @@ import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
+import rusbik.database.RusbikBlockActionPerformLog;
 
 @Mixin(Block.class)
-// Mixin para registrar en la base de datos cuando un jugador rompe un bloque.
+/**
+ * Mixin to record in the database when a player breaks a block.
+ */
 public abstract class BlockBreakingLoggingMixin {
     @Inject(method = "onBreak", at = @At("HEAD"))
     private void broken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) throws SQLException {
-        RusbikDatabase.blockLogging(player.getName().getString(), state.getBlock().getTranslationKey(), pos.getX(), pos.getY(), pos.getZ(), KrusbibUtils.getDim(world), 0, KrusbibUtils.getDate());
+        RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
+                    player.getName().getString(),
+                    state.getBlock().getTranslationKey(),
+                    pos.getX(), pos.getY(), pos.getZ(), KrusbibUtils.getDim(world),
+                    0,
+                    KrusbibUtils.getDate()
+            )
+        );
     }
 }

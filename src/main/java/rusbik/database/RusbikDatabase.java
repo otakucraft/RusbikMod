@@ -10,14 +10,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Toda la gestión de bases de datos.
+/**
+ * All database management.
+ */
 public class RusbikDatabase {
 
     public static Connection c = null;
+    public static RusbikLogger logger = new RusbikLogger();
 
     public static void initializeDB(String directoryName){
         try {
-            // Creo la conexión.
+            // I create the connection.
             Class.forName("org.sqlite.JDBC");
             boolean createDir = new File(String.format("%s/information", directoryName)).mkdirs();
             if (createDir) System.out.println("information dir created");
@@ -25,7 +28,7 @@ public class RusbikDatabase {
             c.setAutoCommit(false);
             Statement stmt = c.createStatement();
 
-            // Creo las tablas.
+            // I create the tables.
             String createPlayerDB = "CREATE TABLE IF NOT EXISTS `player` (" +
                     "`name` VARCHAR(20) PRIMARY KEY NOT NULL," +
                     "`discordId` NUMERIC DEFAULT NULL," +
@@ -66,26 +69,32 @@ public class RusbikDatabase {
         }
     }
 
-    // Se ejecuta al añadir al jugador a la whitelist desde el comando !add de discord.
+    /**
+     * Add player to the whitelist.
+     * It is executed by adding the player to the whitelist from the discord !add command.
+     * @param name player's name
+     * @param discordId discrod ID related to player
+     * @throws SQLException 
+     */
     public static void addPlayerInformation(String name, long discordId) throws SQLException {
         if (c != null){
-            // Intentar dedicar una row en la tabla player vincular el id de discord
+            // Try to dedicate a row in the player table bind the discord id
             String queryAddPlayer = "INSERT OR IGNORE INTO player (name) VALUES (?)";
             PreparedStatement psAddPlayer = c.prepareStatement(queryAddPlayer);
             psAddPlayer.setString(1, name);
             psAddPlayer.executeUpdate();
             psAddPlayer.close();
             
-            // Intentar dedicar una row en la tabla pos para home y death
+            // Try to dedicate a row in the pos table for home and death
             String queryPlayerPos = "INSERT OR IGNORE INTO pos (name) VALUES (?)";
             PreparedStatement psPlayerPos = c.prepareStatement(queryPlayerPos);
             psPlayerPos.setString(1, name);
             psPlayerPos.executeUpdate();
             psPlayerPos.close();
             
-            //Añadir el id de discord
-            /* No se hace junto con el primer insert porque el jugador puede estar registrado pero tener null en esta columna al sacar de la whitelist por ejemplo
-               no se elimina so row por completo, simplemente el discordId, para dar facilidad ante posibles cambios de cuenta de discord.*/
+            // Add discord id
+            /* It is not done together with the first insert because the player can be registered but have null in this column when removing from the whitelist for example
+            so row is not completely removed, just the discordId, to make it easier for possible discord account changes. */
             String queryDiscId = "UPDATE player SET discordId = ? WHERE name = ?";
             PreparedStatement psDiscId = c.prepareStatement(queryDiscId);
             psDiscId.setLong(1, discordId);
@@ -97,7 +106,15 @@ public class RusbikDatabase {
         }
     }
 
-    // Actualiza la muerte del jugador
+    /**
+     * Update the player's death.
+     * @param name player's name
+     * @param X position X
+     * @param Y positi�n Y
+     * @param Z position Z
+     * @param Dim Dimension
+     * @throws SQLException 
+     */
     public static void updatePlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             String query = "UPDATE pos SET deathX = ?, deathY = ?, deathZ = ?, deathDim = ? WHERE name = ?";
@@ -114,7 +131,15 @@ public class RusbikDatabase {
         }
     }
 
-    // Actualiza la home del jugador
+    /**
+     * Update the player's home.
+     * @param player player entity
+     * @param X position X
+     * @param Y positi�n Y
+     * @param Z position Z
+     * @param Dim Dimension
+     * @throws SQLException 
+     */
     public static void updatePlayerInformation(ServerPlayerEntity player, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             String query = "UPDATE pos SET homeX = ?, homeY = ?, homeZ = ?, homeDim = ? WHERE name = ?";
@@ -131,7 +156,12 @@ public class RusbikDatabase {
         }
     }
 
-    // Conseguir los permisos de cada jugador.
+    /**
+     * Get the player's permissions.
+     * @param playerName player's name
+     * @return player's permissions
+     * @throws SQLException 
+     */
     public static int getPlayerPerms(String playerName) throws SQLException {
         String query = "SELECT perms FROM player WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -144,7 +174,12 @@ public class RusbikDatabase {
         return playerPerm;
     }
 
-    // Conseguir la posición de la Última muerte.
+    /**
+     * Get the position of the last death.
+     * @param playerName player's name
+     * @return player's last death position
+     * @throws SQLException 
+     */
     public static BackPos getDeathPos(String playerName) throws SQLException {
         String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -160,7 +195,12 @@ public class RusbikDatabase {
         return new BackPos(X, Y, Z, dim);
     }
 
-    // Conseguir la posición de "home".
+    /**
+     * Get the home position.
+     * @param playerName player's name
+     * @return player's home position
+     * @throws SQLException 
+     */
     public static HomePos getHomePos(String playerName) throws SQLException {
         String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -176,7 +216,12 @@ public class RusbikDatabase {
         return new HomePos(X, Y, Z, dim);
     }
 
-    // Actualizar los permisos para un jugador.
+    /**
+     * Update playe's permissions.
+     * @param playerName player's name
+     * @param value permissions ID
+     * @throws SQLException 
+     */
     public static void updatePerms(String playerName, int value) throws SQLException {
         if (c != null) {
             String query = "UPDATE player SET perms = ? WHERE name = ?";
@@ -189,7 +234,12 @@ public class RusbikDatabase {
         }
     }
 
-    // Check de si es la primera vez que este jugador se conecta.
+    /**
+     * Check if this is the first time this player has logged in.
+     * @param playerName player's name
+     * @return true if it has not a previous login, false in othercase
+     * @throws SQLException 
+     */
     public static boolean playerExists(String playerName) throws SQLException {
         String query = "SELECT timesJoined FROM player WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -206,7 +256,12 @@ public class RusbikDatabase {
         return true;
     }
 
-    // Check de si este jugador está registrado en la base de datos con nombre y discord ID.
+    /**
+     * Check if this player is registered in the database with name and discord ID.
+     * @param playerName player's name
+     * @return true if it has a discord ID registered, false in othercase
+     * @throws SQLException 
+     */
     public static boolean userExists(String playerName) throws SQLException {
         String query = "SELECT name FROM player WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -227,7 +282,11 @@ public class RusbikDatabase {
         return exists;
     }
 
-    // Banear usuario para que no pueda meter a más gente.
+    /**
+     * Ban user so they can't get more people.
+     * @param userID discord ID
+     * @throws SQLException 
+     */
     public static void banUser(long userID) throws SQLException {
         String query = "UPDATE player SET isBanned = 1 WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -237,7 +296,11 @@ public class RusbikDatabase {
         c.commit();
     }
 
-    // Retirar el ban.
+    /**
+     * Retirar el ban.
+     * @param userID discord ID
+     * @throws SQLException 
+     */
     public static void pardonUser(long userID) throws SQLException {
         String query = "UPDATE player SET isBanned = 0 WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -247,6 +310,12 @@ public class RusbikDatabase {
         c.commit();
     }
 
+    /**
+     * Check if the user is banned
+     * @param userID discord ID
+     * @return true if the user is banned, false in othercases.
+     * @throws SQLException 
+     */
     public static boolean isBanned(long userID) throws SQLException {
         String query = "SELECT name FROM player WHERE discordId = ? AND isBanned = 1";
         PreparedStatement ps = c.prepareStatement(query);
@@ -258,6 +327,12 @@ public class RusbikDatabase {
         return exists;
     }
 
+    /**
+     * Get the discord ID from a player's name.
+     * @param playerName player's name
+     * @return discord ID
+     * @throws SQLException 
+     */
     public static long getID(String playerName) throws SQLException {
         String query = "SELECT discordId FROM player WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -269,7 +344,14 @@ public class RusbikDatabase {
         return id;
     }
 
-    // Si tiene permitido eliminar. Para que desde el comando !remove nadie elimine que no sea a a sí mismo.
+    /**
+     * Check if the  discord user can remove the player
+     * If you are allowed to delete. So that from the !Remove command nobody removes other than himself.
+     * @param discId discord ID
+     * @param playerName player's name
+     * @return true if it can remove the player, false in other case
+     * @throws SQLException 
+     */
     public static boolean allowedToRemove(long discId, String playerName) throws SQLException {
         boolean isAllowed = true;
         if (userExists(playerName)) {
@@ -284,7 +366,12 @@ public class RusbikDatabase {
         return isAllowed;
     }
 
-    // Acción al eliminarte de la whitelist.
+    /**
+     * Delete player's data
+     * Action by removing yourself from the whitelist.
+     * @param playerName player's name
+     * @throws SQLException 
+     */
     public static void removeData(String playerName) throws SQLException {
         if (c != null) {
             String query = "UPDATE player SET discordId = NULL WHERE name = ?";
@@ -304,6 +391,12 @@ public class RusbikDatabase {
         }
     }
 
+    /**
+     * Get the player's name
+     * @param discordID discord ID
+     * @return
+     * @throws SQLException 
+     */
     public static String getPlayerName(long discordID) throws SQLException {
         if (c != null) {
             String query = "SELECT name FROM player WHERE discordId = ?";
@@ -318,7 +411,13 @@ public class RusbikDatabase {
         return null;
     }
 
-    // Check de si el jugador ya ha registrado algÃºn usuario, solo puedes registrar una cuenta.
+    /**
+     * Check if the discord user has already registered some player.
+     * Discord users can only register one account.
+     * @param discId discord ID
+     * @return true if it has register a player, false in othercase
+     * @throws SQLException 
+     */
     public static boolean hasPlayer(long discId) throws SQLException {
         String query = "SELECT name FROM player WHERE discordId = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -330,7 +429,12 @@ public class RusbikDatabase {
         return hasPlayer;
     }
 
-    // Actualizar número cada vez que te conectas, solo se usa para comprobar si es la primera vez que te unes.
+    /**
+     * Update user's connection number
+     * It is only used to check if it is the first time you join.
+     * @param playerName player's name
+     * @throws SQLException 
+     */
     public static void updateCount(String playerName) throws SQLException {
         if (c != null) {
             String query = "SELECT timesJoined FROM player WHERE name = ?";
@@ -352,7 +456,45 @@ public class RusbikDatabase {
         }
     }
 
-    // Registrar acciones de bloques en la base de datos.
+    /**
+     * Register block actions in the database.
+     * @param log log with the information of the action carried out on the block
+     * @throws java.sql.SQLException
+     */
+    public static void blockLogging(RusbikBlockAccionPerformLog log) throws SQLException {
+        if (c != null){
+            String query = "INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
+                    "VALUES (?,?,?,?,?,?,?,?)";
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, log.getInit());
+            ps.setString(2, log.getBlock());
+            ps.setInt(3, log.getX());
+            ps.setInt(4, log.getY());
+            ps.setInt(5, log.getZ());
+            ps.setString(6, log.getDim());
+            ps.setInt(7, log.getActionType());            
+            ps.setString(8, log.getDate());
+            ps.executeUpdate();
+            ps.close();
+            c.commit();
+        }
+    }
+
+
+    /**
+     * Register block actions in the database.
+     * @param init  player's name
+     * @param block transactional key of the block
+     * @param X block coordinate X
+     * @param Y block coordinate Y
+     * @param Z block coordinate Z
+     * @param dim block dimension
+     * @param actionType identifier of the action type
+     * @param date current date
+     * @throws java.sql.SQLException
+     * @deprecated Prioritizing the use of {@link #blockLogging (RusbikBlockAccionPerformLog log)}
+     */
+    @Deprecated
     public static void blockLogging(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) throws SQLException {
         if (c != null){
             String query = "INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
@@ -372,7 +514,16 @@ public class RusbikDatabase {
         }
     }
 
-    // Extraer la información de un bloque especificado por coordenadas, dimensión, y la página.
+    /**
+     * Get information from a block
+     * @param X block coordinate X
+     * @param Y block coordinate Y
+     * @param Z block coordinate Z
+     * @param dim block dimension
+     * @param page pagination with 10 logs per page
+     * @return requested logs
+     * @throws SQLException 
+     */
     public static List<String> getInfo(int X, int Y, int Z, String dim, int page) throws SQLException {
         String query = "SELECT action , date , name , block  FROM logger " +
                 "WHERE posX = ? AND posY = ? AND posZ = ? AND dim = ? ORDER BY id DESC LIMIT 10 OFFSET ?";
@@ -401,7 +552,15 @@ public class RusbikDatabase {
         return msg;
     }
 
-    // Número de páginas que puede tener de historial el bloque.
+    /**
+     * Number of pages that the block can have in history.
+     * @param X block coordinate X
+     * @param Y block coordinate Y
+     * @param Z block coordinate Z
+     * @param dim block dimension
+     * @return number of pages with 10 log
+     * @throws SQLException 
+     */
     public static int getLines(int X, int Y, int Z, String dim) throws SQLException {
         String query = "SELECT (COUNT(id) / 10) + 1 AS line FROM logger WHERE posX = ? AND posY = ? AND posZ = ? AND dim = ?";
         PreparedStatement ps = c.prepareStatement(query);
@@ -416,7 +575,11 @@ public class RusbikDatabase {
         return lines;
     }
 
-    // Extraer todos los IDs de gente no baneada o añadida por excepción.
+    /**
+     * Extract all the IDs of people not banned or added by exception.
+     * @return list of discord IDs
+     * @throws SQLException 
+     */
     public static List<Long> getIDs() throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT discordId FROM player WHERE isBanned = 0 AND discordId IS NOT NULL AND discordId IS NOT 999999;");
@@ -429,7 +592,11 @@ public class RusbikDatabase {
         return idList;
     }
 
-    // Extraer todos los nicknames.
+    /**
+     * Extract all nicknames.
+     * @return list with players' name
+     * @throws SQLException 
+     */
     public static List<String> getNames() throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT name FROM player WHERE isBanned = 0 AND discordId IS NOT NULL");
@@ -442,7 +609,11 @@ public class RusbikDatabase {
         return nameList;
     }
     
-    // Elimina registros del logger si se supera un número de registros
+    /**
+     * Clear blocks logger records
+     * Delete first 100k records if it exists more than 1M records
+     * @throws SQLException 
+     */
     public static void clearLogger() throws SQLException {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");

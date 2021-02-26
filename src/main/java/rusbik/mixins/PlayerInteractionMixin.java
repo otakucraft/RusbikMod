@@ -17,19 +17,39 @@ import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
+import rusbik.database.RusbikBlockAccionPerformLog;
 
 @Mixin(ServerPlayerInteractionManager.class)
-// Mixin para registrar en la base de datos cuando un jugador usa un bloque.
+/**
+ * Mixin to record in the database when a player uses a block.
+ */
 public class PlayerInteractionMixin {
     @Shadow public ServerWorld world;
 
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldCancelInteraction()Z"))
     private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) throws SQLException {
         if (KrusbibUtils.shouldRegisterBlock(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)){
-            RusbikDatabase.blockLogging(player.getName().getString(), world.getBlockState(hitResult.getBlockPos()).getBlock().getTranslationKey(), hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world), 2, KrusbibUtils.getDate());
+            RusbikDatabase.logger.addBlockAccionPerformLog(
+                new RusbikBlockAccionPerformLog(
+                        player.getName().getString(),
+                        world.getBlockState(hitResult.getBlockPos()).getBlock().getTranslationKey(),
+                        hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),
+                        2,
+                        KrusbibUtils.getDate()
+                )
+            );
         }
         else if (KrusbibUtils.shouldRegisterItem(player, stack)) {
-            RusbikDatabase.blockLogging(player.getName().getString(), stack.getItem().getTranslationKey(), hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world), 2, KrusbibUtils.getDate());
+            RusbikDatabase.logger.addBlockAccionPerformLog(
+                new RusbikBlockAccionPerformLog(
+                        player.getName().getString(),
+                        stack.getItem().getTranslationKey(),
+                        hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),
+                        2,
+                        KrusbibUtils.getDate()
+                )
+            );
+            
         }
     }
 }

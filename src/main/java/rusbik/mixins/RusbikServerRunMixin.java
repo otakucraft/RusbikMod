@@ -16,8 +16,11 @@ import rusbik.discord.utils.DiscordListener;
 import java.sql.SQLException;
 import java.util.function.BooleanSupplier;
 
+
 @Mixin(MinecraftServer.class)
-// Mixin que inicializa todos los procesos.
+/**
+ * Mixin that initializes all processes.
+ */
 public class RusbikServerRunMixin {
     @Shadow @Final protected LevelStorage.Session session;
 
@@ -43,13 +46,26 @@ public class RusbikServerRunMixin {
         }
     }
 
-    // Detiene el bot y la conexión con la base de datos al cerrar el servidor.
+    /**
+     * Server shut down
+     * Stops the bot and the database connection when shutting down the server.
+     * Stops all threads
+     * @param ci
+     * @throws SQLException 
+     */
     @Inject(method = "runServer", at = @At("RETURN"))
     public void stop (CallbackInfo ci) throws SQLException {
         if (RusbikDatabase.c != null) RusbikDatabase.c.close();
         if (DiscordListener.chatBridge) DiscordListener.stop();
+        if (RusbikDatabase.logger.isAlive()) RusbikDatabase.logger.stop();
     }
 
+    /**
+     * Server regular tasks
+     * @param shouldKeepTicking
+     * @param ci
+     * @throws SQLException 
+     */
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;saveAllPlayerData()V"))
     public void onSave(BooleanSupplier shouldKeepTicking, CallbackInfo ci) throws SQLException {
         DiscordListener.checkSub(RusbikDatabase.getIDs());

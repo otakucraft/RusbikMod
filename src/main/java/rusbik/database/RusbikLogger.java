@@ -30,22 +30,22 @@ public class RusbikLogger extends Thread {
       */
     @Override
      public void run() {
-         while(this.running) {  // Write first list log in database and remove it from the list
-             if(!this.blockActionPerformLogs.isEmpty()) {
+        while (this.running) {  // Write first list log in database and remove it from the list
+            if (!this.blockActionPerformLogs.isEmpty()) {
                 try {
                     RusbikDatabase.blockLogging(this.blockActionPerformLogs.get(0));
-                } catch (SQLException e) {
-                     e.printStackTrace();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
                 this.blockActionPerformLogs.remove(0);
-             } else {
-                 try {  // Sleep Thread execution 500 ms
-                     Thread.sleep(500);
-                 } catch (InterruptedException e) {
-                     e.printStackTrace();
-                 }
-             }
-         }
+            } else {
+                try {  // Sleep Thread execution 500 ms
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // Safe logger thread stop
         if(!this.blockActionPerformLogs.isEmpty()) { // Just make sure all logs are in database

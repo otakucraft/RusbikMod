@@ -55,9 +55,9 @@ public class RusbikServerRunMixin {
      */
     @Inject(method = "runServer", at = @At("RETURN"))
     public void stop (CallbackInfo ci) throws SQLException {
+        if (RusbikDatabase.logger.isAlive()) RusbikDatabase.logger.dispose(); // Needs conection to database until it stops
         if (RusbikDatabase.c != null) RusbikDatabase.c.close();
-        if (DiscordListener.chatBridge) DiscordListener.stop();
-        if (RusbikDatabase.logger.isAlive()) RusbikDatabase.logger.stop();
+        if (DiscordListener.chatBridge) DiscordListener.stop(); 
     }
 
     /**

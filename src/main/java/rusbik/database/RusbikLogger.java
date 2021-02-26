@@ -3,14 +3,39 @@ package rusbik.database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RusbikLogger extends Thread{
     private volatile List<RusbikBlockActionPerformLog> blockAccitionPerformLogs = new ArrayList<>();
+    private boolean running;
 
+    /**
+     * Logger thread constructor and initializer
+     */
     public RusbikLogger() {
+        this.running = true;
         this.start();
+    }
+    
+    /**
+     * Safe logger thread stop
+     */
+    public void dispose(){
+        this.running = false;
+        try {
+            this.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(this.isAlive()){this.stop();} // Just for prevent the threads stops
+        if(!this.blockAccitionPerformLogs.isEmpty()){ // Just for prevent all logs are in database
+            blockAccitionPerformLogs.forEach(log -> {
+                try {
+                    RusbikDatabase.blockLogging(log);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
     
     /**
@@ -25,8 +50,8 @@ public class RusbikLogger extends Thread{
       */
     @Override
      public void run(){
-         while(true){// Write first list log in database and remove it from the list
-             if(!blockAccitionPerformLogs.isEmpty()){
+         while(this.running){// Write first list log in database and remove it from the list
+             if(!this.blockAccitionPerformLogs.isEmpty()){
                 try {
                     RusbikDatabase.blockLogging(this.blockAccitionPerformLogs.get(0));
                 } catch (SQLException e) {

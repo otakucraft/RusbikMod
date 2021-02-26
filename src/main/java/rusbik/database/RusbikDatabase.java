@@ -461,7 +461,7 @@ public class RusbikDatabase {
      * @param log log with the information of the action carried out on the block
      * @throws java.sql.SQLException
      */
-    public static void blockLogging(RusbikBlockAccionPerformLog log) throws SQLException {
+    public static void blockLogging(RusbikBlockActionPerformLog log) throws SQLException {
         if (c != null){
             String query = "INSERT INTO logger (name,block,posX,posY,posZ,dim,action,date) " +
                     "VALUES (?,?,?,?,?,?,?,?)";

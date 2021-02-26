@@ -17,7 +17,7 @@ import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
-import rusbik.database.RusbikBlockAccionPerformLog;
+import rusbik.database.RusbikBlockActionPerformLog;
 
 @Mixin(ServerPlayerInteractionManager.class)
 /**
@@ -29,8 +29,7 @@ public class PlayerInteractionMixin {
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldCancelInteraction()Z"))
     private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) throws SQLException {
         if (KrusbibUtils.shouldRegisterBlock(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)){
-            RusbikDatabase.logger.addBlockAccionPerformLog(
-                new RusbikBlockAccionPerformLog(
+            RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
                         player.getName().getString(),
                         world.getBlockState(hitResult.getBlockPos()).getBlock().getTranslationKey(),
                         hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),
@@ -40,8 +39,7 @@ public class PlayerInteractionMixin {
             );
         }
         else if (KrusbibUtils.shouldRegisterItem(player, stack)) {
-            RusbikDatabase.logger.addBlockAccionPerformLog(
-                new RusbikBlockAccionPerformLog(
+            RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
                         player.getName().getString(),
                         stack.getItem().getTranslationKey(),
                         hitResult.getBlockPos().getX(), hitResult.getBlockPos().getY(), hitResult.getBlockPos().getZ(), KrusbibUtils.getDim(world),

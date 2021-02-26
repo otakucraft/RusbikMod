@@ -1,6 +1,6 @@
 package rusbik.database;
 
-public class RusbikBlockAccionPerformLog {
+public class RusbikBlockActionPerformLog {
     private final String init;
     private final String block;
     private final int X;
@@ -10,7 +10,7 @@ public class RusbikBlockAccionPerformLog {
     private final int actionType;
     private final String date;
 
-    public RusbikBlockAccionPerformLog(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) {
+    public RusbikBlockActionPerformLog(String init, String block, int X, int Y, int Z, String dim, int actionType, String date) {
         this.init = init;
         this.block = block;
         this.X = X;

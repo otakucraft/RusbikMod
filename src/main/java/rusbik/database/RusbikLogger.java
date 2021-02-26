@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RusbikLogger extends Thread{
-    private volatile List<RusbikBlockAccionPerformLog> blockAccitionPerformLogs = new ArrayList<>();
+    private volatile List<RusbikBlockActionPerformLog> blockAccitionPerformLogs = new ArrayList<>();
 
     public RusbikLogger() {
         this.start();
@@ -17,7 +17,7 @@ public class RusbikLogger extends Thread{
      * Add log to the log list.
      * @param log with the information of the action carried out on the block
      */
-    public synchronized void addBlockAccionPerformLog( RusbikBlockAccionPerformLog log){
+    public synchronized void addBlockActionPerformLog( RusbikBlockActionPerformLog log){
          this.blockAccitionPerformLogs.add(log);
      }
      /**
@@ -25,7 +25,7 @@ public class RusbikLogger extends Thread{
       */
     @Override
      public void run(){
-         while(true){
+         while(true){// Write first list log in database and remove it from the list
              if(!blockAccitionPerformLogs.isEmpty()){
                 try {
                     RusbikDatabase.blockLogging(this.blockAccitionPerformLogs.get(0));
@@ -34,8 +34,8 @@ public class RusbikLogger extends Thread{
                 }
                 this.blockAccitionPerformLogs.remove(0);
              }else{
-                 try {
-                     Thread.sleep(500); // Sleep Thread execution 500 ms
+                 try {// Sleep Thread execution 500 ms
+                     Thread.sleep(500);
                  } catch (InterruptedException e) {
                      e.printStackTrace();
                  }

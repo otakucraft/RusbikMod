@@ -13,7 +13,7 @@ import rusbik.database.RusbikDatabase;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
-import rusbik.database.RusbikBlockAccionPerformLog;
+import rusbik.database.RusbikBlockActionPerformLog;
 
 @Mixin(Block.class)
 /**
@@ -22,8 +22,7 @@ import rusbik.database.RusbikBlockAccionPerformLog;
 public abstract class BlockBreakingLoggingMixin {
     @Inject(method = "onBreak", at = @At("HEAD"))
     private void broken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) throws SQLException {
-        RusbikDatabase.logger.addBlockAccionPerformLog(
-            new RusbikBlockAccionPerformLog(
+        RusbikDatabase.logger.addBlockActionPerformLog(new RusbikBlockActionPerformLog(
                     player.getName().getString(),
                     state.getBlock().getTranslationKey(),
                     pos.getX(), pos.getY(), pos.getZ(), KrusbibUtils.getDim(world),

@@ -33,6 +33,7 @@ public class FileManager {
                 validRoles.add(6L);
                 validRoles.add(7L);
                 Rusbik.config = new RubiConfig("", 0, false, 0, whitelistChat, allowedChat, adminChat, 0, validRoles);
+
                 FileWriter writer = new FileWriter(file);
                 gson.toJson(Rusbik.config, writer);
                 writer.close();
@@ -57,7 +58,7 @@ public class FileManager {
     // Actualizar el archivo con los nuevos datos.
     public static void updateFile() {
         try {
-            if (!directoryName.equals("")) jsonConfigFile = String.format("%s/%s", directoryName, jsonConfigFile);
+            if (!directoryName.equals("")) jsonConfigFile = String.format("%s", jsonConfigFile);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(jsonConfigFile);
             gson.toJson(Rusbik.config, writer);

@@ -32,3 +32,5 @@ logs/
 # myStuff
 server.db
 old.db
+python/reboot/.env
+python/backup/.env

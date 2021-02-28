@@ -9,8 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import rusbik.database.RusbikBlockActionPerformLog;
-import rusbik.database.RusbikDatabase;
+import rusbik.Rusbik;
 import rusbik.utils.KrusbibUtils;
 
 /**
@@ -20,13 +19,12 @@ import rusbik.utils.KrusbibUtils;
 public abstract class BlockBreakingLoggingMixin {
     @Inject(method = "onBreak", at = @At("HEAD"))
     private void broken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
-        RusbikDatabase.logger.log(new RusbikBlockActionPerformLog(
-                    player.getName().getString(),
-                    state.getBlock().getTranslationKey(),
-                    pos.getX(), pos.getY(), pos.getZ(), KrusbibUtils.getDim(world),
-                    0,
-                    KrusbibUtils.getDate()
-            )
+        Rusbik.onBlockInteraction(
+                player.getName().getString(),
+                state.getBlock().getTranslationKey(),
+                pos,
+                KrusbibUtils.getDim(world),
+                0
         );
     }
 }

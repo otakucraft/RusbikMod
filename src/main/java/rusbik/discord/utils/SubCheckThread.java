@@ -91,7 +91,6 @@ public class SubCheckThread extends Thread {
             return;
         }
 
-
         System.out.println("Discord User check - END");
     }
 

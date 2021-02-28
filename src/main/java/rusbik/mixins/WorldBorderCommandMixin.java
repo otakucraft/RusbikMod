@@ -14,6 +14,6 @@ import rusbik.Rusbik;
 public class WorldBorderCommandMixin {
     @Inject(method = "register", at = @At("RETURN"))
     private static void registerRusbik(CommandDispatcher<ServerCommandSource> dispatcher, CallbackInfo ci){
-        Rusbik.registerCommand(dispatcher);
+        Rusbik.registerCommands(dispatcher);
     }
 }

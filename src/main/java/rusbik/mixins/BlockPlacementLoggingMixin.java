@@ -11,8 +11,7 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import rusbik.database.RusbikBlockActionPerformLog;
-import rusbik.database.RusbikDatabase;
+import rusbik.Rusbik;
 import rusbik.utils.KrusbibUtils;
 
 /**
@@ -22,16 +21,16 @@ import rusbik.utils.KrusbibUtils;
 public class BlockPlacementLoggingMixin {
     @Redirect(method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onPlaced(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)V"))
     private void onPlace(Block block, World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        block.onPlaced(world, pos, state, placer, itemStack);
+
         if (placer instanceof ServerPlayerEntity) {
-            RusbikDatabase.logger.log(new RusbikBlockActionPerformLog(
-                        placer.getName().getString(),
-                        state.getBlock().getTranslationKey(),
-                        pos.getX(), pos.getY(), pos.getZ(), KrusbibUtils.getDim(world),
-                        1,
-                        KrusbibUtils.getDate()
-                )
+            Rusbik.onBlockInteraction(
+                    placer.getName().getString(),
+                    state.getBlock().getTranslationKey(),
+                    pos,
+                    KrusbibUtils.getDim(world),
+                    1
             );
         }
-        block.onPlaced(world, pos, state, placer, itemStack);
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.GameMode;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class RusbisSurvivalCommand {
+public class SurvivalCommand {
     // El /s robado de carpet.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("s").

@@ -32,8 +32,8 @@ public class Rusbik {
         AdminTeleportCommand.register(dispatcher);
         BackCommand.register(dispatcher);
         DiscordCommand.register(dispatcher);
-        RusbisCameraCommand.register(dispatcher);
-        RusbisSurvivalCommand.register(dispatcher);
+        CameraCommand.register(dispatcher);
+        SurvivalCommand.register(dispatcher);
         HereCommand.register(dispatcher);
         SpoofCommand.register(dispatcher);
         PitoCommand.register(dispatcher);

@@ -10,7 +10,7 @@ import rusbik.database.RusbikDatabase;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class RusbisCameraCommand {
+public class CameraCommand {
     // El /c robado de carpet.
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("c").

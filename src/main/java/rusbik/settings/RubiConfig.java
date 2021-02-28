@@ -10,10 +10,10 @@ public class RubiConfig {
     private boolean isRunning;
     private long discordRole;
     private long groupID;
-    private List<Long> whitelistChat;
-    private List<Long> allowedChat;
-    private List<Long> adminChat;
-    private List<Long> validRoles;
+    private final List<Long> whitelistChat;
+    private final List<Long> allowedChat;
+    private final List<Long> adminChat;
+    private final List<Long> validRoles;
 
     public RubiConfig(String discordToken, long chatChannelId, boolean isRunning, long discordRole, List<Long> whitelistChat, List<Long> allowedChat, List<Long> adminChat, long groupID, List<Long> validRoles) {
         this.discordToken = discordToken;

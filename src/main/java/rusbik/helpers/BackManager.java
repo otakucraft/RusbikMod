@@ -2,14 +2,14 @@ package rusbik.helpers;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import rusbik.database.RusbikDatabase;
+import rusbik.Rusbik;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
 
 public class BackManager {
     public static void tpDeathPos(ServerPlayerEntity player) throws SQLException {
-        BackPos deathPos = RusbikDatabase.getDeathPos(player.getName().getString());
+        BackPos deathPos = Rusbik.players.get(player.getName().getString()).back.getBackPos();
         // Intentar hacer tp a tu última deathPos.
         if (deathPosExist(deathPos.X)) {
             player.teleport(KrusbibUtils.getWorld(deathPos.dim, player), deathPos.X, deathPos.Y, deathPos.Z, player.yaw, player.pitch);

@@ -2,14 +2,12 @@ package rusbik.helpers;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import rusbik.database.RusbikDatabase;
+import rusbik.Rusbik;
 import rusbik.utils.KrusbibUtils;
 
-import java.sql.SQLException;
-
 public class HomeManager {
-    public static void tpHome(ServerPlayerEntity player) throws SQLException {
-        HomePos homePos = RusbikDatabase.getHomePos(player.getName().getString());
+    public static void tpHome(ServerPlayerEntity player) {
+        HomePos homePos = Rusbik.players.get(player.getName().getString()).home.getHomePos();
         // Intentar hacer tp a tu última home.
         if (homePosExists(homePos.X)){
             player.teleport(KrusbibUtils.getWorld(homePos.dim, player), homePos.X, homePos.Y, homePos.Z, player.yaw, player.pitch);

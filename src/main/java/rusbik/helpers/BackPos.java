@@ -13,4 +13,15 @@ public class BackPos {
         this.Z = Z;
         this.dim = dim;
     }
+
+    public BackPos getBackPos() {
+        return this;
+    }
+
+    public void setBackPos(double X, double Y, double Z, String dim) {
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
+        this.dim = dim;
+    }
 }

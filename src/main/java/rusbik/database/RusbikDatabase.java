@@ -1,6 +1,5 @@
 package rusbik.database;
 
-import net.minecraft.server.network.ServerPlayerEntity;
 import rusbik.Rusbik;
 import rusbik.helpers.BackPos;
 import rusbik.helpers.HomePos;
@@ -128,36 +127,36 @@ public class RusbikDatabase {
             ps.setString(5, playerName);
             ps.executeUpdate();
             ps.close();
-            
+
             c.commit();
         }
-        Rusbik.players.get(playerName).back.setBackPos(X, Y, Z, Dim);
+        if (Rusbik.players.containsKey(playerName)) Rusbik.players.get(playerName).back.setBackPos(X, Y, Z, Dim);
     }
 
     /**
      * Update the player's home.
-     * @param player player entity
+     * @param playerName player entity
      * @param X position X
      * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
      * @throws SQLException connection error
      */
-    public static void updateHomeInformation(String player, double X, double Y, double Z, String Dim) throws SQLException {
-        if (c != null){
+    public static void updateHomeInformation(String playerName, double X, double Y, double Z, String Dim) throws SQLException {
+        if (c != null) {
             String query = "UPDATE pos SET homeX = ?, homeY = ?, homeZ = ?, homeDim = ? WHERE name = ?";
             PreparedStatement ps = c.prepareStatement(query);
             ps.setDouble(1, X);
             ps.setDouble(2, Y);
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
-            ps.setString(5, player);
+            ps.setString(5, playerName);
             ps.executeUpdate();
             ps.close();
 
             c.commit();
         }
-        Rusbik.players.get(player).home.setHomePos(X, Y, Z, Dim);
+        if (Rusbik.players.containsKey(playerName)) Rusbik.players.get(playerName).home.setHomePos(X, Y, Z, Dim);
     }
 
     /**
@@ -644,15 +643,18 @@ public class RusbikDatabase {
      * Add the player to the list of online players
      * @param player player to be added
      */
-    public static void addPlayer(ServerPlayerEntity player) {
-        Rusbik.players.put(player.getName().getString(), new RusbikPlayer(player.getName().getString()));
+    public static void addPlayer(String player) {
+        if (Rusbik.players.containsKey(player)) {
+            removePlayer(player);
+        }
+        Rusbik.players.put(player, new RusbikPlayer(player));
     }
     
     /**
      * Remove the player from the list od online players
      * @param player player to be removed
      */
-    public static void removePlayer(ServerPlayerEntity player) {
-        Rusbik.players.remove(player.getName().getString());
+    public static void removePlayer(String player) {
+        Rusbik.players.remove(player);
     }
 }

@@ -24,4 +24,8 @@ public class HomePos {
         this.Z = Z;
         this.dim = dim;
     }
+
+    public boolean isValid() {
+        return !this.dim.equals("");
+    }
 }

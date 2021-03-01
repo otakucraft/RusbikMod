@@ -258,15 +258,16 @@ public class RusbikDatabase {
         PreparedStatement ps = c.prepareStatement(query);
         ps.setString(1, playerName);
         ResultSet rs = ps.executeQuery();
+        boolean exists = false;
         if (rs.next()) {
             long times = rs.getLong("timesJoined");
             rs.close();
             ps.close();
-            return times != 0;
+            exists = times != 0;
         }
         rs.close();
         ps.close();
-        return true;
+        return exists;
     }
 
     /**

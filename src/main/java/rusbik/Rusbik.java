@@ -83,7 +83,9 @@ public class Rusbik {
 
     public static void onPlayerJoins(ServerPlayerEntity player) throws SQLException {
         if (DiscordListener.chatBridge) DiscordListener.sendMessage(":arrow_right: **" + player.getName().getString().replace("_", "\\_") + " joined the game!**");
-        
+
+        if (!RusbikDatabase.playerExists(player.getName().getString())) { return; }
+
         RusbikDatabase.addPlayer(player.getName().getString());
 
         if (!RusbikDatabase.playerExists(player.getName().getString())){
@@ -103,7 +105,7 @@ public class Rusbik {
     }
 
     public static void onPlayerDies(ServerPlayerEntity playerEntity) throws SQLException {
-        if (DiscordListener.chatBridge){
+        if (DiscordListener.chatBridge) {
             DiscordListener.sendMessage(":skull_crossbones: **" + playerEntity.getDamageTracker().getDeathMessage().getString().replace("_", "\\_") + "**");
         }
 

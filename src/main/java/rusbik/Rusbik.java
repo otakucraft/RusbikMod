@@ -12,16 +12,19 @@ import rusbik.commands.*;
 import rusbik.database.RusbikBlockActionPerformLog;
 import rusbik.database.RusbikDatabase;
 import rusbik.discord.utils.DiscordListener;
+import rusbik.helpers.RusbikPlayer;
 import rusbik.settings.RubiConfig;
 import rusbik.utils.FileManager;
 import rusbik.utils.KrusbibUtils;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class Rusbik {
 
     public static RubiConfig config;
     private static MinecraftServer minecraftServer;
+    public static final HashMap<String, RusbikPlayer> players = new HashMap<>();
 
     public static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher) {
         RandomTpCommand.register(dispatcher);
@@ -80,6 +83,8 @@ public class Rusbik {
 
     public static void onPlayerJoins(ServerPlayerEntity player) throws SQLException {
         if (DiscordListener.chatBridge) DiscordListener.sendMessage(":arrow_right: **" + player.getName().getString().replace("_", "\\_") + " joined the game!**");
+        
+        RusbikDatabase.addPlayer(player);
 
         if (!RusbikDatabase.playerExists(player.getName().getString())){
             RusbikDatabase.updateCount(player.getName().getString());
@@ -91,8 +96,10 @@ public class Rusbik {
         }
     }
 
-    public static void onPlayerLeaves(ServerPlayerEntity playerEntity) {
+    public static void onPlayerLeaves(ServerPlayerEntity playerEntity) throws SQLException {
         if (DiscordListener.chatBridge) DiscordListener.sendMessage(":arrow_left: **" + playerEntity.getName().getString().replace("_", "\\_") + " left the game!**");
+        
+        RusbikDatabase.removePlayer(playerEntity);
     }
 
     public static void onPlayerDies(ServerPlayerEntity playerEntity) throws SQLException {
@@ -103,7 +110,7 @@ public class Rusbik {
         playerEntity.sendMessage(new LiteralText(String.format("RIP ;( %s %s", KrusbibUtils.getDimensionWithColor(playerEntity.world), KrusbibUtils.formatCoords(playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z))), false);
 
         if (RusbikDatabase.userExists(playerEntity.getEntityName())) {
-            RusbikDatabase.updatePlayerInformation(playerEntity.getEntityName(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
+            RusbikDatabase.updateDeathInformation(playerEntity.getEntityName(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
         }
     }
 

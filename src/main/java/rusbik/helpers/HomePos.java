@@ -13,4 +13,15 @@ public class HomePos {
         this.Z = Z;
         this.dim = dim;
     }
+
+    public HomePos getHomePos() {
+        return this;
+    }
+
+    public void setHomePos(double X, double Y, double Z, String dim) {
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
+        this.dim = dim;
+    }
 }

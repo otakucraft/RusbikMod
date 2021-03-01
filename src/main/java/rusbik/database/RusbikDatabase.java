@@ -1,8 +1,10 @@
 package rusbik.database;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import rusbik.Rusbik;
 import rusbik.helpers.BackPos;
 import rusbik.helpers.HomePos;
+import rusbik.helpers.RusbikPlayer;
 import rusbik.utils.KrusbibUtils;
 
 import java.io.File;
@@ -108,14 +110,14 @@ public class RusbikDatabase {
 
     /**
      * Update the player's death.
-     * @param name player's name
+     * @param playerName player's name
      * @param X position X
      * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
      * @throws SQLException connection error
      */
-    public static void updatePlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
+    public static void updateDeathInformation(String playerName, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             String query = "UPDATE pos SET deathX = ?, deathY = ?, deathZ = ?, deathDim = ? WHERE name = ?";
             PreparedStatement ps = c.prepareStatement(query);
@@ -123,12 +125,13 @@ public class RusbikDatabase {
             ps.setDouble(2, Y);
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
-            ps.setString(5, name);
+            ps.setString(5, playerName);
             ps.executeUpdate();
             ps.close();
             
             c.commit();
         }
+        Rusbik.players.get(playerName).back.setBackPos(X, Y, Z, Dim);
     }
 
     /**
@@ -140,7 +143,7 @@ public class RusbikDatabase {
      * @param Dim Dimension
      * @throws SQLException connection error
      */
-    public static void updatePlayerInformation(ServerPlayerEntity player, double X, double Y, double Z, String Dim) throws SQLException {
+    public static void updateHomeInformation(String player, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             String query = "UPDATE pos SET homeX = ?, homeY = ?, homeZ = ?, homeDim = ? WHERE name = ?";
             PreparedStatement ps = c.prepareStatement(query);
@@ -148,12 +151,13 @@ public class RusbikDatabase {
             ps.setDouble(2, Y);
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
-            ps.setString(5, player.getName().getString());
+            ps.setString(5, player);
             ps.executeUpdate();
             ps.close();
 
             c.commit();
         }
+        Rusbik.players.get(player).home.setHomePos(X, Y, Z, Dim);
     }
 
     /**
@@ -178,42 +182,52 @@ public class RusbikDatabase {
      * Get the position of the last death.
      * @param playerName player's name
      * @return player's last death position
-     * @throws SQLException connection error
      */
-    public static BackPos getDeathPos(String playerName) throws SQLException {
+    public static BackPos getDeathPos(String playerName) {
         String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name = ?";
-        PreparedStatement ps = c.prepareStatement(query);
-        ps.setString(1, playerName);
-        ResultSet rs = ps.executeQuery();
-        double X = rs.getDouble("deathX");
-        double Y = rs.getDouble("deathY");
-        double Z = rs.getDouble("deathZ");
-        String dim = rs.getString("deathDim");
-        rs.close();
-        ps.close();
+        PreparedStatement ps;
+        try {
+            ps = c.prepareStatement(query);
+            ps.setString(1, playerName);
+            ResultSet rs = ps.executeQuery();
+            double X = rs.getDouble("deathX");
+            double Y = rs.getDouble("deathY");
+            double Z = rs.getDouble("deathZ");
+            String dim = rs.getString("deathDim");
+            rs.close();
+            ps.close();
 
-        return new BackPos(X, Y, Z, dim);
+            return new BackPos(X, Y, Z, dim);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return new BackPos(0, 0, 0, "");
+        }
     }
 
     /**
      * Get the home position.
      * @param playerName player's name
      * @return player's home position
-     * @throws SQLException connection error
      */
-    public static HomePos getHomePos(String playerName) throws SQLException {
+    public static HomePos getHomePos(String playerName) {
         String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name = ?";
-        PreparedStatement ps = c.prepareStatement(query);
-        ps.setString(1, playerName);
-        ResultSet rs = ps.executeQuery();
-        double X = rs.getDouble("homeX");
-        double Y = rs.getDouble("homeY");
-        double Z = rs.getDouble("homeZ");
-        String dim = rs.getString("homeDim");
-        rs.close();
-        ps.close();
+        PreparedStatement ps;
+        try {
+            ps = c.prepareStatement(query);
+            ps.setString(1, playerName);
+            ResultSet rs = ps.executeQuery();
+            double X = rs.getDouble("homeX");
+            double Y = rs.getDouble("homeY");
+            double Z = rs.getDouble("homeZ");
+            String dim = rs.getString("homeDim");
+            rs.close();
+            ps.close();
 
-        return new HomePos(X, Y, Z, dim);
+            return new HomePos(X, Y, Z, dim);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return new HomePos(0, 0, 0, "");
+        }
     }
 
     /**
@@ -624,5 +638,21 @@ public class RusbikDatabase {
         rs.close();
         stmt.close();
         
+    }
+    
+    /**
+     * Add the player to the list of online players
+     * @param player player to be added
+     */
+    public static void addPlayer(ServerPlayerEntity player) {
+        Rusbik.players.put(player.getName().getString(), new RusbikPlayer(player.getName().getString()));
+    }
+    
+    /**
+     * Remove the player from the list od online players
+     * @param player player to be removed
+     */
+    public static void removePlayer(ServerPlayerEntity player) {
+        Rusbik.players.remove(player.getName().getString());
     }
 }

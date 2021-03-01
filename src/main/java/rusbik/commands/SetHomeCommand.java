@@ -24,7 +24,7 @@ public class SetHomeCommand {
                 if (RusbikDatabase.userExists(playerEntity.getName().getString())) {
                     if (RusbikDatabase.getPlayerPerms(source.getPlayer().getName().getString()) > 0) {
                         // Actualizar la base de datos y mensaje.
-                        RusbikDatabase.updatePlayerInformation(playerEntity, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
+                        RusbikDatabase.updateHomeInformation(playerEntity.getName().getString(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
                         playerEntity.setSpawnPoint(playerEntity.world.getRegistryKey(), playerEntity.getBlockPos(), 0.0F, true, false);
                         source.sendFeedback(new LiteralText(String.format("Casa en: %s %s", KrusbibUtils.getDimensionWithColor(playerEntity.world), KrusbibUtils.formatCoords(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ()))), false);
                     }

@@ -3,6 +3,7 @@ package rusbik.database;
 import net.minecraft.server.network.ServerPlayerEntity;
 import rusbik.helpers.BackPos;
 import rusbik.helpers.HomePos;
+import rusbik.helpers.RusbikPlayer;
 import rusbik.utils.KrusbibUtils;
 
 import java.io.File;
@@ -17,6 +18,7 @@ public class RusbikDatabase {
 
     public static Connection c = null;
     public static RusbikLogger logger = new RusbikLogger("RusbikLogger");
+    private static final List<RusbikPlayer> players = new ArrayList<>();
 
     public static void initializeDB(String directoryName){
         try {
@@ -108,14 +110,14 @@ public class RusbikDatabase {
 
     /**
      * Update the player's death.
-     * @param name player's name
+     * @param playerName player's name
      * @param X position X
      * @param Y position Y
      * @param Z position Z
      * @param Dim Dimension
      * @throws SQLException connection error
      */
-    public static void updatePlayerInformation(String name, double X, double Y, double Z, String Dim) throws SQLException {
+    public static void updatePlayerInformation(String playerName, double X, double Y, double Z, String Dim) throws SQLException {
         if (c != null){
             String query = "UPDATE pos SET deathX = ?, deathY = ?, deathZ = ?, deathDim = ? WHERE name = ?";
             PreparedStatement ps = c.prepareStatement(query);
@@ -123,12 +125,13 @@ public class RusbikDatabase {
             ps.setDouble(2, Y);
             ps.setDouble(3, Z);
             ps.setString(4, Dim);
-            ps.setString(5, name);
+            ps.setString(5, playerName);
             ps.executeUpdate();
             ps.close();
             
             c.commit();
         }
+        players.get(players.indexOf(playerName)).setBack(X,Y,Z,Dim);
     }
 
     /**
@@ -154,6 +157,7 @@ public class RusbikDatabase {
 
             c.commit();
         }
+        players.get(players.indexOf(player)).setHome(X,Y,Z,Dim);
     }
 
     /**
@@ -181,18 +185,7 @@ public class RusbikDatabase {
      * @throws SQLException connection error
      */
     public static BackPos getDeathPos(String playerName) throws SQLException {
-        String query = "SELECT deathX , deathY , deathZ , deathDim FROM pos WHERE name = ?";
-        PreparedStatement ps = c.prepareStatement(query);
-        ps.setString(1, playerName);
-        ResultSet rs = ps.executeQuery();
-        double X = rs.getDouble("deathX");
-        double Y = rs.getDouble("deathY");
-        double Z = rs.getDouble("deathZ");
-        String dim = rs.getString("deathDim");
-        rs.close();
-        ps.close();
-
-        return new BackPos(X, Y, Z, dim);
+        return players.get(players.indexOf(playerName)).getBack();
     }
 
     /**
@@ -202,18 +195,7 @@ public class RusbikDatabase {
      * @throws SQLException connection error
      */
     public static HomePos getHomePos(String playerName) throws SQLException {
-        String query = "SELECT homeX , homeY , homeZ , homeDim FROM pos WHERE name = ?";
-        PreparedStatement ps = c.prepareStatement(query);
-        ps.setString(1, playerName);
-        ResultSet rs = ps.executeQuery();
-        double X = rs.getDouble("homeX");
-        double Y = rs.getDouble("homeY");
-        double Z = rs.getDouble("homeZ");
-        String dim = rs.getString("homeDim");
-        rs.close();
-        ps.close();
-
-        return new HomePos(X, Y, Z, dim);
+        return players.get(players.indexOf(playerName)).getHome();
     }
 
     /**
@@ -624,5 +606,23 @@ public class RusbikDatabase {
         rs.close();
         stmt.close();
         
+    }
+    
+    /**
+     * Add the player to the list of online players
+     * @param player player to be added
+     * @throws SQLException connection error
+     */
+    public static void addPlayer(ServerPlayerEntity player) throws SQLException{
+        RusbikDatabase.players.add(new RusbikPlayer(player, true));
+    }
+    
+    /**
+     * Remove the player from the list od online players
+     * @param player player to be removed
+     * @throws SQLException 
+     */
+    public static void removePlayer(ServerPlayerEntity player)throws SQLException{
+        RusbikDatabase.players.remove(new RusbikPlayer(player, false));
     }
 }

@@ -111,8 +111,8 @@ public class Rusbik {
 
         playerEntity.sendMessage(new LiteralText(String.format("RIP ;( %s %s", KrusbibUtils.getDimensionWithColor(playerEntity.world), KrusbibUtils.formatCoords(playerEntity.getPos().x, playerEntity.getPos().y, playerEntity.getPos().z))), false);
 
-        if (RusbikDatabase.userExists(playerEntity.getEntityName())) {
-            RusbikDatabase.updateDeathInformation(playerEntity.getEntityName(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
+        if (RusbikDatabase.userExists(playerEntity.getName().getString())) {
+            RusbikDatabase.updateDeathInformation(playerEntity.getName().getString(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), KrusbibUtils.getDim(playerEntity.world));
         }
     }
 

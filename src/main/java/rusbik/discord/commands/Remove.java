@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 import rusbik.discord.utils.DiscordPermission;
@@ -57,7 +57,7 @@ public class Remove extends Commands {
             long id = Long.parseLong(event.getAuthor().getId());
 
             try {
-                if (!RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
+                if (RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
                     RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
 
                     WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
@@ -65,7 +65,7 @@ public class Remove extends Commands {
 
                     ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
                     if (serverPlayerEntity != null) {
-                        serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                        serverPlayerEntity.networkHandler.disconnect(new LiteralText("Ya no estás en la whitelist :("));  // kickear si está conectado.
                     }
 
                     event.getChannel().sendMessage("Eliminado ;(").queue();

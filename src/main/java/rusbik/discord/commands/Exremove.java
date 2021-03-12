@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 import rusbik.discord.utils.DiscordPermission;
@@ -56,7 +56,7 @@ public class Exremove extends Commands {
 
                     ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
                     if (serverPlayerEntity != null) {
-                        serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+                        serverPlayerEntity.networkHandler.disconnect(new LiteralText("Ya no estás en la whitelist :("));  // kickear si está conectado.
                     }
 
                     event.getChannel().sendMessage("Eliminado ;(").queue();

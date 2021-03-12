@@ -15,7 +15,7 @@ public class FileManager {
     public static String jsonConfigFile = "RConfig.json";
 
     public static void initializeJson() {
-        if (!directoryName.equals("")) jsonConfigFile = String.format("%s/%s", directoryName, jsonConfigFile);
+        // if (!directoryName.equals("")) jsonConfigFile = String.format("%s/%s", directoryName, jsonConfigFile);
         File file = new File(jsonConfigFile);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!file.exists()) {
@@ -58,7 +58,7 @@ public class FileManager {
     // Actualizar el archivo con los nuevos datos.
     public static void updateFile() {
         try {
-            if (!directoryName.equals("")) jsonConfigFile = String.format("%s", jsonConfigFile);
+            // if (!directoryName.equals("")) jsonConfigFile = String.format("%s", jsonConfigFile);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(jsonConfigFile);
             gson.toJson(Rusbik.config, writer);

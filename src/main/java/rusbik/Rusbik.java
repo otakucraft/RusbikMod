@@ -49,7 +49,10 @@ public class Rusbik {
 
         RusbikDatabase.initializeDB(session.getDirectoryName());  // Crear si fuera necesario y establecer con conexión con la base de datos.
 
-        FileManager.directoryName = session.getDirectoryName();
+        if (!session.getDirectoryName().equals("")) {
+            FileManager.jsonConfigFile = String.format("%s/%s", session.getDirectoryName(), FileManager.jsonConfigFile);
+        }
+
         try {
             FileManager.initializeJson();  // Cargar la configuración del archivo .yaml
             if (Rusbik.config.getChatChannelId() != 0 && !Rusbik.config.getDiscordToken().equals("")) {

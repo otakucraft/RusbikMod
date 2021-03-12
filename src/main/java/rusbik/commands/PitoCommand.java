@@ -13,7 +13,7 @@ public class PitoCommand {
                 executes(context -> msg(context.getSource())));
     }
     public static int msg(ServerCommandSource source){
-        source.sendFeedback(new LiteralText("Buena tula mi rey"), false);
+        source.sendFeedback(new LiteralText("Buena tula mi rey."), false);
         return 1;
     }
 }

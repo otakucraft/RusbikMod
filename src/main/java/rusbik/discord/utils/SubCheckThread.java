@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import rusbik.Rusbik;
 import rusbik.database.RusbikDatabase;
 
@@ -34,9 +34,19 @@ public class SubCheckThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Discord User check - START");
         try {
-            List<Member> members = Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(ids).get();
+            List<Member> members = new ArrayList<>();
+            List<Long> tempList = new ArrayList<>();
+
+            for (long id : ids) {
+                tempList.add(id);
+                if (tempList.size() > 90) {
+                    members.addAll(Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(tempList).get());
+                    tempList.clear();
+                }
+            }
+            members.addAll(Objects.requireNonNull(jda.getGuildById(Rusbik.config.getGroupID())).retrieveMembersByIds(tempList).get());
+
             List<Long> currentIDs = new ArrayList<>();
 
             for (Member member : members) {
@@ -88,10 +98,8 @@ public class SubCheckThread extends Thread {
             }
         }
         catch (NullPointerException e) {
-            return;
+            e.printStackTrace();
         }
-
-        System.out.println("Discord User check - END");
     }
 
     private boolean hasValidRole(List<Role> roles) {
@@ -120,7 +128,7 @@ public class SubCheckThread extends Thread {
 
         ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
         if (serverPlayerEntity != null) {
-            serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.not_whitelisted"));  // kickear si está conectado.
+            serverPlayerEntity.networkHandler.disconnect(new LiteralText("F sub :("));  // kickear si está conectado.
         }
 
         DiscordListener.sendAdminMessage(String.format("A %s se le acabó la sub, F.", playerName));

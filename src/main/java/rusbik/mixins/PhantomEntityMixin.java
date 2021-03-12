@@ -19,7 +19,7 @@ public abstract class PhantomEntityMixin extends FlyingEntity {
     @Override
     protected void dropLoot(DamageSource source, boolean causedByPlayer) {
         super.dropLoot(source, causedByPlayer);
-        if (source.getAttacker() instanceof ShulkerEntity && this.random.nextDouble() < 0.4) {
+        if (source.getAttacker() instanceof ShulkerEntity && this.random.nextDouble() < 0.7) {
             this.dropStack(new ItemStack(Items.ELYTRA));
         }
     }

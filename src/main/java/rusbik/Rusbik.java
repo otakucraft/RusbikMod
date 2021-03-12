@@ -84,11 +84,11 @@ public class Rusbik {
     public static void onPlayerJoins(ServerPlayerEntity player) throws SQLException {
         if (DiscordListener.chatBridge) DiscordListener.sendMessage(":arrow_right: **" + player.getName().getString().replace("_", "\\_") + " joined the game!**");
 
-        if (!RusbikDatabase.playerExists(player.getName().getString())) { return; }
+        if (!RusbikDatabase.hasRow(player.getName().getString())) { return; }
 
         RusbikDatabase.addPlayer(player.getName().getString());
 
-        if (!RusbikDatabase.playerExists(player.getName().getString())){
+        if (RusbikDatabase.playerFirstJoined(player.getName().getString())){
             RusbikDatabase.updateCount(player.getName().getString());
             for (Team team : minecraftServer.getScoreboard().getTeams()){
                 if (team.getName().equals("MIEMBRO")){

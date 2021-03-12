@@ -248,12 +248,32 @@ public class RusbikDatabase {
     }
 
     /**
+     * Check if the player is joining without adding (op player maybe?).
+     * @param playerName player's name
+     * @return true if it has not a previous login, false otherwise
+     * @throws SQLException connection error
+     */
+    public static boolean hasRow(String playerName) throws SQLException {
+        String query = "SELECT timesJoined FROM player WHERE name = ?";
+        PreparedStatement ps = c.prepareStatement(query);
+        ps.setString(1, playerName);
+        ResultSet rs = ps.executeQuery();
+        boolean exists = false;
+        if (rs.next()) {
+            exists = true;
+        }
+        rs.close();
+        ps.close();
+        return exists;
+    }
+
+    /**
      * Check if this is the first time this player has logged in.
      * @param playerName player's name
      * @return true if it has not a previous login, false otherwise
      * @throws SQLException connection error
      */
-    public static boolean playerExists(String playerName) throws SQLException {
+    public static boolean playerFirstJoined(String playerName) throws SQLException {
         String query = "SELECT timesJoined FROM player WHERE name = ?";
         PreparedStatement ps = c.prepareStatement(query);
         ps.setString(1, playerName);
@@ -267,7 +287,7 @@ public class RusbikDatabase {
         }
         rs.close();
         ps.close();
-        return exists;
+        return !exists;
     }
 
     /**

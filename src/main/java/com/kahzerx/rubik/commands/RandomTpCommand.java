@@ -15,7 +15,7 @@ import java.util.Random;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class RandomTpCommand {
+public final class RandomTpCommand {
     /**
      * Hacer tp al jugador a una posición random en un radio de 10k bloques.
      * @param dispatcher register command.
@@ -28,6 +28,8 @@ public class RandomTpCommand {
                                 context.getSource(),
                                 EntityArgumentType.getEntity(context, "player")))));
     }
+
+    private RandomTpCommand() { }
 
     public static int tpAndSpawnPoint(final ServerCommandSource source, final Entity player) {
         if (player instanceof ServerPlayerEntity) {

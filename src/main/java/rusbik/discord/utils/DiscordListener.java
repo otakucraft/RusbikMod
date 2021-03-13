@@ -105,7 +105,7 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     public static void sendMessage(String msg) {
-        if (chatBridge){
+        if (chatBridge) {
             try {
                 TextChannel ch = jda.getTextChannelById(channelId);
                 if (ch != null) ch.sendMessage(msg).queue();

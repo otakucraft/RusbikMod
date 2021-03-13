@@ -59,6 +59,7 @@ public class Rusbik {
                 if (Rusbik.config.isRunning()) {  // Iniciar el bot de discord.
                     try {
                         DiscordListener.connect(minecraftServer, Rusbik.config.getDiscordToken(), String.valueOf(Rusbik.config.getChatChannelId()));
+                        DiscordListener.sendMessage("\\o/");  // Avisar que el server está abierto xd.
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

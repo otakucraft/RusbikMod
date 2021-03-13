@@ -26,6 +26,6 @@ public class BackPos {
     }
 
     public boolean isValid() {
-        return !this.dim.equals("");
+        return this.dim != null && !this.dim.equals("");
     }
 }

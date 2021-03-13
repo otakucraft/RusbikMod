@@ -47,18 +47,18 @@ public class BlockInfoCommand {
             else if (page == 1) {  // Estás en la posición 1 pero existen más páginas.
                 MutableText pages = getPages(page, nLine);
                 MutableText next = getNext(X, Y, Z, page);
-                source.sendFeedback(new LiteralText("").append(pages).append(next).append(help(X, Y, Z)), false);
+                source.sendFeedback(new LiteralText("").append(pages).append(next).append(getHelp(X, Y, Z)), false);
             }
             else if (page == nLine) {  // Estás en la última página de muchas.
                 MutableText prev = getPrev(X, Y, Z, page);
                 MutableText pages = getPages(page, nLine);
-                source.sendFeedback(new LiteralText("").append(prev).append(pages).append(help(X, Y, Z)), false);
+                source.sendFeedback(new LiteralText("").append(prev).append(pages).append(getHelp(X, Y, Z)), false);
             }
             else {  // Tienes páginas antes y después.
                 MutableText prev = getPrev(X, Y, Z, page);
                 MutableText pages = getPages(page, nLine);
                 MutableText next = getNext(X, Y, Z, page);
-                source.sendFeedback(new LiteralText("").append(prev).append(pages).append(next).append(help(X, Y, Z)), false);
+                source.sendFeedback(new LiteralText("").append(prev).append(pages).append(next).append(getHelp(X, Y, Z)), false);
             }
         }
         catch (Exception e) {
@@ -83,7 +83,7 @@ public class BlockInfoCommand {
         return new LiteralText(String.format("%d/%d", page, nLine)).styled((style -> style.withColor(Formatting.WHITE)));
     }
 
-    public static MutableText help(int X, int Y, int Z) {  // Mensaje de ayuda.
+    public static MutableText getHelp(int X, int Y, int Z) {  // Mensaje de ayuda.
         return new LiteralText(String.format(". También puedes especificar la página con /blockInfo %d %d %d <página>.", X, Y, Z)).styled(style -> style.withColor(Formatting.WHITE));
     }
 }

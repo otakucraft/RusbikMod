@@ -18,7 +18,6 @@
     "ServerPlayerMixin",
     "ServerWorldMixin",
     "TeleportCommandMixin",
-    "UserCacheWhitelistMixin",
     "WorldBorderCommandMixin"
   ],
   "client": [],

@@ -12,6 +12,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import com.kahzerx.rubik.Rusbik;
 import com.kahzerx.rubik.database.RusbikDatabase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class SubCheckThread extends Thread {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final JDA jda;
     private final List<Long> ids;
 
@@ -35,6 +38,7 @@ public class SubCheckThread extends Thread {
     @Override
     public void run() {
         try {
+            LOGGER.info("Starting Subscription check");
             List<Member> members = new ArrayList<>();
             List<Long> tempList = new ArrayList<>();
 
@@ -97,6 +101,7 @@ public class SubCheckThread extends Thread {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            LOGGER.info("Finished Subscription check");
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -112,6 +117,7 @@ public class SubCheckThread extends Thread {
     }
 
     private void removeFromWhitelist(final String playerName) {
+        LOGGER.info("Starting Whitelist removal.");
         Whitelist whitelist = server.getPlayerManager().getWhitelist();
 
         GameProfile gameProfile = server.getUserCache().findByName(playerName);
@@ -132,9 +138,11 @@ public class SubCheckThread extends Thread {
         }
 
         DiscordListener.sendAdminMessage(String.format("A %s se le acabó la sub, F.", playerName));
+        LOGGER.info("Finished Whitelist removal.");
     }
 
     private void syncWhitelist() throws SQLException {
+        LOGGER.info("Starting whitelist/database sync.");
         List<String> nameList = RusbikDatabase.getNames();
         Whitelist whitelist = server.getPlayerManager().getWhitelist();
         List<String> actualWhitelist = Arrays.asList(whitelist.getNames());
@@ -167,5 +175,7 @@ public class SubCheckThread extends Thread {
         }
 
         server.getPlayerManager().reloadWhitelist();
+
+        LOGGER.info("Finished whitelist/database sync.");
     }
 }

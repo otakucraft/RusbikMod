@@ -6,7 +6,7 @@
   "mixins": [
     "BlockBreakingLoggingMixin",
     "BlockPlacementLoggingMixin",
-    "CommandManagerSeedMixin",
+    "RusbiCommandManagerMixin",
     "DiscordAdvancementMixin",
     "DiscordServerChatListerMixin",
     "DrownedEntityAccessor",
@@ -17,8 +17,7 @@
     "RusbikServerRunMixin",
     "ServerPlayerMixin",
     "ServerWorldMixin",
-    "TeleportCommandMixin",
-    "WorldBorderCommandMixin"
+    "TeleportCommandMixin"
   ],
   "client": [],
   "injectors": {

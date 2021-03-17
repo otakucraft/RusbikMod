@@ -122,7 +122,7 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     public static void checkSub(final List<Long> ids) {
-        assert jda != null;
+        assert jda != null && chatBridge;
         Thread dbCheck = new SubCheckThread("discordSubCheckThread", jda, ids, server);
         dbCheck.start();
     }

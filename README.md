@@ -19,6 +19,7 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 |`/blockInfo`|Revisar el historial de cada bloque `/blockInfo x y z`.|`>0`|
 |`/here`|Envía por el chat a todos los jugadores tu posición y aplica 5 segundos de glowing.|`>0`|
 |`/home`|Tp al jugador a la posición `home`.|`>0`|
+|`/pito`|¯\\\_(ツ)_/¯|`>0`|
 |`/s`|Comando retirado del carpet para ponerse en survival, retira `Night Vision` y `Conduit Power`.| `>0`|
 |`/sb`|Visualizar cualquier scoreboard.|`>0`|
 |`/seed`|Habilitado para todos|`>0`|
@@ -34,11 +35,12 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 
 ---
 
-## otros
-* Al morir se envía al jugador un mensaje con la posición de muerte y dimensión.
-* Jugadores añadidos manualmente a la whitelist no podrán ejecutar ningún comando con privilegios distinto de `null`, al no tener un registro en la base de datos.
-* Los phantoms sueltan elytras al morir por shulker.independientemente del OP.
-* `/pito` ¯\\\_(ツ)_/¯
+## Eventos
+
+|Evento|Acción|
+|---|---|
+|Morir un jugador.|Notifiación por el chat de la posición de muerte.|
+|Morir phantom por shulker.|40% de droppear elytras.|
 
 ---
 

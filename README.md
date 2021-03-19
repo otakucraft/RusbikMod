@@ -22,7 +22,7 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 |`/pito`|¯\\\_(ツ)_/¯|`>0`|
 |`/s`|Comando retirado del carpet para ponerse en survival, retira `Night Vision` y `Conduit Power`.| `>0`|
 |`/sb`|Visualizar cualquier scoreboard.|`>0`|
-|`/seed`|Habilitado para todos|`>0`|
+|`/seed`|Habilitado para todos.|`>0`|
 |`/setHome`|Registrar una posición como `home`.|`>0`|
 |`/tp`|Tan solo tiene la función de hacer un tp de TU jugador a la posición de otro jugador (para que moderadores puedan asistir a otras personas sin abusar del `tp`).|`>1`|
 |`/back`|Permite volver a la posición de tu última muerte.|`>2`|
@@ -54,15 +54,15 @@ La configuración se guarda en un archivo `RConfig.json` dentro de la carpeta de
 
 |Comandos|Descripción|Categoría|
 |---|---|---|
-|`!online`|Lista jugadores conectados al servidor|`allowedChat`|
+|`!online`|Lista jugadores conectados al servidor.|`allowedChat`|
 |`!add <nombre>`|Añade al jugador a la whitelist y registra en la base de datos junto con ID de discord y aplica un rol, permite que al banear podamos evitar que ese ID de discord añada a nadie más, solo puedes añadir a un jugador a la whitelist.|`whitelistChat`|
 |`!remove <nombre>`|Elimina al jugador nombrado, su ID de discord corresponde con el que añadió, tiene la finalidad de facilitar el cambio de cuentas de minecraft ya que solo puedes añadir a una persona.|`whitelistChat`|
-|`!list`|Lista jugadores en whitelist|`whitelistChat`|
+|`!list`|Lista jugadores en whitelist.|`whitelistChat`|
 |`!exadd <nombre>`|Añadir jugadores que no son subs a la whitelist, estos jugadores solo saldrán de la whitelist con el comando `!exremove`.|`adminChat`|
 |`!exremove <nombre>`|Eliminar jugadores añadidos con el comando `!exadd`.|`adminChat`|
 |`!ban <nombre>`|Banea al jugador del server de minecraft y bloquea que pueda añadir o eliminar a nadie de la whitelist.|`adminChat`|
 |`!pardon <nombre>`|Desbanea al jugador del server de minecraft, se le devuelve el permiso de añadir o eliminar de whitelist.|`adminChat`|
-|`!reload`|Hace un reload de whitelist además de re-sincronizar la información modificada en el archivo `RConfig.json`|`adminChat`|
+|`!reload`|Hace un reload de whitelist además de re-sincronizar la información modificada en el archivo `RConfig.json`.|`adminChat`|
 
 ---
 

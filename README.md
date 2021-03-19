@@ -62,7 +62,7 @@ La configuración se guarda en un archivo `RConfig.json` dentro de la carpeta de
 |`!exremove <nombre>`|Eliminar jugadores añadidos con el comando `!exadd`.|`adminChat`|
 |`!ban <nombre>`|Banea al jugador del server de minecraft y bloquea que pueda añadir o eliminar a nadie de la whitelist.|`adminChat`|
 |`!pardon <nombre>`|Desbanea al jugador del server de minecraft, se le devuelve el permiso de añadir o eliminar de whitelist.|`adminChat`|
-|`!reload`|Hace un reload de whitelist además de re-sincronizar la información modificada en el archivo `RConfig.json`
+|`!reload`|Hace un reload de whitelist además de re-sincronizar la información modificada en el archivo `RConfig.json`|`adminChat`|
 
 ---
 

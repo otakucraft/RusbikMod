@@ -87,7 +87,14 @@ public final class Rusbik {
 
     public static void onAutoSave() throws SQLException {
         DiscordListener.checkSub(RusbikDatabase.getIDs());
-        RusbikDatabase.clearLogger();
+
+        new Thread(() -> {
+            try {
+                RusbikDatabase.clearLogger();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }).start();
     }
 
     public static void onPlayerJoins(final ServerPlayerEntity player) throws SQLException {

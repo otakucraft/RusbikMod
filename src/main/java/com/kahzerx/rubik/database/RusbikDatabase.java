@@ -5,6 +5,8 @@ import com.kahzerx.rubik.helpers.HomePos;
 import com.kahzerx.rubik.helpers.RusbikPlayer;
 import com.kahzerx.rubik.Rusbik;
 import com.kahzerx.rubik.utils.KrusbibUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.sql.*;
@@ -18,6 +20,7 @@ public class RusbikDatabase {
 
     public static Connection c = null;
     public static RusbikLogger logger = new RusbikLogger("RusbikLogger");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static void initializeDB(final String directoryName) {
         try {
@@ -623,11 +626,12 @@ public class RusbikDatabase {
         Statement stmt = c.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");
         if (rs.next()) {
+            LOGGER.info("Starting rows deletion");
             stmt.executeUpdate("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,5))");
+            LOGGER.info("Finished rows deletion");
         }
         rs.close();
         stmt.close();
-        
     }
 
     /**

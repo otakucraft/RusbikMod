@@ -39,7 +39,7 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 
 |Evento|Acción|
 |---|---|
-|Morir un jugador.|Notifiación por el chat de la posición de muerte.|
+|Morir un jugador.|Notificación por el chat de la posición de muerte.|
 |Morir phantom por shulker.|40% de droppear elytras.|
 
 ---

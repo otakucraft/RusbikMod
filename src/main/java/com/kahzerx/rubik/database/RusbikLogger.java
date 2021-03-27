@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RusbikLogger extends Thread {
-    private final List<RusbikBlockActionPerformLog> blockActionPerformLogs = new ArrayList<>();
+    private List<RusbikBlockActionPerformLog> blockActionPerformLogs = new ArrayList<>();
     public boolean running;
 
     /**
@@ -23,7 +23,21 @@ public class RusbikLogger extends Thread {
      * @param log with the information of the action carried out on the block
      */
     public synchronized void log(final RusbikBlockActionPerformLog log) {
-         this.blockActionPerformLogs.add(log);
+        try {
+            this.blockActionPerformLogs.add(log);
+        } catch (NullPointerException lol) {
+            clear();
+            lol.printStackTrace();
+        }
+    }
+
+    public void clear() {
+        try {
+            this.blockActionPerformLogs.clear();
+        } catch (Exception e) {
+            this.blockActionPerformLogs = new ArrayList<>();
+            e.printStackTrace();
+        }
     }
 
      /**

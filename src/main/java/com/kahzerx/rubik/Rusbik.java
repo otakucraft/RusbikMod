@@ -86,6 +86,15 @@ public final class Rusbik {
     }
 
     public static void onAutoSave() throws SQLException {
+        if (!RusbikDatabase.logger.isAlive()) {
+            try {
+                RusbikDatabase.logger.clear();
+                RusbikDatabase.logger.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         DiscordListener.checkSub(RusbikDatabase.getIDs());
 
         new Thread(() -> {

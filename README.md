@@ -16,6 +16,7 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 
 |Comando|Descripción|Privilegios|
 |---|---|---|
+|`/afk`|Literalmente nada|`>0`|
 |`/blockInfo`|Revisar el historial de cada bloque `/blockInfo x y z`.|`>0`|
 |`/here`|Envía por el chat a todos los jugadores tu posición y aplica 5 segundos de glowing.|`>0`|
 |`/home`|Tp al jugador a la posición `home`.|`>0`|

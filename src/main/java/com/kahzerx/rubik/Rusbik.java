@@ -28,6 +28,7 @@ public final class Rusbik {
     private Rusbik() { }
 
     public static void registerCommands(final CommandDispatcher<ServerCommandSource> dispatcher) {
+        AfkCommand.register(dispatcher);
         RandomTpCommand.register(dispatcher);
         SetHomeCommand.register(dispatcher);
         HomeCommand.register(dispatcher);

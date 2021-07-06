@@ -12,6 +12,7 @@ import net.minecraft.text.TranslatableText;
 import com.kahzerx.rubik.database.RusbikDatabase;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class Ban extends Commands {
     public Ban() {
@@ -30,20 +31,20 @@ public class Ban extends Commands {
                 return;
             }
 
-            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+            Optional<GameProfile> gameProfile = server.getUserCache().findByName(playerName);
 
-            if (gameProfile == null) {  // El Jugador tiene que ser premium.
+            if (gameProfile.isEmpty()) {  // El Jugador tiene que ser premium.
                 event.getChannel().sendMessage("Este usuario no existe!").queue();
                 return;
             }
 
             try {
-                if (!RusbikDatabase.userExists(gameProfile.getName())) {
+                if (!RusbikDatabase.userExists(gameProfile.get().getName())) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
                     return;
                 }
 
-                long id = RusbikDatabase.getID(gameProfile.getName());
+                long id = RusbikDatabase.getID(gameProfile.get().getName());
 
                 if (RusbikDatabase.isBanned(id)) {
                     event.getChannel().sendMessage("Ya estaba baneado.").queue();
@@ -52,12 +53,12 @@ public class Ban extends Commands {
 
                 BannedPlayerList list = server.getPlayerManager().getUserBanList();
 
-                if (!list.contains(gameProfile)) {  // Vanilla ban
+                if (!list.contains(gameProfile.get())) {  // Vanilla ban
 
-                    BannedPlayerEntry playerEntry = new BannedPlayerEntry(gameProfile, null, "DiscordBan", null, null);
+                    BannedPlayerEntry playerEntry = new BannedPlayerEntry(gameProfile.get(), null, "DiscordBan", null, null);
                     list.add(playerEntry);
 
-                    ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());  // kickear si está conectado.
+                    ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.get().getId());  // kickear si está conectado.
                     if (serverPlayerEntity != null) {
                         serverPlayerEntity.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.banned"));
                     }

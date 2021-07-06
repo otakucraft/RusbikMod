@@ -6,6 +6,8 @@
 
 Mod para la administración del server de subs de Rubik.
 
+## RusbikMod 4.0 será un refactor total
+
 
 ## Configuración
 Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfig.json` dentro de la carpeta del mundo, en él encontrarás información como chats permitidos, chat del chatbridge, lugar para la token, etc.
@@ -16,13 +18,11 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 
 |Comando|Descripción|Privilegios|
 |---|---|---|
-|`/afk`|Literalmente nada|`>0`|
 |`/blockInfo`|Revisar el historial de cada bloque `/blockInfo x y z`.|`>0`|
 |`/here`|Envía por el chat a todos los jugadores tu posición y aplica 5 segundos de glowing.|`>0`|
 |`/home`|Tp al jugador a la posición `home`.|`>0`|
 |`/pito`|¯\\\_(ツ)_/¯|`>0`|
 |`/s`|Comando retirado del carpet para ponerse en survival, retira `Night Vision` y `Conduit Power`.| `>0`|
-|`/sb`|Visualizar cualquier scoreboard.|`>0`|
 |`/seed`|Habilitado para todos.|`>0`|
 |`/setHome`|Registrar una posición como `home`.|`>0`|
 |`/tp`|Tan solo tiene la función de hacer un tp de TU jugador a la posición de otro jugador (para que moderadores puedan asistir a otras personas sin abusar del `tp`).|`>1`|
@@ -41,7 +41,6 @@ Al iniciar por primera vez con el mod instalado, se generará un archivo `RConfi
 |Evento|Acción|
 |---|---|
 |Morir un jugador.|Notificación por el chat de la posición de muerte.|
-|Morir phantom por shulker.|40% de droppear elytras.|
 
 ---
 

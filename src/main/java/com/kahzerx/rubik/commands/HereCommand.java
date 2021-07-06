@@ -51,7 +51,7 @@ public final class HereCommand {
                     getValue().
                     equals(World.OVERWORLD.getValue())) {
                 source.
-                        getMinecraftServer().
+                        getServer().
                         getPlayerManager().
                         broadcastChatMessage(
                         new LiteralText(String.format(
@@ -72,7 +72,7 @@ public final class HereCommand {
                     getValue().
                     equals(World.NETHER.getValue())) {
                 source.
-                        getMinecraftServer().
+                        getServer().
                         getPlayerManager().
                         broadcastChatMessage(
                         new LiteralText(String.format(
@@ -93,7 +93,7 @@ public final class HereCommand {
                     getValue().
                     equals(World.END.getValue())) {
                 source.
-                        getMinecraftServer().
+                        getServer().
                         getPlayerManager().
                         broadcastChatMessage(
                         new LiteralText(String.format(

@@ -23,7 +23,7 @@ public abstract class ServerPlayerMixin extends PlayerEntity {
         super(world, pos, yaw, profile);
     }
 
-    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/CombatEventS2CPacket;<init>(Lnet/minecraft/entity/damage/DamageTracker;Lnet/minecraft/network/packet/s2c/play/CombatEventS2CPacket$Type;Lnet/minecraft/text/Text;)V", ordinal = 0))
+    @Inject(method = "onDeath", at = @At(value = "HEAD"))
     public void onPlayerDies(DamageSource source, CallbackInfo ci) throws SQLException {
         Rusbik.onPlayerDies((ServerPlayerEntity) (Object) this);
     }

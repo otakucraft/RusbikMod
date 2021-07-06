@@ -14,6 +14,7 @@ import com.kahzerx.rubik.database.RusbikDatabase;
 
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Exremove extends Commands {
     public Exremove() {
@@ -33,14 +34,14 @@ public class Exremove extends Commands {
             }
 
             Whitelist whitelist = server.getPlayerManager().getWhitelist();
-            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+            Optional<GameProfile> gameProfile = server.getUserCache().findByName(playerName);
 
-            if (gameProfile == null) {  // El Jugador es premium.
+            if (gameProfile.isEmpty()) {  // El Jugador es premium.
                 event.getChannel().sendMessage("No es premium :P").queue();
                 return;
             }
 
-            if (!whitelist.isAllowed(gameProfile)) {
+            if (!whitelist.isAllowed(gameProfile.get())) {
                 event.getChannel().sendMessage("No está en la whitelist").queue();
                 return;
             }
@@ -48,13 +49,13 @@ public class Exremove extends Commands {
             final long id = 999999L;
 
             try {
-                if (RusbikDatabase.allowedToRemove(id, gameProfile.getName())) {
-                    RusbikDatabase.removeData(gameProfile.getName());  // Eliminar discordID, home y deathPos.
+                if (RusbikDatabase.allowedToRemove(id, gameProfile.get().getName())) {
+                    RusbikDatabase.removeData(gameProfile.get().getName());  // Eliminar discordID, home y deathPos.
 
-                    WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Sacar de la whitelist vanilla.
+                    WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile.get());  // Sacar de la whitelist vanilla.
                     whitelist.remove(whitelistEntry);
 
-                    ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
+                    ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.get().getId());
                     if (serverPlayerEntity != null) {
                         serverPlayerEntity.networkHandler.disconnect(new LiteralText("Ya no estás en la whitelist :("));  // kickear si está conectado.
                     }

@@ -23,7 +23,7 @@ public final class SurvivalCommand {
 
     public static int setSurvivalMode(final ServerCommandSource source)
             throws CommandSyntaxException {
-        source.getPlayer().setGameMode(GameMode.SURVIVAL);
+        source.getPlayer().changeGameMode(GameMode.SURVIVAL);
         source.getPlayer().removeStatusEffect(StatusEffects.CONDUIT_POWER);
         source.getPlayer().removeStatusEffect(StatusEffects.NIGHT_VISION);
         return 1;

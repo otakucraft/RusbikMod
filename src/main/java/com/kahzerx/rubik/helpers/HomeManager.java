@@ -18,7 +18,7 @@ public final class HomeManager {
         HomePos homePos = Rusbik.players.get(player.getName().getString()).home.getHomePos();
         // Intentar hacer tp a tu última home.
         if (homePos.isValid()) {
-            player.teleport(KrusbibUtils.getWorld(homePos.dim, player), homePos.x, homePos.y, homePos.z, player.yaw, player.pitch);
+            player.teleport(KrusbibUtils.getWorld(homePos.dim, player), homePos.x, homePos.y, homePos.z, player.getYaw(), player.getPitch());
             player.addExperience(0); // xp gets reset when you tp from other dimension and needs to update smh, mojang pls.
         } else {
             player.sendMessage(new LiteralText("Aun no has configurado tu casa, usa ").append(getSetHomeCommand()), false);

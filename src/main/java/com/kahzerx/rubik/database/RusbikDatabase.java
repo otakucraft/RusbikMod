@@ -266,10 +266,7 @@ public class RusbikDatabase {
         PreparedStatement ps = c.prepareStatement(query);
         ps.setString(1, playerName);
         ResultSet rs = ps.executeQuery();
-        boolean exists = false;
-        if (rs.next()) {
-            exists = true;
-        }
+        boolean exists = rs.next();
         rs.close();
         ps.close();
         return exists;
@@ -624,10 +621,10 @@ public class RusbikDatabase {
      */
     public static void clearLogger() throws SQLException {
         Statement stmt = c.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,6)");
+        ResultSet rs = stmt.executeQuery("SELECT id FROM logger ORDER BY id DESC LIMIT 1 OFFSET POWER(10,7)");
         if (rs.next()) {
             LOGGER.info("Starting rows deletion");
-            stmt.executeUpdate("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,5))");
+            stmt.executeUpdate("DELETE FROM logger WHERE id IN (SELECT id FROM logger LIMIT POWER(10,6))");
             LOGGER.info("Finished rows deletion");
         }
         rs.close();

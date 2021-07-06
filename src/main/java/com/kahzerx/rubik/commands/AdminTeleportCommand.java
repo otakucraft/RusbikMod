@@ -72,8 +72,8 @@ public final class AdminTeleportCommand {
                 pos.getX(),
                 pos.getY(),
                 pos.getZ(),
-                source.getPlayer().yaw,
-                source.getPlayer().pitch);
+                source.getPlayer().getYaw(),
+                source.getPlayer().getPitch());
         return 1;
     }
 
@@ -83,7 +83,7 @@ public final class AdminTeleportCommand {
             final BlockPos pos) {
         // De jugador a bloque.
         ServerPlayerEntity playerEntity = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player);
         if (playerEntity != null) {
@@ -92,8 +92,8 @@ public final class AdminTeleportCommand {
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),
-                    playerEntity.yaw,
-                    playerEntity.pitch);
+                    playerEntity.getYaw(),
+                    playerEntity.getPitch());
         } else {
             source.sendFeedback(
                     new LiteralText(
@@ -109,11 +109,11 @@ public final class AdminTeleportCommand {
             final String player2) throws CommandSyntaxException {
         // De jugador a jugador.
         ServerPlayerEntity playerEntity = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player);
         ServerPlayerEntity playerEntity2 = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player2);
         if (playerEntity != null && playerEntity2 != null) {
@@ -121,7 +121,7 @@ public final class AdminTeleportCommand {
             // es probablemente porque está en modo /c.
             if (playerEntity2.isSpectator()) {
                 final int duration = 999999;
-                source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                source.getPlayer().changeGameMode(GameMode.SPECTATOR);
                 source.getPlayer().addStatusEffect(
                         new StatusEffectInstance(
                                 StatusEffects.NIGHT_VISION,
@@ -140,8 +140,8 @@ public final class AdminTeleportCommand {
                     playerEntity2.getX(),
                     playerEntity2.getY(),
                     playerEntity2.getZ(),
-                    playerEntity.yaw,
-                    playerEntity.pitch);
+                    playerEntity.getYaw(),
+                    playerEntity.getPitch());
         } else {
             source.sendFeedback(
                     new LiteralText(
@@ -156,13 +156,13 @@ public final class AdminTeleportCommand {
             final String player) throws CommandSyntaxException {
         // De administrador a jugador.
         ServerPlayerEntity playerEntity = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player);
         if (playerEntity != null) {
             if (playerEntity.isSpectator()) {
                 final int duration = 999999;
-                source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                source.getPlayer().changeGameMode(GameMode.SPECTATOR);
                 source.getPlayer().addStatusEffect(
                         new StatusEffectInstance(
                                 StatusEffects.NIGHT_VISION,
@@ -187,8 +187,8 @@ public final class AdminTeleportCommand {
                     playerEntity.getX(),
                     playerEntity.getY(),
                     playerEntity.getZ(),
-                    source.getPlayer().yaw,
-                    source.getPlayer().pitch);
+                    source.getPlayer().getYaw(),
+                    source.getPlayer().getPitch());
         } else {
             source.sendFeedback(
                     new LiteralText(
@@ -202,15 +202,28 @@ public final class AdminTeleportCommand {
                            final Collection<? extends Entity> targets,
                            final String player) {
         ServerPlayerEntity playerEntity = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player);
         if (playerEntity != null) {
             for (Entity e : targets) {
-                e.teleport(
-                        playerEntity.getX(),
-                        playerEntity.getY(),
-                        playerEntity.getZ());
+                if (e instanceof ServerPlayerEntity players) {
+                    players.teleport(
+                            playerEntity.getServerWorld(),
+                            playerEntity.getX(),
+                            playerEntity.getY(),
+                            playerEntity.getZ(),
+                            players.getYaw(),
+                            players.getPitch()
+                    );
+
+                } else {
+                    e.teleport(
+                            playerEntity.getX(),
+                            playerEntity.getY(),
+                            playerEntity.getZ()
+                    );
+                }
             }
         } else {
             source.sendFeedback(
@@ -221,8 +234,7 @@ public final class AdminTeleportCommand {
         return 1;
     }
 
-    private static int tp(final Collection<? extends Entity> targets,
-                          final BlockPos pos) {
+    private static int tp(final Collection<? extends Entity> targets, final BlockPos pos) {
         for (Entity e : targets) {
             e.teleport(pos.getX(), pos.getY(), pos.getZ());
         }

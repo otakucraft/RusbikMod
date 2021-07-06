@@ -128,18 +128,10 @@ public final class KrusbibUtils {
 
     // Formateo para el comando blockInfo.
     public static String buildLine(final ResultSet rs) throws SQLException {
-        String line;
-        switch (rs.getInt("action")) {
-            case 0:
-                line = String.format("[%s] <%s> ha roto '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
-                break;
-            case 1:
-                line = String.format("[%s] <%s> ha puesto '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
-                break;
-            default:
-                line = String.format("[%s] <%s> ha usado '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
-                break;
-        }
-        return line;
+        return switch (rs.getInt("action")) {
+            case 0 -> String.format("[%s] <%s> ha roto '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
+            case 1 -> String.format("[%s] <%s> ha puesto '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
+            default -> String.format("[%s] <%s> ha usado '%s'", rs.getString("date"), Formatting.WHITE + rs.getString("name"), Formatting.DARK_PURPLE + rs.getString("block").split("\\.")[rs.getString("block").split("\\.").length - 1] + Formatting.WHITE);
+        };
     }
 }

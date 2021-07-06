@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import com.kahzerx.rubik.database.RusbikDatabase;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class Pardon extends Commands {
     public Pardon() {
@@ -27,20 +28,20 @@ public class Pardon extends Commands {
                 return;
             }
 
-            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+            Optional<GameProfile> gameProfile = server.getUserCache().findByName(playerName);
 
-            if (gameProfile == null) {  // El Jugador tiene que ser premium.
+            if (gameProfile.isEmpty()) {  // El Jugador tiene que ser premium.
                 event.getChannel().sendMessage("Este usuario no existe!").queue();
                 return;
             }
 
             try {
-                if (!RusbikDatabase.userExists(gameProfile.getName())) {
+                if (!RusbikDatabase.userExists(gameProfile.get().getName())) {
                     event.getChannel().sendMessage("Este usuario no existe!").queue();
                     return;
                 }
 
-                long id = RusbikDatabase.getID(gameProfile.getName());
+                long id = RusbikDatabase.getID(gameProfile.get().getName());
 
                 if (!RusbikDatabase.isBanned(id)) {
                     event.getChannel().sendMessage("No estaba baneado.").queue();
@@ -49,12 +50,12 @@ public class Pardon extends Commands {
 
                 BannedPlayerList list = server.getPlayerManager().getUserBanList();
 
-                if (list.contains(gameProfile)) {  // Vanilla pardon
-                    list.remove(gameProfile);
+                if (list.contains(gameProfile.get())) {  // Vanilla pardon
+                    list.remove(gameProfile.get());
                 }
 
                 RusbikDatabase.pardonUser(id);
-                RusbikDatabase.removeData(gameProfile.getName());
+                RusbikDatabase.removeData(gameProfile.get().getName());
                 event.getChannel().sendMessage("Desbaneado!").queue();
             } catch (SQLException e) {
                 event.getChannel().sendMessage("Ooops, error en la base de datos.").queue();

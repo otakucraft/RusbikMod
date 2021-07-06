@@ -235,7 +235,7 @@ public final class DiscordCommand {
             final ServerCommandSource source,
             final long id) {
         Rusbik.config.setGroupID(id);
-        getDiscordRole(source);
+        getGroupID(source);
         return 1;
     }
 
@@ -314,7 +314,7 @@ public final class DiscordCommand {
                 try {
                     // Envío la información al bot para que inicie.
                     DiscordListener.connect(
-                            src.getMinecraftServer(),
+                            src.getServer(),
                             Rusbik.config.getDiscordToken(),
                             String.valueOf(Rusbik.config.getChatChannelId()));
                     src.sendFeedback(

@@ -41,7 +41,7 @@ public final class SpoofCommand {
 
     public static int spoofEC(final ServerCommandSource source, final String playerE) throws CommandSyntaxException {
         ServerPlayerEntity player = source.getPlayer();
-        ServerPlayerEntity player2 = source.getMinecraftServer().getPlayerManager().getPlayer(playerE);
+        ServerPlayerEntity player2 = source.getServer().getPlayerManager().getPlayer(playerE);
         if (player2 != null) {
             EnderChestInventory enderChestInventory = player2.getEnderChestInventory();
             // Generar la pantalla de enderChest.
@@ -61,24 +61,24 @@ public final class SpoofCommand {
         final int invStartPos = 9;
         Inventory inventory = new SimpleInventory(invSize);
         ServerPlayerEntity player = source.getPlayer();
-        ServerPlayerEntity player2 = source.getMinecraftServer().getPlayerManager().getPlayer(playerE);
+        ServerPlayerEntity player2 = source.getServer().getPlayerManager().getPlayer(playerE);
         assert player2 != null;
 
-        for (int i = 0; i < player2.inventory.main.size(); i++) {
+        for (int i = 0; i < player2.getInventory().main.size(); i++) {
             if (i < hotBarSize) {
-                inventory.setStack(i + hotBarStartPos, player2.inventory.main.get(i));
+                inventory.setStack(i + hotBarStartPos, player2.getInventory().main.get(i));
             } else {
-                inventory.setStack(i - invStartPos, player2.inventory.main.get(i));
+                inventory.setStack(i - invStartPos, player2.getInventory().main.get(i));
             }
         }
 
         final int armorSlotStartPos = 45;
-        for (int j = 0; j < player2.inventory.armor.size(); j++) {
-            inventory.setStack(j + armorSlotStartPos, player2.inventory.armor.get(j));
+        for (int j = 0; j < player2.getInventory().armor.size(); j++) {
+            inventory.setStack(j + armorSlotStartPos, player2.getInventory().armor.get(j));
         }
 
         final int offHandSlotPos = 36;
-        inventory.setStack(offHandSlotPos, player2.inventory.offHand.get(0));
+        inventory.setStack(offHandSlotPos, player2.getInventory().offHand.get(0));
 
         player.openHandledScreen(
                 new SimpleNamedScreenHandlerFactory(

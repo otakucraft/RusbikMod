@@ -21,7 +21,8 @@ import com.kahzerx.rubik.utils.KrusbibUtils;
  */
 @Mixin(ServerPlayerInteractionManager.class)
 public class PlayerInteractionMixin {
-    @Shadow public ServerWorld world;
+    @Shadow
+    protected ServerWorld world;
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldCancelInteraction()Z"))
     private void onRightClick(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (KrusbibUtils.shouldRegisterBlock(world.getBlockState(hitResult.getBlockPos()).getBlock(), player)) {

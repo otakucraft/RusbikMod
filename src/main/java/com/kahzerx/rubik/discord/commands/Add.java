@@ -14,6 +14,7 @@ import com.kahzerx.rubik.database.RusbikDatabase;
 
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Add extends Commands {
     public Add() {
@@ -41,21 +42,21 @@ public class Add extends Commands {
                 return;
             }
 
-            GameProfile gameProfile = server.getUserCache().findByName(playerName);
+            Optional<GameProfile> gameProfile = server.getUserCache().findByName(playerName);
 
-            if (gameProfile == null) {  // El Jugador es premium.
+            if (gameProfile.isEmpty()) {  // El Jugador es premium.
                 event.getChannel().sendMessage("No es premium :P").queue();
                 return;
             }
 
             Whitelist whitelist = server.getPlayerManager().getWhitelist();
 
-            if (whitelist.isAllowed(gameProfile)) {  // Si ya estaba en la whitelist.
+            if (whitelist.isAllowed(gameProfile.get())) {  // Si ya estaba en la whitelist.
                 event.getChannel().sendMessage("Ya estaba en whitelist").queue();
                 return;
             }
 
-            WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+            WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile.get());
             long id = event.getAuthor().getIdLong();
 
             try {
@@ -64,7 +65,7 @@ public class Add extends Commands {
                     return;
                 }
 
-                RusbikDatabase.addPlayerInformation(gameProfile.getName(), id);  // Añadir a la base de datos
+                RusbikDatabase.addPlayerInformation(gameProfile.get().getName(), id);  // Añadir a la base de datos
                 // Uso el getName del gameProfile porque confío en que el usuario no hará lo lógico y pondrá el nombre con mayúsculas donde le dé la gana.
                 whitelist.add(whitelistEntry);  // Añadir a la whitelist vanilla.
 

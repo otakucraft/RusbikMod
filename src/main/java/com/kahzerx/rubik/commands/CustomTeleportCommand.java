@@ -45,7 +45,7 @@ public final class CustomTeleportCommand {
             final ServerCommandSource source,
             final String player) {
         ServerPlayerEntity playerEntity = source.
-                getMinecraftServer().
+                getServer().
                 getPlayerManager().
                 getPlayer(player);
         final int duration = 999999;
@@ -59,7 +59,7 @@ public final class CustomTeleportCommand {
                             getName().
                             getString()) > 1) {
                         if (playerEntity.isSpectator()) {
-                            source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                            source.getPlayer().changeGameMode(GameMode.SPECTATOR);
                             source.getPlayer().addStatusEffect(
                                     new StatusEffectInstance(
                                             StatusEffects.NIGHT_VISION,
@@ -79,8 +79,8 @@ public final class CustomTeleportCommand {
                                     playerEntity.getPos().x,
                                     playerEntity.getPos().y,
                                     playerEntity.getPos().z,
-                                    source.getPlayer().yaw,
-                                    source.getPlayer().pitch);
+                                    source.getPlayer().getYaw(),
+                                    source.getPlayer().getPitch());
                             source.sendFeedback(
                                     new LiteralText(
                                             "Recuerda usar /s "
@@ -92,8 +92,8 @@ public final class CustomTeleportCommand {
                                     playerEntity.getPos().x,
                                     playerEntity.getPos().y,
                                     playerEntity.getPos().z,
-                                    source.getPlayer().yaw,
-                                    source.getPlayer().pitch);
+                                    source.getPlayer().getYaw(),
+                                    source.getPlayer().getPitch());
                         }
                     } else {
                         source.sendFeedback(

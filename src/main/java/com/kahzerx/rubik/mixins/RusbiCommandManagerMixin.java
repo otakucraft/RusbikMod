@@ -22,8 +22,6 @@ import java.util.Map;
 public abstract class RusbiCommandManagerMixin {
     @Shadow @Final private CommandDispatcher<ServerCommandSource> dispatcher;
 
-    @Shadow protected abstract void makeTreeForSource(CommandNode<ServerCommandSource> tree, CommandNode<CommandSource> result, ServerCommandSource source, Map<CommandNode<ServerCommandSource>, CommandNode<CommandSource>> resultNodes);
-
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/command/SeedCommand;register(Lcom/mojang/brigadier/CommandDispatcher;Z)V"))
     public void onRegister(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {
         SeedCommand.register(dispatcher, false);

@@ -39,7 +39,7 @@ public final class CameraCommand {
                 if (RusbikDatabase.getPlayerPerms(
                         source.getPlayer().getName().getString()) > 2) {
                     final int duration = 999999;
-                    source.getPlayer().setGameMode(GameMode.SPECTATOR);
+                    source.getPlayer().changeGameMode(GameMode.SPECTATOR);
                     source.getPlayer().addStatusEffect(
                             new StatusEffectInstance(
                                     StatusEffects.NIGHT_VISION,

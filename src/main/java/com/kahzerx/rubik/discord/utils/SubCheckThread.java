@@ -16,10 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SubCheckThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -120,19 +117,21 @@ public class SubCheckThread extends Thread {
         LOGGER.info("Starting Whitelist removal.");
         Whitelist whitelist = server.getPlayerManager().getWhitelist();
 
-        GameProfile gameProfile = server.getUserCache().findByName(playerName);
+        Optional<GameProfile> gameProfile = server.getUserCache().findByName(playerName);
 
-        if (!whitelist.isAllowed(gameProfile)) {  // Comprobar si está en whitelist.
+        if (gameProfile.isEmpty()) {  // TODO Esto no se qué he hecho
+            return;
+        }
+
+        if (!whitelist.isAllowed(gameProfile.get())) {  // Comprobar si está en whitelist.
             DiscordListener.sendAdminMessage(String.format("No ha sido posible sacar a %s de la whitelist.", playerName));
             return;
         }
 
-        WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);  // Eliminar de la whitelist.
+        WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile.get());  // Eliminar de la whitelist.
         whitelist.remove(whitelistEntry);
 
-        assert gameProfile != null;
-
-        ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.getId());
+        ServerPlayerEntity serverPlayerEntity = server.getPlayerManager().getPlayer(gameProfile.get().getId());
         if (serverPlayerEntity != null) {
             serverPlayerEntity.networkHandler.disconnect(new LiteralText("F sub :("));  // kickear si está conectado.
         }
@@ -148,13 +147,13 @@ public class SubCheckThread extends Thread {
         List<String> actualWhitelist = Arrays.asList(whitelist.getNames());
         for (String name : nameList) {
             if (!actualWhitelist.contains(name)) {  // Añadir a los que están en la base de datos pero no en whitelist.
-                GameProfile gameProfile = server.getUserCache().findByName(name);
-                if (gameProfile == null) {  // El Jugador es premium.
+                Optional<GameProfile> gameProfile = server.getUserCache().findByName(name);
+                if (gameProfile.isEmpty()) {  // El Jugador es premium.
                     RusbikDatabase.removeData(name);
                     continue;
                 }
 
-                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile.get());
                 whitelist.add(whitelistEntry);
                 DiscordListener.sendAdminMessage(String.format("%s añadido a la whitelist.", name));
             }
@@ -165,10 +164,13 @@ public class SubCheckThread extends Thread {
         whitelist = server.getPlayerManager().getWhitelist();
         actualWhitelist = Arrays.asList(whitelist.getNames());
 
-        for (String player : actualWhitelist) {  // Sacar a los que están wn whitelist pero no en la base de datos.
+        for (String player : actualWhitelist) {  // Sacar a los que están en whitelist pero no en la base de datos.
             if (!nameList.contains(player)) {
-                GameProfile gameProfile = server.getUserCache().findByName(player);
-                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile);
+                Optional<GameProfile> gameProfile = server.getUserCache().findByName(player);
+                if (gameProfile.isEmpty()) {
+                    continue;
+                }
+                WhitelistEntry whitelistEntry = new WhitelistEntry(gameProfile.get());
                 whitelist.remove(whitelistEntry);
                 DiscordListener.sendAdminMessage(String.format("%s eliminado de la whitelist.", player));
             }

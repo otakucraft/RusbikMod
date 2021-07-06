@@ -19,7 +19,7 @@ public final class BackManager {
         BackPos deathPos = Rusbik.players.get(player.getName().getString()).back.getBackPos();
         // Intentar hacer tp a tu última deathPos.
         if (deathPos.isValid()) {
-            player.teleport(KrusbibUtils.getWorld(deathPos.dim, player), deathPos.x, deathPos.y, deathPos.z, player.yaw, player.pitch);
+            player.teleport(KrusbibUtils.getWorld(deathPos.dim, player), deathPos.x, deathPos.y, deathPos.z, player.getYaw(), player.getPitch());
         } else {
             player.sendMessage(new LiteralText("Aun no has muerto :("), false);
         }
